@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/fileView"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:background="@color/darkGrey"
+	tools:context=".FileView.FileView">
+	
+	<TextView
+		android:id="@+id/pathDisplay"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textColor="@color/lightGrey"
+		android:background="@color/darkGrey"
+		tools:text="@string/filePath" />
+	
+	<ScrollView
+		android:id="@+id/fileScrollView"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:contentDescription="@string/fileContainerDesc">
+		
+		<LinearLayout
+			android:id="@+id/fileContainer"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+		
+		</LinearLayout>
+	</ScrollView>
+
+</LinearLayout>

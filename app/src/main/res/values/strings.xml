@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="filePath">LIBRARY://</string>
+    <string name="fileContainerDesc">Files in current folder:</string>
+    <string name="app_name">my Little Audio Player</string>
+	<string name="folder_name" translatable="false"> %s</string>
+</resources>
