@@ -1,6 +1,7 @@
 package my.little.audio.player.java;
 
 import my.little.audio.player.java.ResTree.ResTree;
+import my.little.audio.player.java.ResTree.Directory;
 
 import android.app.Application;
 import android.util.Log;
@@ -38,5 +39,17 @@ public class Global extends Application {
 	
 	public static Global getInstance() {
 		return instance;
+	}
+	
+	public static void enterSubfolder(Directory subfolder) {
+		path.add(subfolder.getName());
+		ResTree.current_folder = ResTree.load_folder(path);
+		Signals.emitSignal(Signals.SignalType.PATH_CHANGED);
+	}
+	
+	public static void leaveSubfolder() {
+		path.remove(path.size() - 1);
+		ResTree.current_folder = ResTree.load_folder(path);
+		Signals.emitSignal(Signals.SignalType.PATH_CHANGED);
 	}
 }

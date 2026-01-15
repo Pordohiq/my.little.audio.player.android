@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import my.little.audio.player.java.Global;
-
+import my.little.audio.player.java.Signals;
 import my.little.audio.player.java.ResTree.ResTree;
 import my.little.audio.player.java.ResTree.DiskElement;
 import my.little.audio.player.java.ResTree.Directory;
@@ -39,15 +39,20 @@ public class FileView extends LinearLayout {
 		pathDisplay = findViewById(R.id.pathDisplay);
 		fileContainer = findViewById(R.id.fileContainer);
 		updateFileView();
+		Signals.subscribeToEvent(Signals.SignalType.PATH_CHANGED, this::updateFileView);
 	}
 	
 	public void updateFileView () {
+		fileContainer.removeAllViews();
 		// Set the new PATH string
 		List<String> new_path = Global.path;
 		String path_formatted = getContext().getString(R.string.filePath) + String.join("/", new_path);
 		pathDisplay.setText(path_formatted);
 		// Load the folder
 		List<DiskElement> elements = ResTree.load_folder(new_path);
+		if (!Global.path.isEmpty()){
+			fileContainer.addView(new BackBlock(getContext()));
+		}
 		for (DiskElement element : elements) {
 			if (element instanceof Directory) {
 				FolderBlock block = new FolderBlock(getContext());
