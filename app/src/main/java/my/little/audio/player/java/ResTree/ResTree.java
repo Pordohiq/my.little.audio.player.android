@@ -8,6 +8,9 @@ import java.util.Objects;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import my.little.audio.player.java.Global;
 
 public class ResTree {
@@ -21,7 +24,8 @@ public class ResTree {
 		current_folder = library;
 	}
 	
-	public static List<DiskElement> load_library(String path){
+	@Nullable
+	public static List<DiskElement> load_library(@NonNull String path){
 		File directory = new File(path);
 		List<DiskElement> elements = new ArrayList<>();
 		

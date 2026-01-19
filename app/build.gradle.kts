@@ -45,6 +45,6 @@ configurations.all {
 dependencies {
 
     implementation(libs.activity)
-    implementation(libs.constraintlayout)
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
 }

@@ -3,5 +3,5 @@
 <string name="filePath">LIBRARY://</string>
     <string name="fileContainerDesc">Files in current folder:</string>
     <string name="app_name">my Little Audio Player</string>
-	<string name="folder_name" translatable="false"> %s</string>
+	<string name="none">NONE</string>
 </resources>

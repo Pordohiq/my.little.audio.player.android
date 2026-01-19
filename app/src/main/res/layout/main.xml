@@ -5,13 +5,14 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	tools:context=".Main">
+	tools:context=".Main"
+	android:background="@color/darkGrey">
 	
-	<TextView
-		android:id="@+id/textView"
+	<my.little.audio.player.java.Active
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:text="My Little Audio Player" />
+		android:layout_height="150dp">
+		
+	</my.little.audio.player.java.Active>
 	
 	<my.little.audio.player.java.FileView.FileView
 		android:id="@+id/fileView"

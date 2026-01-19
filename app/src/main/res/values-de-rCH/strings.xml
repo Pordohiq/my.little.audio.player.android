@@ -3,4 +3,5 @@
     <string name="fileContainerDesc">Dateien in diesem Ordner:</string>
     <string name="app_name">mein Kleiner Audio Spieler</string>
     <string name="filePath">BIBLIOTHEK://</string>
+    <string name="none">NIX</string>
 </resources>

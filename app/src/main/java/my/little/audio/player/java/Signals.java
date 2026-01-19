@@ -1,5 +1,9 @@
 package my.little.audio.player.java;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -7,49 +11,65 @@ import java.util.Objects;
 public class Signals {
 	Signals() {}
 	private static List<Runnable> onPathChanged = new ArrayList<>();
+	private static List<Runnable> onPlaybackStateChanged = new ArrayList<>();
+	private static List<Runnable> onAudioSet = new ArrayList<>();
 	
 	public enum SignalType {
 		PATH_CHANGED,
-		PB_STATE_CHANGED
+		PB_STATE_CHANGED,
+		AUDIO_SET,
 	}
 	
-	private static void cleanUp(SignalType type) {
+	private static void cleanUp(@NonNull SignalType type) {
 		switch (type) {
 			case PATH_CHANGED:
 				onPathChanged.removeIf(Objects::isNull);
 				break;
 			case PB_STATE_CHANGED:
-				return; // FIX
+				onPlaybackStateChanged.removeIf(Objects::isNull);
+				break;
+			case AUDIO_SET:
+				onAudioSet.removeIf(Objects::isNull);
+				break;
 			default:
 				throw new IllegalArgumentException("Unknown signal type: " + type);
 		}
 	}
 	
-	public static void subscribeToEvent(SignalType type, Runnable callback) {
+	public static void subscribeToEvent(@NonNull SignalType type, Runnable callback) {
 		switch (type) {
 			case PATH_CHANGED:
 				onPathChanged.add(callback);
 				break;
 			case PB_STATE_CHANGED:
-				return; // FIX
+				onPlaybackStateChanged.add(callback);
+				break;
+			case AUDIO_SET:
+				onAudioSet.add(callback);
+				break;
 			default:
 				throw new IllegalArgumentException("Unknown signal type: " + type);
 		}
 	}
 	
-	public static void unsubscribeFromEvent(SignalType type, Runnable callback) {
+	public static void unsubscribeFromEvent(@NonNull SignalType type, Runnable callback) {
 		switch (type) {
 			case PATH_CHANGED:
 				onPathChanged.remove(callback);
 				break;
 			case PB_STATE_CHANGED:
-				return; // FIX
+				onPlaybackStateChanged.remove(callback);
+				break;
+			case AUDIO_SET:
+				onAudioSet.remove(callback);
+				break;
 			default:
 				throw new IllegalArgumentException("Unknown signal type: " + type);
 		}
 	}
 	
-	public static void emitSignal(SignalType type) {
+	public static void emitSignal(@NonNull SignalType type) {
+		Log.d(Global.APP_TAG, "Emitting signal: " + type.toString());
 		switch (type) {
 			case PATH_CHANGED:
 				cleanUp(SignalType.PATH_CHANGED);
@@ -58,7 +78,15 @@ public class Signals {
 				}
 				break;
 			case PB_STATE_CHANGED:
-				return;
+				for (Runnable callback : onPlaybackStateChanged) {
+					callback.run();
+				}
+				break;
+			case AUDIO_SET:
+				for (Runnable callback : onAudioSet) {
+					callback.run();
+				}
+				break;
 			default:
 				throw new IllegalArgumentException("Unknown signal type: " + type);
 		}
