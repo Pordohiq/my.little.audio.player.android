@@ -1,4 +1,4 @@
-package my.little.audio.player.java.FileView;
+package my.little.audio.player.android.FileView;
 
 import android.content.Context;
 
@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 
-import my.little.audio.player.java.Global;
-import my.little.audio.player.java.R;
-import my.little.audio.player.java.ResTree.Music;
-import my.little.audio.player.java.Signals;
+import my.little.audio.player.android.Global;
+import my.little.audio.player.android.R;
+import my.little.audio.player.android.ResTree.Music;
+import my.little.audio.player.android.Signals;
 
 public class MusicBlock extends LinearLayout {
 	private ImageView mainIcon;

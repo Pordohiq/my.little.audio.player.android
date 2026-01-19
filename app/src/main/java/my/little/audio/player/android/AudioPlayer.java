@@ -1,4 +1,4 @@
-package my.little.audio.player.java;
+package my.little.audio.player.android;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

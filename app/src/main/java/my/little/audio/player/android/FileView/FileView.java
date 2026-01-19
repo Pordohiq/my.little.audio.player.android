@@ -1,4 +1,4 @@
-package my.little.audio.player.java.FileView;
+package my.little.audio.player.android.FileView;
 
 import android.content.Context;
 
@@ -11,14 +11,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import my.little.audio.player.java.Global;
-import my.little.audio.player.java.Signals;
-import my.little.audio.player.java.ResTree.ResTree;
-import my.little.audio.player.java.ResTree.DiskElement;
-import my.little.audio.player.java.ResTree.Directory;
-import my.little.audio.player.java.ResTree.Music;
+import my.little.audio.player.android.Global;
+import my.little.audio.player.android.Signals;
+import my.little.audio.player.android.ResTree.ResTree;
+import my.little.audio.player.android.ResTree.DiskElement;
+import my.little.audio.player.android.ResTree.Directory;
+import my.little.audio.player.android.ResTree.Music;
 
-import my.little.audio.player.java.R;
+import my.little.audio.player.android.R;
 
 public class FileView extends LinearLayout {
 	private TextView pathDisplay;

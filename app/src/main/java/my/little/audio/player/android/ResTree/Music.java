@@ -1,4 +1,4 @@
-package my.little.audio.player.java.ResTree;
+package my.little.audio.player.android.ResTree;
 
 public class Music extends DiskElement {
 	private String extension;

@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "my.little.audio.player.java"
+    namespace = "my.little.audio.player.android"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "my.little.audio.player.java"
+        applicationId = "my.little.audio.player.android"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

@@ -1,8 +1,8 @@
-package my.little.audio.player.java;
+package my.little.audio.player.android;
 
-import my.little.audio.player.java.ResTree.ResTree;
-import my.little.audio.player.java.ResTree.Directory;
-import my.little.audio.player.java.ResTree.Music;
+import my.little.audio.player.android.ResTree.ResTree;
+import my.little.audio.player.android.ResTree.Directory;
+import my.little.audio.player.android.ResTree.Music;
 
 import android.app.Application;
 

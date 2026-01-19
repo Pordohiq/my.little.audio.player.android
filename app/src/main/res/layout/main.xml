@@ -8,19 +8,19 @@
 	tools:context=".Main"
 	android:background="@color/darkGrey">
 	
-	<my.little.audio.player.java.Active
+	<my.little.audio.player.android.Active
 		android:layout_width="match_parent"
 		android:layout_height="150dp">
 		
-	</my.little.audio.player.java.Active>
+	</my.little.audio.player.android.Active>
 	
-	<my.little.audio.player.java.FileView.FileView
+	<my.little.audio.player.android.FileView.FileView
 		android:id="@+id/fileView"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical"
 		android:visibility="visible">
 	
-	</my.little.audio.player.java.FileView.FileView>
+	</my.little.audio.player.android.FileView.FileView>
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package my.little.audio.player.java.FileView;
+package my.little.audio.player.android.FileView;
 
 import android.content.Context;
 
@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 
 import android.widget.LinearLayout;
 
-import my.little.audio.player.java.R;
-import my.little.audio.player.java.Global;
+import my.little.audio.player.android.R;
+import my.little.audio.player.android.Global;
 
 public class BackBlock extends LinearLayout {
 	public BackBlock(Context context) {

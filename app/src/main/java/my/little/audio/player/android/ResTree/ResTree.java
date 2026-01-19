@@ -1,4 +1,4 @@
-package my.little.audio.player.java.ResTree;
+package my.little.audio.player.android.ResTree;
 
 import java.util.Comparator;
 import java.util.List;
@@ -11,7 +11,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import my.little.audio.player.java.Global;
+import my.little.audio.player.android.Global;
 
 public class ResTree {
 	public static String library_root;

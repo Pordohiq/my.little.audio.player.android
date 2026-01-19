@@ -1,4 +1,4 @@
-package my.little.audio.player.java.FileView;
+package my.little.audio.player.android.FileView;
 
 import android.content.Context;
 
@@ -10,9 +10,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import my.little.audio.player.java.Global;
-import my.little.audio.player.java.R;
-import my.little.audio.player.java.ResTree.Directory;
+import my.little.audio.player.android.Global;
+import my.little.audio.player.android.R;
+import my.little.audio.player.android.ResTree.Directory;
 
 public class FolderBlock extends LinearLayout {
 	// Nodes
