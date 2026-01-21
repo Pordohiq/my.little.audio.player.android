@@ -3,6 +3,7 @@
     <color name="darkGrey">#333333</color>
     <color name="middleGrey">#555555</color>
     <color name="lightGrey">#aaaaaa</color>
+    <color name="lightestGrey">#cccccc</color>
 
     <!-- Default colours -->
     <color name="purple_200">#FFBB86FC</color>

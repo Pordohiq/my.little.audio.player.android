@@ -35,8 +35,9 @@ public class Global extends Application {
 		PAUSED,
 		NONE
 	}
-	public static PlayBackState current_playbackState = PlayBackState.NONE;
+	private static PlayBackState current_playbackState = PlayBackState.NONE;
 	
+	// Status on current song
 	public static Music current_audio;
 	
 	private static MediaController mediaController;
@@ -85,8 +86,9 @@ public class Global extends Application {
 				// Now the controller is connected to your AudioPlayer service
 				mediaController = controllerFuture.get();
 				mediaController.addListener(pb_listener);
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (Exception ex) {
+				Log.e(APP_TAG, "Fatal: " + ex);
+				System.exit(1);
 			}
 		}, MoreExecutors.directExecutor());
 		
@@ -113,10 +115,6 @@ public class Global extends Application {
 		}
 	}
 	
-	public static Global getInstance() {
-		return instance;
-	}
-	
 	//region Path logic
 	public static void enterSubfolder(@NonNull Directory subfolder) {
 		path.add(subfolder.getName());
@@ -133,26 +131,51 @@ public class Global extends Application {
 	//region AudioLogic
 	public static void setAudio(@NonNull Music audio, boolean playImmediately) {
 		Global.current_audio = audio;
-		Signals.emitSignal(Signals.SignalType.AUDIO_SET);
+		mediaController.setMediaItem(
+				new MediaItem.Builder().setUri(audio.getAbspath()).build()
+		);
+		mediaController.prepare();
+		
 		if (playImmediately) {
-			mediaController.setMediaItem(
-					new MediaItem.Builder().setUri(audio.getAbspath()).build()
-			);
-			mediaController.prepare();
 			mediaController.play();
+		}
+		Signals.emitSignal(Signals.SignalType.AUDIO_SET);
+	}
+	
+	public static void setPlayBackState(PlayBackState pbs){
+		current_playbackState = pbs;
+		if (pbs == PlayBackState.PLAYING)
+			mediaController.play();
+		else if (pbs == PlayBackState.PAUSED) {
+			mediaController.pause();
+		} else {
+			mediaController.stop();
+		}
+		Signals.emitSignal(Signals.SignalType.PB_STATE_CHANGED);
+	}
+	
+	public static PlayBackState getPlayBackState(){
+		return current_playbackState;
+	}
+	
+	public static int getPlayBackPosition() {
+		try {
+			return Math.toIntExact(mediaController.getCurrentPosition() / 1000);
+		} catch (ArithmeticException aex) {
+			return 0;
 		}
 	}
 	
-	public static void togglePlayback(){
-		if (Global.current_playbackState == Global.PlayBackState.PLAYING) {
-			mediaController.pause();
+	public static int getPlayBackDuration() {
+		try {
+			return Math.toIntExact(mediaController.getDuration() / 1000);
+		}catch (ArithmeticException aex) {
+			return 0;
 		}
-		else if (Global.current_playbackState == Global.PlayBackState.PAUSED) {
-			mediaController.play();
-		}
-		else {
-			mediaController.play();
-		}
+	}
+	
+	public static void seekTo(int seconds) {
+		mediaController.seekTo(seconds * 1000L);
 	}
 	//endregion
 }

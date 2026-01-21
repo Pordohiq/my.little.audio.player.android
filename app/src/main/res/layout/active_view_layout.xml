@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/activeParent"
 	android:orientation="vertical"
 	android:layout_width="match_parent"
@@ -22,10 +23,55 @@
 			
 		</TextView>
 	</ScrollView>
-	<View
+	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="25dp"
-		android:background="@color/darkGrey"></View>
+		android:background="@color/darkGrey">
+		<SeekBar
+			android:id="@+id/progressBar"
+			android:layout_width="match_parent"
+			android:layout_height="25dp"
+			android:minHeight="25dp"
+			android:maxHeight="25dp"
+			android:thumb="@null"
+			android:splitTrack="false"
+			android:progressDrawable="@drawable/progress_bar_layer"
+			android:paddingStart="0dp"
+			android:paddingEnd="0dp"
+			android:max="1"
+			android:progress="1" />
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="25dp">
+			<TextView
+				android:id="@+id/time_in"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:gravity="center_vertical"
+				
+				android:textColor="@color/lightestGrey"
+				android:fontFamily="monospace"
+				
+				tools:ignore="HardcodedText"
+				android:text="--:--" />
+			<View
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="1" />
+			
+			<TextView
+				android:id="@+id/time_remaining"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:gravity="center_vertical"
+				
+				android:textColor="@color/lightestGrey"
+				android:fontFamily="monospace"
+				
+				android:text="--:--"
+				tools:ignore="HardcodedText" />
+		</LinearLayout>
+	</FrameLayout>
 	
 	<!-- Bottom row -->
 	<LinearLayout
@@ -43,16 +89,19 @@
 				android:id="@+id/previousButton"
 				android:layout_width="50dp"
 				android:layout_height="50dp"
+				android:contentDescription="@string/previous_song"
 				android:src="@drawable/active_pb_previous" />
 			<ImageView
 				android:id="@+id/playButton"
 				android:layout_width="50dp"
 				android:layout_height="50dp"
+				android:contentDescription="@string/play_pause"
 				android:src="@drawable/active_pb_play" />
 			<ImageView
 				android:id="@+id/nextButton"
 				android:layout_width="50dp"
 				android:layout_height="50dp"
+				android:contentDescription="@string/next_song"
 				android:src="@drawable/active_pb_next" />
 		</LinearLayout>
 		

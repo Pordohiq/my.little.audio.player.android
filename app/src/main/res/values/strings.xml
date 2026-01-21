@@ -4,4 +4,7 @@
     <string name="fileContainerDesc">Files in current folder:</string>
     <string name="app_name">my Little Audio Player</string>
 	<string name="none">NONE</string>
+	<string name="previous_song">previous song</string>
+	<string name="play_pause">play button</string>
+	<string name="next_song">next song</string>
 </resources>
