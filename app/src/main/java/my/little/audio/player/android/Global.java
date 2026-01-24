@@ -72,7 +72,7 @@ public class Global extends Application {
 		instance = this;
 		
 		// Load the Resource Tree
-		ResTree.init("/storage/emulated/0/Music");
+		ResTree.init(this);
 		
 		// Connect to the Service AudioPlayer
 		SessionToken sessionToken = new SessionToken(this,
