@@ -10,9 +10,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import my.little.audio.player.android.Action.Action;
 import my.little.audio.player.android.Global;
 import my.little.audio.player.android.R;
 import my.little.audio.player.android.ResTree.Directory;
+import my.little.audio.player.android.Signals;
 
 public class FolderBlock extends LinearLayout {
 	// Nodes
@@ -37,6 +39,16 @@ public class FolderBlock extends LinearLayout {
 		folderIcon = findViewById(R.id.folder_icon);
 		folderName = findViewById(R.id.folder_name);
 		moreIcon = findViewById(R.id.more_icon);
+		
+		Signals.subscribeToEvent("onActionSet", this::check_more_icon);
+	}
+	
+	private void check_more_icon() {
+		if (folder == Action.get_element() && folder != null) {
+			moreIcon.setImageResource(R.drawable.block_more_active);
+		} else {
+			moreIcon.setImageResource(R.drawable.block_more);
+		}
 	}
 	
 	public void setUp(Directory dir) {
@@ -45,6 +57,10 @@ public class FolderBlock extends LinearLayout {
 		// Onclick
 		folderIcon.setOnClickListener(view -> Global.enterSubfolder(dir));
 		folderName.setOnClickListener(view -> Global.enterSubfolder(dir));
+		moreIcon.setOnClickListener(view -> Action.set_element(dir));
+		// Connection with ACTION
+		check_more_icon();
+		
 	}
 	
 }

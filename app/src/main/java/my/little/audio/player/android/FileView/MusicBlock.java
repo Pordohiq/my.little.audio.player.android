@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 
+import my.little.audio.player.android.Action.Action;
 import my.little.audio.player.android.Global;
 import my.little.audio.player.android.R;
 import my.little.audio.player.android.ResTree.Music;
@@ -39,7 +40,16 @@ public class MusicBlock extends LinearLayout {
 		musicName = findViewById(R.id.music_name);
 		moreIcon = findViewById(R.id.more_icon);
 		
-		Signals.subscribeToEvent(Signals.SignalType.AUDIO_SET, this::onAudioSet);
+		Signals.subscribeToEvent("onAudioSet", this::onAudioSet);
+		Signals.subscribeToEvent("onActionSet", this::check_more_icon);
+	}
+	
+	private void check_more_icon() {
+		if (music == Action.get_element() && music != null) {
+			moreIcon.setImageResource(R.drawable.block_more_active);
+		} else {
+			moreIcon.setImageResource(R.drawable.block_more);
+		}
 	}
 	
 	private void onAudioSet() {
@@ -59,8 +69,6 @@ public class MusicBlock extends LinearLayout {
 		// Hook up buttons
 		mainIcon.setOnClickListener(view -> Global.setAudio(music, true));
 		musicName.setOnClickListener(view -> Global.setAudio(music, true));
-		moreIcon.setOnClickListener(view -> {
-			// TODO: Hook up to action
-		});
+		moreIcon.setOnClickListener(view -> Action.set_element(music));
 	}
 }

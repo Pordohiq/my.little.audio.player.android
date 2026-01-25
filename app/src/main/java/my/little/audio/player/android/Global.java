@@ -1,5 +1,6 @@
 package my.little.audio.player.android;
 
+import my.little.audio.player.android.Action.Action;
 import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.ResTree.Directory;
 import my.little.audio.player.android.ResTree.Music;
@@ -30,6 +31,8 @@ public class Global extends Application {
 	
 	public static List<String> path = new ArrayList<>();
 	
+	public static final Action action = new Action();
+	
 	public enum PlayBackState {
 		PLAYING,
 		PAUSED,
@@ -46,14 +49,14 @@ public class Global extends Application {
 		public void onPlaybackStateChanged(int playbackState) {
 			Player.Listener.super.onPlaybackStateChanged(playbackState);
 			current_playbackState = mapCustomPBState(playbackState, mediaController.getPlayWhenReady());
-			Signals.emitSignal(Signals.SignalType.PB_STATE_CHANGED);
+			Signals.emitSignal("onPBStateChanged");
 		}
 		
 		@Override
 		public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
 			Player.Listener.super.onPlayWhenReadyChanged(playWhenReady, reason);
 			current_playbackState = mapCustomPBState(mediaController.getPlaybackState(), playWhenReady);
-			Signals.emitSignal(Signals.SignalType.PB_STATE_CHANGED);
+			Signals.emitSignal("onPBStateChanged");
 		}
 	};
 	
@@ -70,6 +73,10 @@ public class Global extends Application {
 	public void onCreate() {
 		super.onCreate();
 		instance = this;
+		
+		Signals.createEvent("onPathChanged");
+		Signals.createEvent("onAudioSet");
+		Signals.createEvent("onPBStateChanged");
 		
 		// Load the Resource Tree
 		ResTree.init(this);
@@ -105,6 +112,8 @@ public class Global extends Application {
 		}
 	}
 	
+	public static Global getInstance() { return instance; }
+	
 	private static PlayBackState mapCustomPBState(int exoState, boolean playWhenReady) {
 		if (exoState == Player.STATE_IDLE || exoState == Player.STATE_ENDED) {
 			return PlayBackState.NONE;
@@ -119,13 +128,13 @@ public class Global extends Application {
 	public static void enterSubfolder(@NonNull Directory subfolder) {
 		path.add(subfolder.getName());
 		ResTree.current_folder = ResTree.load_folder(path);
-		Signals.emitSignal(Signals.SignalType.PATH_CHANGED);
+		Signals.emitSignal("onPathChanged");
 	}
 	
 	public static void leaveSubfolder() {
 		path.remove(path.size() - 1);
 		ResTree.current_folder = ResTree.load_folder(path);
-		Signals.emitSignal(Signals.SignalType.PATH_CHANGED);
+		Signals.emitSignal("onPathChanged");
 	}
 	//endregion
 	//region AudioLogic
@@ -139,7 +148,7 @@ public class Global extends Application {
 		if (playImmediately) {
 			mediaController.play();
 		}
-		Signals.emitSignal(Signals.SignalType.AUDIO_SET);
+		Signals.emitSignal("onAudioSet");
 	}
 	
 	public static void setPlayBackState(PlayBackState pbs){
@@ -151,7 +160,7 @@ public class Global extends Application {
 		} else {
 			mediaController.stop();
 		}
-		Signals.emitSignal(Signals.SignalType.PB_STATE_CHANGED);
+		Signals.emitSignal("onPBStateChanged");
 	}
 	
 	public static PlayBackState getPlayBackState(){

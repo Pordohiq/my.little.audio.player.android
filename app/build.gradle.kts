@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "my.little.audio.player.android"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -17,14 +17,14 @@ android {
     }
 
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
-        debug {
+        getByName("debug") {
             isMinifyEnabled = false
         }
     }
@@ -34,16 +34,9 @@ android {
     }
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin-stdlib-jdk")) {
-            useTarget("org.jetbrains.kotlin:kotlin-stdlib:${requested.version}")
-        }
-    }
-}
-
 dependencies {
 
+    implementation(libs.appcompat)
     implementation(libs.activity)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.session)

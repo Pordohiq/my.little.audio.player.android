@@ -1,94 +1,53 @@
 package my.little.audio.player.android;
 
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Signals {
-	Signals() {}
-	private static List<Runnable> onPathChanged = new ArrayList<>();
-	private static List<Runnable> onPlaybackStateChanged = new ArrayList<>();
-	private static List<Runnable> onAudioSet = new ArrayList<>();
+	private static final Map<String, List<Runnable>> events = new HashMap<>();
 	
-	public enum SignalType {
-		PATH_CHANGED,
-		PB_STATE_CHANGED,
-		AUDIO_SET,
-	}
+	private Signals() {}
 	
-	private static void cleanUp(@NonNull SignalType type) {
-		switch (type) {
-			case PATH_CHANGED:
-				onPathChanged.removeIf(Objects::isNull);
-				break;
-			case PB_STATE_CHANGED:
-				onPlaybackStateChanged.removeIf(Objects::isNull);
-				break;
-			case AUDIO_SET:
-				onAudioSet.removeIf(Objects::isNull);
-				break;
-			default:
-				throw new IllegalArgumentException("Unknown signal type: " + type);
+	public static void createEvent(@NonNull String eventName) {
+		if (!events.containsKey(eventName)) {
+			events.put(eventName, new ArrayList<>());
 		}
 	}
 	
-	public static void subscribeToEvent(@NonNull SignalType type, Runnable callback) {
-		switch (type) {
-			case PATH_CHANGED:
-				onPathChanged.add(callback);
-				break;
-			case PB_STATE_CHANGED:
-				onPlaybackStateChanged.add(callback);
-				break;
-			case AUDIO_SET:
-				onAudioSet.add(callback);
-				break;
-			default:
-				throw new IllegalArgumentException("Unknown signal type: " + type);
+	private static void cleanUp(@NonNull String eventName) {
+		List<Runnable> callbacks = events.get(eventName);
+		if (callbacks != null) {
+			callbacks.removeIf(Objects::isNull);
 		}
 	}
 	
-	public static void unsubscribeFromEvent(@NonNull SignalType type, Runnable callback) {
-		switch (type) {
-			case PATH_CHANGED:
-				onPathChanged.remove(callback);
-				break;
-			case PB_STATE_CHANGED:
-				onPlaybackStateChanged.remove(callback);
-				break;
-			case AUDIO_SET:
-				onAudioSet.remove(callback);
-				break;
-			default:
-				throw new IllegalArgumentException("Unknown signal type: " + type);
+	public static void subscribeToEvent(@NonNull String eventName, Runnable callback) {
+		if (!events.containsKey(eventName)) {
+			createEvent(eventName);
+		}
+		events.get(eventName).add(callback);
+	}
+	
+	public static void unsubscribeFromEvent(@NonNull String eventName, Runnable callback) {
+		List<Runnable> callbacks = events.get(eventName);
+		if (callbacks != null) {
+			callbacks.remove(callback);
 		}
 	}
 	
-	public static void emitSignal(@NonNull SignalType type) {
-		Log.d(Global.APP_TAG, "Emitting signal: " + type.toString());
-		switch (type) {
-			case PATH_CHANGED:
-				cleanUp(SignalType.PATH_CHANGED);
-				for (Runnable callback : onPathChanged) {
-					callback.run();
-				}
-				break;
-			case PB_STATE_CHANGED:
-				for (Runnable callback : onPlaybackStateChanged) {
-					callback.run();
-				}
-				break;
-			case AUDIO_SET:
-				for (Runnable callback : onAudioSet) {
-					callback.run();
-				}
-				break;
-			default:
-				throw new IllegalArgumentException("Unknown signal type: " + type);
+	public static void emitSignal(@NonNull String eventName) {
+		Log.d("Global.APP_TAG", "Emitting signal: " + eventName);
+		List<Runnable> callbacks = events.get(eventName);
+		if (callbacks != null) {
+			cleanUp(eventName);
+			for (Runnable callback : new ArrayList<>(callbacks)) {
+				callback.run();
+			}
 		}
 	}
 }

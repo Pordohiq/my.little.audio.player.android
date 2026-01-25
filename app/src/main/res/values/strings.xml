@@ -7,4 +7,9 @@
 	<string name="previous_song">previous song</string>
 	<string name="play_pause">play button</string>
 	<string name="next_song">next song</string>
+	<string name="action_general_add_music">add music</string>
+	<string name="action_general_add_folder">add a folder</string>
+	<string name="action_general_refresh">refresh the library</string>
+	<string name="action_general_set_library">set new library path</string>
+	<string name="action_general_settings">show the settings</string>
 </resources>

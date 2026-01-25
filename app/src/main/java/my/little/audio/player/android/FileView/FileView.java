@@ -39,7 +39,7 @@ public class FileView extends LinearLayout {
 		pathDisplay = findViewById(R.id.pathDisplay);
 		fileContainer = findViewById(R.id.fileContainer);
 		updateFileView();
-		Signals.subscribeToEvent(Signals.SignalType.PATH_CHANGED, this::updateFileView);
+		Signals.subscribeToEvent("onPathChanged", this::updateFileView);
 	}
 	
 	public void updateFileView () {

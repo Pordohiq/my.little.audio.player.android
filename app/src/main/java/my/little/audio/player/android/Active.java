@@ -119,8 +119,8 @@ public class Active extends LinearLayout {
 				}
 			}
 		});
-		Signals.subscribeToEvent(Signals.SignalType.PB_STATE_CHANGED, this::onPbStateChanged);
-		Signals.subscribeToEvent(Signals.SignalType.AUDIO_SET, this::onAudioSet);
+		Signals.subscribeToEvent("onPBStateChanged", this::onPbStateChanged);
+		Signals.subscribeToEvent("onAudioSet", this::onAudioSet);
 	}
 	//endregion
 	//region Signals
