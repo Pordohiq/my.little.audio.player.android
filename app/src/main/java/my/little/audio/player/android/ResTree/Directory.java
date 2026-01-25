@@ -1,12 +1,16 @@
 package my.little.audio.player.android.ResTree;
 
+import android.net.Uri;
+
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 public class Directory extends DiskElement {
 	private List<DiskElement> children;
 	
-	public Directory (String new_abspath) {
-		super(new_abspath);
+	public Directory (String new_name, @NonNull Uri new_uri) {
+		super(new_name, new_uri);
 	}
 	
 	public int getChildCount () {

@@ -15,13 +15,13 @@
 		android:layout_height="wrap_content"
 		android:textColor="@color/lightGrey"
 		android:background="@color/darkGrey"
-		tools:text="@string/filePath" />
+		tools:text="@string/file_view_filePath" />
 	
 	<ScrollView
 		android:id="@+id/fileScrollView"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:contentDescription="@string/fileContainerDesc">
+		android:contentDescription="@string/file_view_fileContainerDesc">
 		
 		<LinearLayout
 			android:id="@+id/fileContainer"

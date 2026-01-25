@@ -41,9 +41,7 @@ public class ActionBar extends LinearLayout {
 		ImageView open_settings_button = findViewById(R.id.action_general_settings);
 		
 		// Link the nodes
-		add_music_button.setOnClickListener(view -> {
-			// TODO: Hook up
-		});
+		add_music_button.setOnClickListener(view -> Action.open_new_audio_file_dialog());
 		add_folder_button.setOnClickListener(view -> {
 			// TODO: Hook up
 		});

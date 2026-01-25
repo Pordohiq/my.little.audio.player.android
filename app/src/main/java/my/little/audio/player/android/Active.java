@@ -39,7 +39,9 @@ public class Active extends LinearLayout {
 				timeInNode.setText(formatDuration(Global.getPlayBackPosition()));
 				timeRemainingNode.setText(formatDuration(Global.getPlayBackDuration() - Global.getPlayBackPosition()));
 				
-				secondHandler.postDelayed(this, 100);
+				if (Global.getPlayBackState() == Global.PlayBackState.PLAYING) {
+					secondHandler.postDelayed(this, 100);
+				}
 			} catch (Exception ex) {
 				secondHandler.removeCallbacks(this);
 				Log.e(Global.APP_TAG, "Error: " + ex);

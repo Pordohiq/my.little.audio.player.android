@@ -15,7 +15,7 @@
 			android:id="@+id/playing_title"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="@string/none"
+			android:text="@string/active_title_none"
 			android:textSize="26sp"
 			android:gravity="center"
 			android:textAlignment="center"
@@ -89,19 +89,19 @@
 				android:id="@+id/previousButton"
 				android:layout_width="50dp"
 				android:layout_height="50dp"
-				android:contentDescription="@string/previous_song"
+				android:contentDescription="@string/active_pb_previous_song"
 				android:src="@drawable/active_pb_previous" />
 			<ImageView
 				android:id="@+id/playButton"
 				android:layout_width="50dp"
 				android:layout_height="50dp"
-				android:contentDescription="@string/play_pause"
+				android:contentDescription="@string/active_pb_play_pause"
 				android:src="@drawable/active_pb_play" />
 			<ImageView
 				android:id="@+id/nextButton"
 				android:layout_width="50dp"
 				android:layout_height="50dp"
-				android:contentDescription="@string/next_song"
+				android:contentDescription="@string/active_pb_next_song"
 				android:src="@drawable/active_pb_next" />
 		</LinearLayout>
 		

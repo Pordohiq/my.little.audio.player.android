@@ -43,10 +43,13 @@ public class FileView extends LinearLayout {
 	}
 	
 	public void updateFileView () {
+		if (ResTree.library == null) {
+			return;
+		}
 		fileContainer.removeAllViews();
 		// Set the new PATH string
 		List<String> new_path = Global.path;
-		String path_formatted = getContext().getString(R.string.filePath) + String.join("/", new_path);
+		String path_formatted = getContext().getString(R.string.file_view_filePath) + String.join("/", new_path);
 		pathDisplay.setText(path_formatted);
 		// Load the folder
 		List<DiskElement> elements = ResTree.load_folder(new_path);

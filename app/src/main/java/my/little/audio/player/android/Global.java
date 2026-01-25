@@ -77,6 +77,7 @@ public class Global extends Application {
 		Signals.createEvent("onPathChanged");
 		Signals.createEvent("onAudioSet");
 		Signals.createEvent("onPBStateChanged");
+		Signals.createEvent("onSongFinished");
 		
 		// Load the Resource Tree
 		ResTree.init(this);
@@ -101,7 +102,6 @@ public class Global extends Application {
 		
 		// Welcome the User
 		Log.i(APP_TAG, "Welcome to my LittleAudioPlayer");
-		Log.d(APP_TAG, ResTree.library.toString());
 	}
 	
 	@Override
@@ -115,7 +115,10 @@ public class Global extends Application {
 	public static Global getInstance() { return instance; }
 	
 	private static PlayBackState mapCustomPBState(int exoState, boolean playWhenReady) {
-		if (exoState == Player.STATE_IDLE || exoState == Player.STATE_ENDED) {
+		if (exoState == Player.STATE_IDLE) {
+			return PlayBackState.NONE;
+		} else if (exoState == Player.STATE_ENDED) {
+			Signals.emitSignal("onSongFinished");
 			return PlayBackState.NONE;
 		} else if (exoState == Player.STATE_READY || exoState == Player.STATE_BUFFERING) {
 			return playWhenReady ? PlayBackState.PLAYING : PlayBackState.PAUSED;
@@ -141,7 +144,7 @@ public class Global extends Application {
 	public static void setAudio(@NonNull Music audio, boolean playImmediately) {
 		Global.current_audio = audio;
 		mediaController.setMediaItem(
-				new MediaItem.Builder().setUri(audio.getAbspath()).build()
+				new MediaItem.Builder().setUri(audio.getUri()).build()
 		);
 		mediaController.prepare();
 		

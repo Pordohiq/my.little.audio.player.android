@@ -23,9 +23,15 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            isDebuggable = false
+            isJniDebuggable = false
+            multiDexEnabled = true
         }
         getByName("debug") {
             isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            isDebuggable = true
         }
     }
     compileOptions {
@@ -37,7 +43,7 @@ android {
 dependencies {
 
     implementation(libs.appcompat)
-    implementation(libs.activity)
+    implementation(libs.documentfile)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.session)
 }
