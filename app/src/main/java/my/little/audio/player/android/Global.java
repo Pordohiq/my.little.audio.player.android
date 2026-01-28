@@ -93,6 +93,7 @@ public class Global extends Application {
 			try {
 				// Now the controller is connected to your AudioPlayer service
 				mediaController = controllerFuture.get();
+				assert mediaController != null;
 				mediaController.addListener(pb_listener);
 			} catch (Exception ex) {
 				Log.e(APP_TAG, "Fatal: " + ex);

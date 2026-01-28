@@ -1,7 +1,6 @@
 package my.little.audio.player.android.ResTree;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.io.File;
 import java.nio.file.*;
@@ -10,11 +9,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
@@ -54,7 +55,7 @@ public class ResTree {
 		DocumentFile root = DocumentFile.fromTreeUri(Global.getInstance(), uri);
 		
 		if (root != null && root.exists() && root.isDirectory()) {
-			Log.v(Global.APP_TAG, "Confirmed valid directory URI: " + uri.toString());
+			Log.v(Global.APP_TAG, "Confirmed valid directory URI: " + uri);
 			
 			write_path_config(Global.getInstance(), uri);
 			
@@ -123,7 +124,7 @@ public class ResTree {
 	
 	public static String getFileName(@NonNull Context context, @NonNull Uri uri) {
 		String result = null;
-		if (uri.getScheme().equals("content")) {
+		if (Objects.equals(uri.getScheme(), "content")) {
 			try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
 				if (cursor != null && cursor.moveToFirst()) {
 					int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
@@ -135,6 +136,7 @@ public class ResTree {
 		}
 		if (result == null) {
 			result = uri.getPath();
+			assert result != null;
 			int cut = result.lastIndexOf('/');
 			if (cut != -1) {
 				result = result.substring(cut + 1);
@@ -146,34 +148,59 @@ public class ResTree {
 	@Nullable
 	public static List<DiskElement> load_library(@NonNull Uri uri) {
 		List<DiskElement> elements = new ArrayList<>();
-		DocumentFile directory = DocumentFile.fromTreeUri(Global.getInstance(), uri);
+		ContentResolver resolver = Global.getInstance().getContentResolver();
+		Uri childrenUri;
 		
-		if (directory == null || !directory.isDirectory()) {
-			Log.w(Global.APP_TAG, "Directory not valid: " + uri);
+		try {
+			String docId;
+			if (DocumentsContract.isDocumentUri(Global.getInstance(), uri)) {
+				docId = DocumentsContract.getDocumentId(uri);
+			} else {
+				docId = DocumentsContract.getTreeDocumentId(uri);
+			}
+			childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri, docId);
+		} catch (IllegalArgumentException e) {
+			Log.w(Global.APP_TAG, "Invalid URI: " + uri);
 			return null;
 		}
 		
-		DocumentFile[] files = directory.listFiles();
+		String[] projection = {
+				DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+				DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+				DocumentsContract.Document.COLUMN_MIME_TYPE
+		};
 		
-		for (DocumentFile file : files) {
-			String name = file.getName();
-			if (name == null || name.startsWith(".")) continue;
-			
-			Uri fileUri = file.getUri();
-			
-			if (file.isDirectory()) {
-				Directory new_directory = new Directory(getFileName(Global.getInstance(), fileUri), fileUri);
-				new_directory.setChildren(load_library(fileUri));
-				elements.add(new_directory);
-			} else if (file.isFile()) {
-				int lastDotIndex = name.lastIndexOf('.');
-				if (lastDotIndex > 0) {
-					String extension = name.substring(lastDotIndex + 1).toLowerCase();
-					if (Global.AUDIO_EXTENSIONS.contains(extension)) {
-						elements.add(new Music(getFileName(Global.getInstance(), fileUri), fileUri, extension));
+		try (Cursor cursor = resolver.query(childrenUri, projection, null, null, null)) {
+			if (cursor != null) {
+				int idCol = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID);
+				int nameCol = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME);
+				int mimeCol = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
+				
+				while (cursor.moveToNext()) {
+					String name = cursor.getString(nameCol);
+					if (name == null || name.startsWith(".")) continue;
+					
+					String documentId = cursor.getString(idCol);
+					String mimeType = cursor.getString(mimeCol);
+					Uri fileUri = DocumentsContract.buildDocumentUriUsingTree(uri, documentId);
+					
+					if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType)) {
+						Directory new_directory = new Directory(name, fileUri);
+						new_directory.setChildren(load_library(fileUri));
+						elements.add(new_directory);
+					} else {
+						int lastDotIndex = name.lastIndexOf('.');
+						if (lastDotIndex > 0) {
+							String extension = name.substring(lastDotIndex + 1).toLowerCase();
+							if (Global.AUDIO_EXTENSIONS.contains(extension)) {
+								elements.add(new Music(name, fileUri, extension));
+							}
+						}
 					}
 				}
 			}
+		} catch (Exception e) {
+			Log.w(Global.APP_TAG, "Query failed: " + uri, e);
 		}
 		
 		elements.sort(Comparator.comparing(DiskElement::getName));
@@ -191,7 +218,7 @@ public class ResTree {
 			if (path_element == null) {
 				continue;
 			}
-			for (int i = 0; i < elements.size(); i ++){
+			for (int i = 0; i < Objects.requireNonNull(elements).size(); i ++){
 				DiskElement element = elements.get(i);
 				if (Objects.equals(element.getName(), path_element) && element instanceof Directory) {
 					elements = ((Directory) element).getChildren();
@@ -200,5 +227,19 @@ public class ResTree {
 			}
 		}
 		return elements;
+	}
+	
+	public static Uri get_folder_uri(@NonNull List<String> path) {
+		if (path.isEmpty()){
+			return library_root;
+		}
+		String last = path.remove(path.size() - 1);
+		List<DiskElement> elements = load_folder(path);
+		for (DiskElement element : elements) {
+			if (element.getName().equals(last) && element instanceof Directory) {
+				return element.getUri();
+			}
+		}
+		return Uri.EMPTY;
 	}
 }

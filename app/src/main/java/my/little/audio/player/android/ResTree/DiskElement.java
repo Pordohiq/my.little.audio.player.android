@@ -1,12 +1,8 @@
 package my.little.audio.player.android.ResTree;
 
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.OpenableColumns;
 
 import androidx.annotation.NonNull;
-
-import java.util.List;
 
 abstract public class DiskElement {
 	protected String name;

@@ -53,7 +53,7 @@ public class Main extends ComponentActivity {
 					new ActivityResultContracts.OpenMultipleDocuments(),
 					uris -> {
 						if (uris != null && !uris.isEmpty()) {
-							final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+							final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
 							
 							for (Uri uri : uris) {
 								getContentResolver().takePersistableUriPermission(uri, takeFlags);

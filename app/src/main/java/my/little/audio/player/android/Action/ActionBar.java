@@ -42,9 +42,7 @@ public class ActionBar extends LinearLayout {
 		
 		// Link the nodes
 		add_music_button.setOnClickListener(view -> Action.open_new_audio_file_dialog());
-		add_folder_button.setOnClickListener(view -> {
-			// TODO: Hook up
-		});
+		add_folder_button.setOnClickListener(view -> Action.request_system_folder_name(context));
 		refresh_button.setOnClickListener(view -> Action.button_refresh());
 		set_library_button.setOnClickListener(view -> Action.open_new_lib_root_dialog());
 		open_settings_button.setOnClickListener(view -> {
