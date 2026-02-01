@@ -9,8 +9,6 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.List;
-
 import my.little.audio.player.android.Global;
 import my.little.audio.player.android.Signals;
 import my.little.audio.player.android.ResTree.ResTree;
@@ -48,24 +46,27 @@ public class FileView extends LinearLayout {
 		}
 		fileContainer.removeAllViews();
 		// Set the new PATH string
-		List<String> new_path = Global.path;
-		String path_formatted = getContext().getString(R.string.file_view_filePath) + String.join("/", new_path);
+		String path_formatted = getContext().getString(R.string.file_view_filePath) + String.join("/", Global.getPath());
 		pathDisplay.setText(path_formatted);
 		// Load the folder
-		List<DiskElement> elements = ResTree.load_folder(new_path);
-		if (!Global.path.isEmpty()){
+		if (!Global.getPath().isEmpty()){
 			fileContainer.addView(new BackBlock(getContext()));
 		}
-		for (DiskElement element : elements) {
+		for (DiskElement element : ResTree.current_folder) {
+			
 			if (element instanceof Directory) {
 				FolderBlock block = new FolderBlock(getContext());
 				block.setUp((Directory) element);
 				fileContainer.addView(block);
-			} else if (element instanceof Music) {
+			}
+			
+			else if (element instanceof Music) {
 				MusicBlock block = new MusicBlock(getContext());
 				block.setUp((Music) element);
 				fileContainer.addView(block);
-			} else {
+			}
+			
+			else {
 				Log.w(Global.APP_TAG, "Unknown element type: " + element.getClass().getName());
 			}
 		}

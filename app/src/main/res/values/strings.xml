@@ -12,4 +12,5 @@
 	<string name="action_general_refresh">refresh the library</string>
 	<string name="action_general_set_library">set new library path</string>
 	<string name="action_general_settings">show the settings</string>
+	<string name="action_popup_new_folder">Enter new Folder name:</string>
 </resources>

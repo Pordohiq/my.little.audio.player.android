@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Directory extends DiskElement {
@@ -11,6 +12,7 @@ public class Directory extends DiskElement {
 	
 	public Directory (String new_name, @NonNull Uri new_uri) {
 		super(new_name, new_uri);
+		children = new ArrayList<>();
 	}
 	
 	public int getChildCount () {

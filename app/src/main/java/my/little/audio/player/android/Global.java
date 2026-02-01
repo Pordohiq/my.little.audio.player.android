@@ -29,8 +29,6 @@ public class Global extends Application {
 	public static final String APP_TAG = "myLittleAudioPlayer";
 	private static Global instance;
 	
-	public static List<String> path = new ArrayList<>();
-	
 	public static final Action action = new Action();
 	
 	public enum PlayBackState {
@@ -129,6 +127,19 @@ public class Global extends Application {
 	}
 	
 	//region Path logic
+	private static List<String> path = new ArrayList<>();
+	
+	public static List<String> getPath() {
+		Log.d(APP_TAG, "Getting path: " + path);
+		return path;
+	}
+	
+	public static void setPath(List<String> new_path) {
+		Log.d(APP_TAG, "Setting path: " + new_path);
+		path = new_path;
+		Signals.emitSignal("onPathChanged");
+	}
+	
 	public static void enterSubfolder(@NonNull Directory subfolder) {
 		path.add(subfolder.getName());
 		ResTree.current_folder = ResTree.load_folder(path);
@@ -136,6 +147,7 @@ public class Global extends Application {
 	}
 	
 	public static void leaveSubfolder() {
+		Log.d(APP_TAG, "Leaving subfolder");
 		path.remove(path.size() - 1);
 		ResTree.current_folder = ResTree.load_folder(path);
 		Signals.emitSignal("onPathChanged");

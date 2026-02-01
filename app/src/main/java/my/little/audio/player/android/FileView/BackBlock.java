@@ -25,6 +25,6 @@ public class BackBlock extends LinearLayout {
 	private void init(Context context){
 		LayoutInflater.from(context).inflate(R.layout.back_block_layout, this, true);
 		// Onclick
-		findViewById(R.id.container).setOnClickListener(view -> Global.leaveSubfolder());
+		findViewById(R.id.back_bar_container).setOnClickListener(view -> Global.leaveSubfolder());
 	}
 }

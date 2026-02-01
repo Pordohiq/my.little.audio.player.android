@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -25,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.documentfile.provider.DocumentFile;
 
 import my.little.audio.player.android.Global;
+import my.little.audio.player.android.Signals;
 
 public class ResTree {
 	public static Uri library_root;
@@ -60,7 +60,7 @@ public class ResTree {
 			write_path_config(Global.getInstance(), uri);
 			
 			ResTree.library_root = uri;
-			Global.path = new ArrayList<>();
+			Global.setPath(new ArrayList<>());
 			
 			library = load_library(uri);
 			current_folder = library;
@@ -122,29 +122,7 @@ public class ResTree {
 		}
 	}
 	
-	public static String getFileName(@NonNull Context context, @NonNull Uri uri) {
-		String result = null;
-		if (Objects.equals(uri.getScheme(), "content")) {
-			try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
-				if (cursor != null && cursor.moveToFirst()) {
-					int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-					if (index != -1) {
-						result = cursor.getString(index);
-					}
-				}
-			}
-		}
-		if (result == null) {
-			result = uri.getPath();
-			assert result != null;
-			int cut = result.lastIndexOf('/');
-			if (cut != -1) {
-				result = result.substring(cut + 1);
-			}
-		}
-		return result;
-	}
-	
+	//region Direct ResTree interactions
 	@Nullable
 	public static List<DiskElement> load_library(@NonNull Uri uri) {
 		List<DiskElement> elements = new ArrayList<>();
@@ -229,17 +207,84 @@ public class ResTree {
 		return elements;
 	}
 	
-	public static Uri get_folder_uri(@NonNull List<String> path) {
-		if (path.isEmpty()){
-			return library_root;
+	@Nullable
+	public static DiskElement get_element_at_path(List<String> sd_path) {
+		if (sd_path == null || sd_path.isEmpty()) {
+			return null;
 		}
-		String last = path.remove(path.size() - 1);
-		List<DiskElement> elements = load_folder(path);
-		for (DiskElement element : elements) {
-			if (element.getName().equals(last) && element instanceof Directory) {
-				return element.getUri();
+		
+		List<String> path = new ArrayList<>(sd_path);
+		List<DiskElement> elements = library;
+		String last_segment = path.remove(path.size() - 1);
+		
+		for (String path_element : path) {
+			if (path_element == null) {
+				continue;
+			}
+			
+			for (int i = 0; i < Objects.requireNonNull(elements).size(); i ++){
+				DiskElement element = elements.get(i);
+				if (Objects.equals(element.getName(), path_element) && element instanceof Directory) {
+					elements = ((Directory) element).getChildren();
+					break;
+				}
 			}
 		}
-		return Uri.EMPTY;
+		
+		if (elements == null) return null;
+		
+		for (DiskElement element : elements){
+			if (Objects.equals(element.getName(), last_segment)) {
+				return element;
+			}
+		}
+		
+		return null;
 	}
+	//endregion
+	//region SAF thingy
+	public static void create_new_folder(@NonNull List<String> path, String folder_name) {
+		Uri treeUri;
+		DiskElement parentElement = null;
+		
+		if (path.isEmpty()) {
+			treeUri = DocumentsContract.buildDocumentUriUsingTree(
+					library_root,
+					DocumentsContract.getTreeDocumentId(library_root)
+			);
+		} else {
+			parentElement = get_element_at_path(path);
+			if (parentElement == null) {
+				Log.e(Global.APP_TAG, "Parent element not found");
+				return;
+			}
+			treeUri = parentElement.getUri();
+		}
+		Log.v(Global.APP_TAG, "Creating new folder: " + folder_name + " at " + treeUri.getPath());
+		
+		ContentResolver resolver = Global.getInstance().getContentResolver();
+		try {
+			DocumentsContract.createDocument(
+					resolver,
+					treeUri,
+					DocumentsContract.Document.MIME_TYPE_DIR,
+					folder_name
+			);
+			
+			Log.v(Global.APP_TAG, "Created new folder: " + folder_name);
+			
+			Directory newDir = new Directory(folder_name, treeUri);
+			if (parentElement == null){
+				if (library == null) return;
+				library.add(newDir);
+			} else {
+				((Directory) parentElement).addChild(newDir);
+			}
+			current_folder = load_folder(Global.getPath());
+			Signals.emitSignal("onPathChanged");
+		} catch (Exception e) {
+			Log.e(Global.APP_TAG, "Error creating new folder", e);
+		}
+	}
+	//endregion
 }
