@@ -1,5 +1,9 @@
 package my.little.audio.player.android.Action;
 
+// This file is part of 'my.little.audio.player.android'
+// It is published on github under the MIT License:
+// https://github.com/lomjek/my.little.audio.player.android
+
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
@@ -66,8 +70,7 @@ public class Action {
 	}
 	
 	public static void import_music(Uri path) {
-		// TODO: Fix this Uri path nonsense
-		// Why is it so hard to just MOVE A FILE WITH SAF?
+		ResTree.add_audio_file_to_library_root(path);
 	}
 	
 	public static void request_system_folder_name(Context context) {

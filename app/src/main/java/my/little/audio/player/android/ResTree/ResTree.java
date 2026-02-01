@@ -1,11 +1,16 @@
 package my.little.audio.player.android.ResTree;
 
+// This file is part of 'my.little.audio.player.android'
+// It is published on github under the MIT License:
+// https://github.com/lomjek/my.little.audio.player.android
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.io.File;
 import java.nio.file.*;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -15,7 +20,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.DocumentsContract;
-import android.provider.OpenableColumns;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -50,26 +54,7 @@ public class ResTree {
 		current_folder = library;
 	}
 	
-	public static void set_library_path(@NonNull Uri uri) {
-		Log.w(Global.APP_TAG, "Setting library path: " + uri);
-		DocumentFile root = DocumentFile.fromTreeUri(Global.getInstance(), uri);
-		
-		if (root != null && root.exists() && root.isDirectory()) {
-			Log.v(Global.APP_TAG, "Confirmed valid directory URI: " + uri);
-			
-			write_path_config(Global.getInstance(), uri);
-			
-			ResTree.library_root = uri;
-			Global.setPath(new ArrayList<>());
-			
-			library = load_library(uri);
-			current_folder = library;
-		}
-		else {
-			Log.w(Global.APP_TAG, "Invalid URI or directory not found: " + uri);
-		}
-	}
-	
+	//region Path config
 	@Nullable
 	private static Uri read_path_config(@NonNull Context context) {
 		File filesDir = context.getFilesDir();
@@ -121,7 +106,7 @@ public class ResTree {
 			Log.e(Global.APP_TAG, "Error writing path config, new path: " + newPath);
 		}
 	}
-	
+	//endregion
 	//region Direct ResTree interactions
 	@Nullable
 	public static List<DiskElement> load_library(@NonNull Uri uri) {
@@ -181,11 +166,17 @@ public class ResTree {
 			Log.w(Global.APP_TAG, "Query failed: " + uri, e);
 		}
 		
-		elements.sort(Comparator.comparing(DiskElement::getName));
+		elements.sort((o1, o2) -> {
+			String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
+			String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
+			return name1.compareTo(name2);
+		});
 		return elements;
 	}
 	
+	@Nullable
 	public static List<DiskElement> load_folder(List<String> path) {
+		if (library == null) return null;
 		List<DiskElement> elements = library;
 		
 		if (path == null ||path.isEmpty()) {
@@ -204,6 +195,14 @@ public class ResTree {
 				}
 			}
 		}
+		
+		if (elements == null) return null;
+		
+		elements.sort((o1, o2) -> {
+			String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
+			String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
+			return name1.compareTo(name2);
+		});
 		return elements;
 	}
 	
@@ -243,6 +242,26 @@ public class ResTree {
 	}
 	//endregion
 	//region SAF thingy
+	public static void set_library_path(@NonNull Uri uri) {
+		Log.w(Global.APP_TAG, "Setting library path: " + uri);
+		DocumentFile root = DocumentFile.fromTreeUri(Global.getInstance(), uri);
+		
+		if (root != null && root.exists() && root.isDirectory()) {
+			Log.v(Global.APP_TAG, "Confirmed valid directory URI: " + uri);
+			
+			write_path_config(Global.getInstance(), uri);
+			
+			ResTree.library_root = uri;
+			Global.setPath(new ArrayList<>());
+			
+			library = load_library(uri);
+			current_folder = library;
+		}
+		else {
+			Log.w(Global.APP_TAG, "Invalid URI or directory not found: " + uri);
+		}
+	}
+	
 	public static void create_new_folder(@NonNull List<String> path, String folder_name) {
 		Uri treeUri;
 		DiskElement parentElement = null;
@@ -284,6 +303,47 @@ public class ResTree {
 			Signals.emitSignal("onPathChanged");
 		} catch (Exception e) {
 			Log.e(Global.APP_TAG, "Error creating new folder", e);
+		}
+	}
+	public static void add_audio_file_to_library_root(@NonNull Uri audio_uri){
+		Uri libUri = DocumentsContract.buildDocumentUriUsingTree(
+				library_root,
+				DocumentsContract.getTreeDocumentId(library_root)
+		);
+		ContentResolver resolver = Global.getInstance().getContentResolver();
+		
+		try {
+			String audio_name = audio_uri.getLastPathSegment();
+			if (audio_name == null) {
+				Log.e(Global.APP_TAG, "Audio name is not valid");
+				return;
+			}
+			audio_name = audio_name.substring(audio_name.lastIndexOf("/") + 1);
+			Log.i(Global.APP_TAG, "Adding audio file to library root: " + audio_name);
+			Uri newFileUri = DocumentsContract.createDocument(resolver, libUri, "audio/*", audio_name);
+			
+			if (newFileUri != null) {
+				try (InputStream is = resolver.openInputStream(audio_uri);
+				     OutputStream os = resolver.openOutputStream(newFileUri)) {
+					
+					byte[] buffer = new byte[4096];
+					int bytesRead;
+					while (true) { // This is a very spicy thing. I wonder if it's safe?
+						assert is != null;
+						if ((bytesRead = is.read(buffer)) == -1) break;
+						assert os != null;
+						os.write(buffer, 0, bytesRead);
+					}
+					DocumentsContract.deleteDocument(resolver, audio_uri);
+					Log.i(Global.APP_TAG, "Added audio file to library root");
+					if (library == null) return;
+					library.add(new Music(audio_name, newFileUri, audio_name.substring(audio_name.lastIndexOf(".") + 1)));
+					current_folder = load_folder(Global.getPath());
+					Signals.emitSignal("onPathChanged");
+				}
+			}
+		} catch (IOException e) {
+			Log.e(Global.APP_TAG, "Error adding audio file to library root ", e);
 		}
 	}
 	//endregion
