@@ -19,9 +19,8 @@
 			android:textSize="26sp"
 			android:gravity="center"
 			android:textAlignment="center"
-			android:textColor="@color/lightGrey">
+			android:textColor="@color/lightGrey" />
 			
-		</TextView>
 	</ScrollView>
 	<FrameLayout
 		android:layout_width="match_parent"

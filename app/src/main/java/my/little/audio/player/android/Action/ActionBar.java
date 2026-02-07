@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 
 import my.little.audio.player.android.R;
+import my.little.audio.player.android.Signals;
 
 public class ActionBar extends LinearLayout {
 	
@@ -45,8 +46,6 @@ public class ActionBar extends LinearLayout {
 		add_folder_button.setOnClickListener(view -> Action.request_system_folder_name(context));
 		refresh_button.setOnClickListener(view -> Action.button_refresh());
 		set_library_button.setOnClickListener(view -> Action.open_new_lib_root_dialog());
-		open_settings_button.setOnClickListener(view -> {
-			// TODO: Hook up
-		});
+		open_settings_button.setOnClickListener(view -> Signals.emitSignal("onTogglePreferences"));
 	}
 }

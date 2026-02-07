@@ -2,7 +2,7 @@
 <resources>
 <string name="file_view_filePath">LIBRARY://</string>
     <string name="file_view_fileContainerDesc">Files in current folder:</string>
-    <string name="app_name">my Little Audio Player</string>
+    <string name="global_app_name">my Little Audio Player</string>
 	<string name="active_title_none">NONE</string>
 	<string name="active_pb_previous_song">previous song</string>
 	<string name="active_pb_play_pause">play button</string>
@@ -13,4 +13,6 @@
 	<string name="action_general_set_library">set new library path</string>
 	<string name="action_general_settings">show the settings</string>
 	<string name="action_popup_new_folder">Enter new Folder name:</string>
+	<string name="global_app_desc">This is a little audio Player that I created out of joy. This started as a small project but somehow happened to get my main project for quite a while.</string>
+	<string name="global_app_welcome">Welcome to my Little Audio Player</string>
 </resources>

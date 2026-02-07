@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
 import androidx.activity.ComponentActivity;
 import androidx.activity.result.ActivityResultLauncher;
@@ -12,16 +14,33 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 
 import my.little.audio.player.android.Action.Action;
+import my.little.audio.player.android.Prefrences.Preferences;
 import my.little.audio.player.android.ResTree.ResTree;
 
 public class Main extends ComponentActivity {
+	private Preferences preferences;
+	
+	private void toggle_preferences() {
+		Log.w(Global.APP_TAG, "Toggling preferences" + preferences.getHeight());
+		if (preferences.getVisibility() == View.GONE){
+			preferences.setVisibility(View.VISIBLE);
+		} else {
+			preferences.setVisibility(View.GONE);
+		}
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
+		Signals.createEvent("onTogglePreferences");
+		
+		Signals.subscribeToEvent("onTogglePreferences", this::toggle_preferences);
 		Signals.subscribeToEvent("requestLibRootPathFromSysDialog", this::request_library_root_from_sys_dialog);
 		Signals.subscribeToEvent("requestAudioFromSysDialog", this::request_audio_from_sys_dialog);
+		
+		preferences = findViewById(R.id.preferences);
 		
 		if (ResTree.library_root == null){
 			Action.open_new_lib_root_dialog();

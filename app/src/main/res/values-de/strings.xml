@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="file_view_fileContainerDesc">Dateien i dem Ordner:</string>
-    <string name="global_app_name">meine kleine Audiowiedergabeanwendung</string>
-    <string name="file_view_filePath">BIBLIOTHEK://</string>
-    <string name="active_title_none">NICHTS</string>
+	<string name="file_view_filePath">BIBLIOTHEK://</string>
+	<string name="file_view_fileContainerDesc">Dateien in diesem Ordner:</string>
+	<string name="global_app_name">meine kleine Audiowiedergabeanwendung</string>
+	<string name="active_title_none">NICHTS</string>
 	<string name="active_pb_previous_song">vorheriges Lied</string>
 	<string name="active_pb_play_pause">Abspielknopf</string>
 	<string name="active_pb_next_song">nächstes Lied</string>
-	<string name="action_general_add_music">musigg ineverschiebe</string>
-	<string name="action_general_add_folder">en neue Ordner mache</string>
+	<string name="action_general_add_music">Musik hinzufügen</string>
+	<string name="action_general_add_folder">einen Ordner hinzufügen</string>
 	<string name="action_general_refresh">Die Bibliothek neu laden</string>
 	<string name="action_general_set_library">eine neuen Ordner als Bibliothek wählen</string>
 	<string name="action_general_settings">Einstellungen anzeigen</string>
 	<string name="action_popup_new_folder">Name für den neuen Ordner:</string>
-	<string name="global_app_welcome">Willkomen zu meiner kleinen Audiowiedergabeanwendung</string>
 	<string name="global_app_desc">Vor sich haben sie eine kleine Anwendung, welche ich aus Freude ins Leben gerufen habe. Es hat als ein kleines Projekt begonnen, aber es ist so gekommen, dass es zu meinem Hauptprojekt für eine längere Zeit wurde.</string>
+	<string name="global_app_welcome">Willkomen zu meiner kleinen Audiowiedergabeanwendung</string>
 </resources>

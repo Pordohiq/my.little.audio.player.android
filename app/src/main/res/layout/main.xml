@@ -8,6 +8,12 @@
 	tools:context=".Main"
 	android:background="@color/darkGrey">
 	
+	<my.little.audio.player.android.Prefrences.Preferences
+		android:id="@+id/preferences"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone"/>
+	
 	<my.little.audio.player.android.Active
 		android:layout_width="match_parent"
 		android:layout_height="150dp" />
