@@ -13,6 +13,10 @@
 	<string name="action_general_set_library">set new library path</string>
 	<string name="action_general_settings">show the settings</string>
 	<string name="action_popup_new_folder">Enter new Folder name:</string>
-	<string name="global_app_desc">This is a little audio Player that I created out of joy. This started as a small project but somehow happened to get my main project for quite a while.</string>
+	<string name="global_app_desc">This is a little audio Player that I created out of joy. This started as a small project but somehow happened to get my main project for quite a while. This work is published under the LGPLv3 License.</string>
 	<string name="global_app_welcome">Welcome to my Little Audio Player</string>
+	<string name="preferences_view_src_code" translatable="false">github - source code</string>
+	<string name="preferences_view_youtube" translatable="false">Pordohiq - YouTube</string>
+	<string name="preferences_view_lgpl">LGPLv3 License</string>
+	<string name="preferences_reset_app" translatable="false">reset app</string>
 </resources>

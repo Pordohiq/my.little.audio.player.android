@@ -1,9 +1,10 @@
 package my.little.audio.player.android.Action;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on github under the MIT License:
+// It is published on github under the LGPL License:
 // https://github.com/lomjek/my.little.audio.player.android
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
@@ -103,5 +104,12 @@ public class Action {
 	
 	public static void create_new_folder_at_path(String folderName) {
 		ResTree.create_new_folder(Global.getPath(), folderName);
+	}
+	
+	public static void reset_app_data(){
+		ActivityManager am = (ActivityManager) Global.getInstance().getSystemService(Context.ACTIVITY_SERVICE);
+		if (am != null) {
+			am.clearApplicationUserData();
+		}
 	}
 }

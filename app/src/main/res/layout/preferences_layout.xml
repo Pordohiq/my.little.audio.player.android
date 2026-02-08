@@ -14,30 +14,183 @@
 		android:textSize="26sp"
 		android:textAlignment="center"
 		android:gravity="center"
-		android:textColor="@color/lightGrey"/>
+		android:textColor="@color/lightGrey"/> <!-- Title -->
 	
-	<FrameLayout
-		android:id="@+id/preferences_back_block"
+	<View
 		android:layout_width="match_parent"
-		android:layout_height="50dp"
-		android:gravity="start">
-		
-		<ImageView
-			android:id="@+id/preferences_back_arrow"
-			android:layout_width="50dp"
-			android:layout_height="50dp"
-			android:src="@drawable/back" />
-	</FrameLayout>
+		android:layout_height="2dp"
+		android:background="@color/middleGrey" /> <!-- hr -->
 	
-	
-	<TextView
+	<ScrollView
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="wrap_content">
 		
-		android:text="@string/global_app_desc"
-		android:textSize="20sp"
-		android:textAlignment="center"
-		android:gravity="center"
-		android:textColor="@color/lightGrey"/>
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+			
+			<FrameLayout
+				android:id="@+id/preferences_back_block"
+				android:layout_width="match_parent"
+				android:layout_height="50dp"
+				android:gravity="start">
+				
+				<ImageView
+					android:id="@+id/preferences_back_arrow"
+					android:layout_width="50dp"
+					android:layout_height="50dp"
+					android:src="@drawable/back" />
+			</FrameLayout> <!-- Back Bar -->
+			
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				
+				android:text="@string/global_app_desc"
+				android:textSize="20sp"
+				android:textAlignment="center"
+				android:gravity="center"
+				android:textColor="@color/lightGrey"/> <!-- App Description -->
+			
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="2dp"
+				android:background="@color/middleGrey" /> <!-- hr -->
+			
+			<LinearLayout
+				android:id="@+id/preferences_action_refresh"
+				android:layout_width="match_parent"
+				android:layout_height="50dp"
+				android:orientation="horizontal">
+				
+				<ImageView
+					android:layout_width="50dp"
+					android:layout_height="50dp"
+					android:src="@drawable/action_general_refresh" />
+				
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/action_general_refresh"
+					android:textSize="20sp"
+					android:layout_gravity="center_vertical"
+					android:textColor="@color/lightGrey"/>
+			
+			</LinearLayout> <!-- Refresh -->
+			
+			<LinearLayout
+				android:id="@+id/preferences_action_set_library"
+				android:layout_width="match_parent"
+				android:layout_height="50dp"
+				android:orientation="horizontal">
+				
+				<ImageView
+					android:layout_width="50dp"
+					android:layout_height="50dp"
+					android:src="@drawable/action_general_set_library" />
+				
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/action_general_set_library"
+					android:textSize="20sp"
+					android:layout_gravity="center_vertical"
+					android:textColor="@color/lightGrey"/>
+			
+			</LinearLayout> <!-- Set new LIB -->
+			
+			<LinearLayout
+				android:id="@+id/preferences_reset_app"
+				android:layout_width="match_parent"
+				android:layout_height="50dp"
+				android:orientation="horizontal">
+				
+				<ImageView
+					android:layout_width="50dp"
+					android:layout_height="50dp"
+					android:src="@drawable/preferences_reset_app" />
+				
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/preferences_reset_app"
+					android:textSize="20sp"
+					android:layout_gravity="center_vertical"
+					android:textColor="@color/lightGrey"/>
+			
+			</LinearLayout> <!-- reset app -->
+			
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="2dp"
+				android:background="@color/middleGrey" /> <!-- hr -->
+			
+			<LinearLayout
+				android:id="@+id/preferences_github_block"
+				android:layout_width="match_parent"
+				android:layout_height="50dp"
+				android:orientation="horizontal">
+				
+				<ImageView
+					android:layout_width="50dp"
+					android:layout_height="50dp"
+					android:src="@drawable/preferences_link" />
+			
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/preferences_view_src_code"
+					android:textSize="20sp"
+					android:layout_gravity="center_vertical"
+					android:textColor="@color/lightGrey"/>
+				
+			</LinearLayout> <!-- Github Code -->
+			
+			<LinearLayout
+				android:id="@+id/preferences_youtube_block"
+				android:layout_width="match_parent"
+				android:layout_height="50dp"
+				android:orientation="horizontal">
+				
+				<ImageView
+					android:layout_width="50dp"
+					android:layout_height="50dp"
+					android:src="@drawable/preferences_link" />
+				
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/preferences_view_youtube"
+					android:textSize="20sp"
+					android:layout_gravity="center_vertical"
+					android:textColor="@color/lightGrey"/>
+			
+			</LinearLayout> <!-- YT page -->
+			
+			<LinearLayout
+				android:id="@+id/preferences_license_block"
+				android:layout_width="match_parent"
+				android:layout_height="50dp"
+				android:orientation="horizontal">
+				
+				<ImageView
+					android:layout_width="50dp"
+					android:layout_height="50dp"
+					android:src="@drawable/preferences_link" />
+				
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/preferences_view_lgpl"
+					android:textSize="20sp"
+					android:layout_gravity="center_vertical"
+					android:textColor="@color/lightGrey"/>
+			
+			</LinearLayout> <!-- License -->
+			
+		</LinearLayout>
+		
+	</ScrollView>
 	
 </LinearLayout>

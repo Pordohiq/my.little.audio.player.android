@@ -5,18 +5,20 @@ package my.little.audio.player.android.Prefrences;
 // https://github.com/lomjek/my.little.audio.player.android
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
+import my.little.audio.player.android.Action.Action;
 import my.little.audio.player.android.R;
 import my.little.audio.player.android.Signals;
 
 public class Preferences extends LinearLayout {
-	View backArrow;
+	private Context ct;
 	
 	public Preferences(Context context) {
 		super(context);
@@ -29,8 +31,23 @@ public class Preferences extends LinearLayout {
 	}
 	
 	private void init(Context context){
+		ct = context;
 		LayoutInflater.from(context).inflate(R.layout.preferences_layout, this, true);
-		backArrow = findViewById(R.id.preferences_back_block);
-		backArrow.setOnClickListener(view -> Signals.emitSignal("onTogglePreferences"));
+		
+		findViewById(R.id.preferences_back_block).setOnClickListener(view -> Signals.emitSignal("onTogglePreferences"));
+		
+		findViewById(R.id.preferences_action_refresh).setOnClickListener(view -> Action.button_refresh());
+		findViewById(R.id.preferences_action_set_library).setOnClickListener(view -> Action.open_new_lib_root_dialog());
+		findViewById(R.id.preferences_reset_app).setOnClickListener(view -> Action.reset_app_data());
+
+		findViewById(R.id.preferences_github_block).setOnClickListener(view -> open_link("https://github.com/lomjek/my.little.audio.player.android"));
+		findViewById(R.id.preferences_youtube_block).setOnClickListener(view -> open_link("https://www.youtube.com/@pordohiq9000"));
+		findViewById(R.id.preferences_license_block).setOnClickListener(view -> open_link("https://www.gnu.org/licenses/lgpl-3.0-standalone.html"));
+	}
+	
+	private void open_link(String url){
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setData(Uri.parse(url));
+		ct.startActivity(intent);
 	}
 }
