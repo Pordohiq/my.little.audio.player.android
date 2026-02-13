@@ -15,8 +15,14 @@
 	<string name="action_popup_new_folder">Enter new Folder name:</string>
 	<string name="global_app_desc">This is a little audio Player that I created out of joy. This started as a small project but somehow happened to get my main project for quite a while. This work is published under the LGPLv3 License.</string>
 	<string name="global_app_welcome">Welcome to my Little Audio Player</string>
-	<string name="preferences_view_src_code" translatable="false">github - source code</string>
+	<string name="preferences_view_src_code">github - source code</string>
 	<string name="preferences_view_youtube" translatable="false">Pordohiq - YouTube</string>
 	<string name="preferences_view_lgpl">LGPLv3 License</string>
-	<string name="preferences_reset_app" translatable="false">reset app</string>
+	<string name="preferences_reset_app">reset app</string>
+	<string name="global_back">back</string>
+	<string name="action_element_rename">rename</string>
+	<string name="action_element_trash">trash</string>
+	<string name="action_element_info" translatable="false">info</string>
+	<string name="action_element_move">move</string>
+	<string name="action_music_toggle_queue" translatable="false">toggle queue</string>
 </resources>

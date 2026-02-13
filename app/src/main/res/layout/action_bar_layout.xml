@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:orientation="horizontal">
+	android:layout_height="50dp"
+	android:orientation="horizontal"
+	android:background="@color/middleGrey">
 	<LinearLayout
+		android:id="@+id/action_general"
 		android:layout_width="match_parent"
 		android:layout_height="50dp"
-		android:background="@color/middleGrey">
+		android:visibility="gone">
 		
 		<ImageView
 			android:id="@+id/action_general_add_music"
@@ -68,7 +70,136 @@
 			
 			android:src="@drawable/action_general_settings" />
 	</LinearLayout>
-	<View
+	<LinearLayout
+		android:id="@+id/action_music"
 		android:layout_width="match_parent"
-		android:layout_height="50dp" />
+		android:layout_height="50dp"
+		android:visibility="gone">
+		
+		<ImageView
+			android:id="@+id/action_music_back"
+			android:contentDescription="@string/global_back"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/back" />
+		
+		<View
+			android:layout_width="2dp"
+			android:layout_height="match_parent"
+			android:background="@color/lightGrey"/>
+		
+		<ImageView
+			android:id="@+id/action_music_rename"
+			android:contentDescription="@string/action_element_rename"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_element_rename" />
+		
+		<ImageView
+			android:id="@+id/action_music_toggle_queue"
+			android:contentDescription="@string/action_element_move"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_music_queue_add" />
+		
+		<ImageView
+			android:id="@+id/action_music_move"
+			android:contentDescription="@string/action_element_move"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_element_move" />
+		
+		<ImageView
+			android:id="@+id/action_music_info"
+			android:contentDescription="@string/action_element_info"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_element_info" />
+		
+		<ImageView
+			android:id="@+id/action_music_trash"
+			android:contentDescription="@string/action_element_trash"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_element_trash" />
+	</LinearLayout>
+	<LinearLayout
+		android:id="@+id/action_folder"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:visibility="gone">
+		
+		<ImageView
+			android:id="@+id/action_folder_back"
+			android:contentDescription="@string/global_back"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/back" />
+		
+		<View
+			android:layout_width="2dp"
+			android:layout_height="match_parent"
+			android:background="@color/lightGrey"/>
+		
+		<ImageView
+			android:id="@+id/action_folder_rename"
+			android:contentDescription="@string/action_element_rename"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_element_rename" />
+		
+		<ImageView
+			android:id="@+id/action_folder_move"
+			android:contentDescription="@string/action_element_move"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_element_move" />
+		
+		<ImageView
+			android:id="@+id/action_folder_info"
+			android:contentDescription="@string/action_element_info"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_element_info" />
+		
+		<ImageView
+			android:id="@+id/action_folder_trash"
+			android:contentDescription="@string/action_element_trash"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_element_trash" />
+	</LinearLayout>
 </FrameLayout>

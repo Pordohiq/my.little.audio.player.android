@@ -28,12 +28,14 @@ public class Action {
 	private static DiskElement currentElement = null;
 	
 	public Action() {
-		Signals.createEvent("onActionSet");
+		Signals.createEvent("onActionElementChanged");
 		Signals.createEvent("requestLibRootPathFromSysDialog");
-		Signals.subscribeToEvent("onPathChanged", this::onPathChanged);
+		Signals.subscribeToEvent("onPathChanged", Action::unset_element);
 	}
 	
-	private void onPathChanged() {
+	public static void unset_element() {
+		Log.i(Global.APP_TAG, "Unsetting element");
+		Signals.emitSignal("onActionElementChanged");
 		currentElement = null;
 	}
 	
@@ -41,10 +43,15 @@ public class Action {
 	
 	public static void set_element(@NonNull DiskElement element) {
 		Log.i(Global.APP_TAG, "Setting element: " + element.getName());
-		currentElement = element;
-		Signals.emitSignal("onActionSet");
+		if (element == currentElement) {
+			unset_element();
+		} else {
+			currentElement = element;
+		}
+		Signals.emitSignal("onActionElementChanged");
 	}
 	
+	//region ActionBar_general functions
 	public static void button_refresh() {
 		Log.i(Global.APP_TAG, "Refreshing library");
 		Global.setPath(new ArrayList<>());
@@ -112,4 +119,5 @@ public class Action {
 			am.clearApplicationUserData();
 		}
 	}
+	//endregion
 }

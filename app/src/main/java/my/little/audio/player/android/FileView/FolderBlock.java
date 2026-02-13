@@ -1,5 +1,9 @@
 package my.little.audio.player.android.FileView;
 
+// This file is part of 'my.little.audio.player.android'
+// It is published on github under the LGPL License:
+// https://github.com/lomjek/my.little.audio.player.android
+
 import android.content.Context;
 
 import android.util.AttributeSet;
@@ -40,7 +44,7 @@ public class FolderBlock extends LinearLayout {
 		folderName = findViewById(R.id.folder_name);
 		moreIcon = findViewById(R.id.more_icon);
 		
-		Signals.subscribeToEvent("onActionSet", this::check_more_icon);
+		Signals.subscribeToEvent("onActionElementChanged", this::check_more_icon);
 	}
 	
 	private void check_more_icon() {

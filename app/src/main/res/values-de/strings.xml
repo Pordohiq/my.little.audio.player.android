@@ -16,4 +16,10 @@
 	<string name="global_app_desc">Vor sich haben sie eine kleine Anwendung, welche ich aus Freude ins Leben gerufen habe. Es hat als ein kleines Projekt begonnen, aber es ist so gekommen, dass es zu meinem Hauptprojekt für eine längere Zeit wurde. DIeses Projekt wurde mit der LGPLv3 Lizenz veröffentlicht.</string>
 	<string name="global_app_welcome">Willkomen zu meiner kleinen Audiowiedergabeanwendung</string>
 	<string name="preferences_view_lgpl">LGPLv3 Lizenz</string>
+	<string name="preferences_view_src_code">github - Quellencode</string>
+	<string name="preferences_reset_app">Anwendung zurücksetzen</string>
+	<string name="global_back">zurück</string>
+	<string name="action_element_rename">umbenennen</string>
+	<string name="action_element_trash">löschen</string>
+	<string name="action_element_move">verschieben</string>
 </resources>
