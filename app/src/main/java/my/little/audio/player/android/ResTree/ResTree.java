@@ -1,9 +1,10 @@
 package my.little.audio.player.android.ResTree;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on github under the MIT License:
+// It is published on GitHub under the MIT License:
 // https://github.com/lomjek/my.little.audio.player.android
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -83,7 +84,7 @@ public class ResTree {
 				if (root != null && root.exists()) {
 					return uri;
 				}
-			} catch (IllegalArgumentException iaex) {
+			} catch (IllegalArgumentException argumentException) {
 				Log.w(Global.APP_TAG, "Invalid URI found in config: " + content);
 				return null;
 			}
@@ -240,6 +241,33 @@ public class ResTree {
 		
 		return null;
 	}
+	@Nullable
+	public static List<String> getLocalElementPath(@NonNull DiskElement element, @NonNull List<DiskElement> data, @NonNull List<String> path) {
+		for (DiskElement disk_element : data) {
+			if (disk_element == element){ // If the child is found
+				path.add(disk_element.getName());
+				return path;
+			}
+
+			if (disk_element instanceof Directory) { // If the child is Directory, recurse.
+				if (((Directory) disk_element).getChildCount() <= 0) continue; // Check that the dir has children, else skip.
+				List<String> new_path = new ArrayList<>(path);
+				new_path.add(disk_element.getName());
+				List<String> result = getLocalElementPath(element, ((Directory) disk_element).getChildren(), new_path);
+				if (result == null) continue;
+				return result;
+			}
+		}
+        return null; // If we have found nothing, return null.
+    }
+	public static DiskElement get_parent(DiskElement element){
+		if (element == null) return null;
+		if (library == null) return null;
+		List<String> childPath = getLocalElementPath(element, library, new ArrayList<>());
+		if (childPath == null) return null;
+		childPath.remove(childPath.size() - 1);
+        return get_element_at_path(childPath);
+	}
 	//endregion
 	//region SAF thingy
 	public static void set_library_path(@NonNull Uri uri) {
@@ -344,6 +372,53 @@ public class ResTree {
 			}
 		} catch (IOException e) {
 			Log.e(Global.APP_TAG, "Error adding audio file to library root ", e);
+		}
+	}
+
+	private static void deleteRecursive(@NonNull DocumentFile file) {
+		if (file.isDirectory()) {
+			for (DocumentFile child : file.listFiles()) {
+				deleteRecursive(child);
+			}
+		}
+		file.delete();
+	}
+
+	public static void delete_file(DiskElement element) {
+		if (element == null) {
+			Log.e(Global.APP_TAG, "Element not found");
+			return;
+		}
+		Context context = Global.getInstance();
+		Uri uri = element.getUri();
+		try {
+			if (DocumentsContract.isDocumentUri(context, uri)) {
+				DocumentFile file;
+
+				if (element instanceof Directory) {
+					file = DocumentFile.fromTreeUri(context, uri);
+				} else {
+					file = DocumentFile.fromSingleUri(context, uri);
+				}
+
+				if (file != null && file.isDirectory()) {
+					deleteRecursive(file);
+				} else {
+					DocumentsContract.deleteDocument(context.getContentResolver(), uri);
+				}
+			}
+			Log.i(Global.APP_TAG, "Deleted file: " + element.getName());
+		} catch (FileNotFoundException e) {
+			Log.e(Global.APP_TAG, "File not found, could not delete: " + element.getName());
+			return;
+		}
+
+		Directory parent = (Directory) get_parent(element);
+		if (parent == null) {
+			if (library == null) return;
+			library.remove(element);
+		} else {
+			parent.removeChild(element);
 		}
 	}
 	//endregion

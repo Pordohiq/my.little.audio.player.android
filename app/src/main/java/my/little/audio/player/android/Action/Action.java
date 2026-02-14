@@ -1,7 +1,7 @@
 package my.little.audio.player.android.Action;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on github under the LGPL License:
+// It is published on GitHub under the LGPL License:
 // https://github.com/lomjek/my.little.audio.player.android
 
 import android.app.ActivityManager;
@@ -35,8 +35,8 @@ public class Action {
 	
 	public static void unset_element() {
 		Log.i(Global.APP_TAG, "Unsetting element");
-		Signals.emitSignal("onActionElementChanged");
 		currentElement = null;
+		Signals.emitSignal("onActionElementChanged");
 	}
 	
 	public static DiskElement get_element() { return currentElement; }
@@ -118,6 +118,14 @@ public class Action {
 		if (am != null) {
 			am.clearApplicationUserData();
 		}
+	}
+	//endregion
+	//region ActionBar_element functions
+	public static void delete_element() {
+		Log.i(Global.APP_TAG, "Deleting element");
+		ResTree.delete_file(get_element());
+		unset_element();
+		Signals.emitSignal("onPathChanged");
 	}
 	//endregion
 }

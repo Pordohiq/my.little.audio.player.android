@@ -1,5 +1,9 @@
 package my.little.audio.player.android.ResTree;
 
+// This file is part of 'my.little.audio.player.android'
+// It is published on GitHub under the MIT License:
+// https://github.com/lomjek/my.little.audio.player.android
+
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -35,8 +39,12 @@ public class Directory extends DiskElement {
 		return children;
 	}
 	
-	@Override
+	@NonNull @Override
 	public String toString() {
 		return "Directory: " + name + " (" + children.size() + " children)";
+	}
+
+	public void removeChild(DiskElement element) {
+        children.remove(element);
 	}
 }

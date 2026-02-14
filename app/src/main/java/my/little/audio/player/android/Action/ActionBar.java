@@ -1,7 +1,7 @@
 package my.little.audio.player.android.Action;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on github under the LGPL License:
+// It is published on GitHub under the LGPL License:
 // https://github.com/lomjek/my.little.audio.player.android
 
 import android.content.Context;
@@ -60,6 +60,8 @@ public class ActionBar extends LinearLayout {
 		// Link the Element nodes
 		findViewById(R.id.action_folder_back).setOnClickListener(view -> Action.unset_element());
 		findViewById(R.id.action_music_back).setOnClickListener(view -> Action.unset_element());
+		findViewById(R.id.action_folder_trash).setOnClickListener(view -> Action.delete_element());
+		findViewById(R.id.action_music_trash).setOnClickListener(view -> Action.delete_element());
 		
 		Signals.subscribeToEvent("onActionElementChanged", this::onActionSet);
 		onActionSet();
