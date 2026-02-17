@@ -108,7 +108,7 @@ public class ResTree {
 		}
 	}
 	//endregion
-	//region Direct ResTree Interactions
+	//region ResTree Interactions
 	@Nullable
 	public static List<DiskElement> load_library(@NonNull Uri uri) {
 		List<DiskElement> elements = new ArrayList<>();
@@ -242,7 +242,11 @@ public class ResTree {
 		return null;
 	}
 	@Nullable
-	public static List<String> getLocalElementPath(@NonNull DiskElement element, @NonNull List<DiskElement> data, @NonNull List<String> path) {
+	public static List<String> getLocalElementPath(@NonNull DiskElement element, @Nullable List<DiskElement> data, @Nullable List<String> path) {
+		if (library == null) return null;
+		if (data == null) data = library;
+		if (path == null) path = new ArrayList<>();
+
 		for (DiskElement disk_element : data) {
 			if (disk_element == element){ // If the child is found
 				path.add(disk_element.getName());
@@ -262,28 +266,175 @@ public class ResTree {
     }
 	@Nullable
 	public static Directory get_parent(DiskElement element){
-		if (element == null) return null;
-		if (library == null) return null;
+		if (element == null || library == null) return null;
 		List<String> childPath = getLocalElementPath(element, library, new ArrayList<>());
 		if (childPath == null) return null;
 		childPath.remove(childPath.size() - 1);
-		if (childPath.isEmpty() || get_element_at_path(childPath) == null) return null;
+		if (childPath.isEmpty() || get_element_at_path(childPath) == null) { return null; }
         return (Directory) get_element_at_path(childPath);
 	}
 	//endregion
-	//region SAF thingy
+	//region SAF Interactions
+	@Nullable
+	private static Uri SAF_create_folder(Uri parentUri, String folderName) {
+		ContentResolver resolver = Global.getInstance().getContentResolver();
+		try {
+			return DocumentsContract.createDocument(
+					resolver,
+					parentUri,
+					DocumentsContract.Document.MIME_TYPE_DIR,
+					folderName
+			);
+		} catch (Exception e) {
+			Log.e(Global.APP_TAG, "Error creating SAF directory", e);
+			return null;
+		}
+	}
+
+	private static void SAF_delete_element(@NonNull DocumentFile file) {
+		if (file.isDirectory()) {
+			for (DocumentFile child : file.listFiles()) {
+				SAF_delete_element(child);
+			}
+		}
+		file.delete();
+	}
+
+	private static void SAF_delete_element(@NonNull Uri uri) throws IOException {
+		Context context = Global.getInstance();
+
+		DocumentFile documentFile = DocumentFile.fromTreeUri(context, uri);
+
+		if (documentFile == null) {
+			throw new IOException("Source Element not valid");
+		}
+
+		SAF_delete_element(documentFile);
+	}
+
+	@Nullable
+	private static Uri SAF_copy_element(@NonNull Context context, @NonNull DocumentFile source, @NonNull DocumentFile targetParent) throws IOException {
+		if (source.isDirectory()) {
+			DocumentFile newDir = targetParent.createDirectory(Objects.requireNonNull(source.getName()));
+			if (newDir == null) return null;
+
+			for (DocumentFile child : source.listFiles()) {
+				SAF_copy_element(context, child, newDir);
+			}
+			return newDir.getUri();
+		} else {
+			DocumentFile newFile = targetParent.createFile(Objects.requireNonNull(source.getType()), Objects.requireNonNull(source.getName()));
+			if (newFile == null) return null;
+
+			try (InputStream in = context.getContentResolver().openInputStream(source.getUri());
+				 OutputStream out = context.getContentResolver().openOutputStream(newFile.getUri())) {
+				byte[] buf = new byte[8192];
+				int len;
+				while (in != null && out != null && (len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+				}
+			}
+			return newFile.getUri();
+		}
+	}
+
+	private static Uri SAF_copy_element(@NonNull Uri sourceUri, @NonNull Uri targetParentUri) throws IOException {
+		Context context = Global.getInstance();
+
+		DocumentFile sourceFile;
+		if (DocumentsContract.isTreeUri(sourceUri)) {
+			sourceFile = DocumentFile.fromTreeUri(context, sourceUri);
+		} else {
+			sourceFile = DocumentFile.fromSingleUri(context, sourceUri);
+		}
+		DocumentFile targetDir = DocumentFile.fromTreeUri(context, targetParentUri);
+
+		if (sourceFile == null || targetDir == null) {
+			throw new IOException("Source or Target Dir not valid");
+		}
+
+		return SAF_copy_element(context, sourceFile, targetDir);
+	}
+	//endregion
+	//region API
+	public static void add_audio_file(@NonNull Uri audio_uri, @NonNull List<String> path){
+		Uri destUri;
+		if (path.isEmpty()) {
+			destUri = library_root;
+		} else {
+			Directory dir = (Directory) get_element_at_path(path);
+			if (dir == null) {
+				destUri = library_root;
+			} else {
+				destUri = dir.getUri();
+			}
+		}
+
+		try {
+			SAF_copy_element(audio_uri, destUri);
+			Music file = new Music(
+					Objects.requireNonNull(DocumentFile.fromTreeUri(Global.getInstance(), audio_uri)).getName(),
+					audio_uri,
+					Objects.requireNonNull(audio_uri.getLastPathSegment()).split("\\.")[1]
+			);
+
+			if (path.isEmpty()) {
+				assert library != null;
+				library.add(file);
+			} else {
+				Directory dir = (Directory) get_element_at_path(path);
+				assert dir != null;
+				dir.addChild(file);
+			}
+
+		} catch (IOException e) {
+			Log.e(Global.APP_TAG, "Error adding audio file to library root ", e);
+		}
+	}
+
+	public static void create_new_folder(@NonNull List<String> path, String folder_name) {
+		Uri parentUri;
+		DiskElement parentElement = null;
+
+		if (path.isEmpty()) {
+			parentUri = DocumentsContract.buildDocumentUriUsingTree(
+					library_root,
+					DocumentsContract.getTreeDocumentId(library_root)
+			);
+		} else {
+			parentElement = get_element_at_path(path);
+			if (parentElement == null) return;
+			parentUri = parentElement.getUri();
+		}
+
+		Uri newFolderUri = SAF_create_folder(parentUri, folder_name);
+
+		if (newFolderUri != null) {
+			Directory newDir = new Directory(folder_name, newFolderUri);
+
+			if (parentElement == null) {
+				if (library != null) library.add(newDir);
+			} else {
+				((Directory) parentElement).addChild(newDir);
+			}
+
+			current_folder = load_folder(Global.getPath());
+			Signals.emitSignal("onPathChanged");
+		}
+	}
+
 	public static void set_library_path(@NonNull Uri uri) {
 		Log.w(Global.APP_TAG, "Setting library path: " + uri);
 		DocumentFile root = DocumentFile.fromTreeUri(Global.getInstance(), uri);
-		
+
 		if (root != null && root.exists() && root.isDirectory()) {
 			Log.v(Global.APP_TAG, "Confirmed valid directory URI: " + uri);
-			
+
 			write_path_config(Global.getInstance(), uri);
-			
+
 			ResTree.library_root = uri;
 			Global.setPath(new ArrayList<>());
-			
+
 			library = load_library(uri);
 			current_folder = library;
 		}
@@ -291,99 +442,39 @@ public class ResTree {
 			Log.w(Global.APP_TAG, "Invalid URI or directory not found: " + uri);
 		}
 	}
-	
-	public static void create_new_folder(@NonNull List<String> path, String folder_name) {
-		Uri treeUri;
-		DiskElement parentElement = null;
-		
-		if (path.isEmpty()) {
-			treeUri = DocumentsContract.buildDocumentUriUsingTree(
-					library_root,
-					DocumentsContract.getTreeDocumentId(library_root)
-			);
-		} else {
-			parentElement = get_element_at_path(path);
-			if (parentElement == null) {
-				Log.e(Global.APP_TAG, "Parent element not found");
+
+	public static void move_file(@NonNull DiskElement element, @NonNull List<String> path) {
+		DiskElement currentParent = get_parent(element);
+		DiskElement targetParent = get_element_at_path(path);
+
+		Uri parentUri = targetParent == null ? library_root : targetParent.getUri();
+
+		if (currentParent == targetParent) {
+			Log.w(Global.APP_TAG, "Element already in target path");
+			return;
+		}
+
+		try {
+			Uri newUri = SAF_copy_element(element.getUri(), parentUri);
+
+			if (newUri == null) {
+				Log.e(Global.APP_TAG, "Couldn't copy file before moving");
 				return;
 			}
-			treeUri = parentElement.getUri();
-		}
-		Log.v(Global.APP_TAG, "Creating new folder: " + folder_name + " at " + treeUri.getPath());
-		
-		ContentResolver resolver = Global.getInstance().getContentResolver();
-		try {
-			DocumentsContract.createDocument(
-					resolver,
-					treeUri,
-					DocumentsContract.Document.MIME_TYPE_DIR,
-					folder_name
-			);
-			
-			Log.v(Global.APP_TAG, "Created new folder: " + folder_name);
-			
-			Directory newDir = new Directory(folder_name, treeUri);
-			if (parentElement == null){
-				if (library == null) return;
-				library.add(newDir);
+
+			delete_file(element);
+
+			element.move(element.getName(), newUri);
+
+			if (targetParent instanceof Directory) {
+				((Directory) targetParent).addChild(element);
 			} else {
-				((Directory) parentElement).addChild(newDir);
-			}
-			current_folder = load_folder(Global.getPath());
-			Signals.emitSignal("onPathChanged");
-		} catch (Exception e) {
-			Log.e(Global.APP_TAG, "Error creating new folder", e);
-		}
-	}
-	public static void add_audio_file_to_library_root(@NonNull Uri audio_uri){
-		Uri libUri = DocumentsContract.buildDocumentUriUsingTree(
-				library_root,
-				DocumentsContract.getTreeDocumentId(library_root)
-		);
-		ContentResolver resolver = Global.getInstance().getContentResolver();
-		
-		try {
-			String audio_name = audio_uri.getLastPathSegment();
-			if (audio_name == null) {
-				Log.e(Global.APP_TAG, "Audio name is not valid");
-				return;
-			}
-			audio_name = audio_name.substring(audio_name.lastIndexOf("/") + 1);
-			Log.i(Global.APP_TAG, "Adding audio file to library root: " + audio_name);
-			Uri newFileUri = DocumentsContract.createDocument(resolver, libUri, "audio/*", audio_name);
-			
-			if (newFileUri != null) {
-				try (InputStream is = resolver.openInputStream(audio_uri);
-				     OutputStream os = resolver.openOutputStream(newFileUri)) {
-					
-					byte[] buffer = new byte[4096];
-					int bytesRead;
-					while (true) { // This is a very spicy thing. I wonder if it's safe?
-						assert is != null;
-						if ((bytesRead = is.read(buffer)) == -1) break;
-						assert os != null;
-						os.write(buffer, 0, bytesRead);
-					}
-					DocumentsContract.deleteDocument(resolver, audio_uri);
-					Log.i(Global.APP_TAG, "Added audio file to library root");
-					if (library == null) return;
-					library.add(new Music(audio_name, newFileUri, audio_name.substring(audio_name.lastIndexOf(".") + 1)));
-					current_folder = load_folder(Global.getPath());
-					Signals.emitSignal("onPathChanged");
-				}
+				assert library != null;
+				library.add(element);
 			}
 		} catch (IOException e) {
-			Log.e(Global.APP_TAG, "Error adding audio file to library root ", e);
+			Log.e(Global.APP_TAG, "Error moving element", e);
 		}
-	}
-
-	private static void deleteRecursive(@NonNull DocumentFile file) {
-		if (file.isDirectory()) {
-			for (DocumentFile child : file.listFiles()) {
-				deleteRecursive(child);
-			}
-		}
-		file.delete();
 	}
 
 	public static void delete_file(DiskElement element) {
@@ -391,27 +482,15 @@ public class ResTree {
 			Log.e(Global.APP_TAG, "Element not found");
 			return;
 		}
-		Context context = Global.getInstance();
 		Uri uri = element.getUri();
+
 		try {
-			if (DocumentsContract.isDocumentUri(context, uri)) {
-				DocumentFile file;
-
-				if (element instanceof Directory) {
-					file = DocumentFile.fromTreeUri(context, uri);
-				} else {
-					file = DocumentFile.fromSingleUri(context, uri);
-				}
-
-				if (file != null && file.isDirectory()) {
-					deleteRecursive(file);
-				} else {
-					DocumentsContract.deleteDocument(context.getContentResolver(), uri);
-				}
-			}
-			Log.i(Global.APP_TAG, "Deleted file: " + element.getName());
+			SAF_delete_element(uri);
 		} catch (FileNotFoundException e) {
 			Log.e(Global.APP_TAG, "File not found, could not delete: " + element.getName());
+			return;
+		} catch (IOException e) {
+			Log.e(Global.APP_TAG, "Error deleting file: " + element.getName());
 			return;
 		}
 
@@ -421,62 +500,6 @@ public class ResTree {
 			library.remove(element);
 		} else {
 			parent.removeChild(element);
-		}
-	}
-
-	public static void move_file(@NonNull DiskElement element, @NonNull List<String> path) {
-		if (get_parent(element) == get_element_at_path(path)) {
-			Log.w(Global.APP_TAG, "Element already in target path");
-			return;
-		}
-        Directory newParent = (Directory) get_element_at_path(path);
-		Uri parent_uri;
-		if (newParent == null) {
-			parent_uri = library_root;
-		} else {
-			parent_uri = newParent.getUri();
-		}
-
-		Context context = Global.getInstance();
-
-		DocumentFile sourceFile = DocumentFile.fromSingleUri(context, element.getUri());
-		DocumentFile targetDir = DocumentFile.fromTreeUri(context, parent_uri);
-
-		if (targetDir == null) {
-			Log.e(Global.APP_TAG, "New Parent not valid");
-			return;
-		}
-
-		DocumentFile newFile;
-        newFile = targetDir.createFile(Objects.requireNonNull(sourceFile.getType()), Objects.requireNonNull(sourceFile.getName()));
-        if (newFile == null) {
-			Log.e(Global.APP_TAG, "New File not created");
-			return;
-		}
-		Uri destUri = newFile.getUri();
-
-		try (InputStream in = context.getContentResolver().openInputStream(element.getUri());
-			 OutputStream out = context.getContentResolver().openOutputStream(destUri)) {
-			byte[] buf = new byte[8192];
-			int len;
-			while (true) {
-                assert in != null;
-                if (!((len = in.read(buf)) > 0)) break;
-                assert out != null;
-                out.write(buf, 0, len);
-			}
-		} catch (IOException e) {
-			Log.e(Global.APP_TAG, "Error moving file", e);
-			return;
-		}
-
-		delete_file(element);
-		element.move(element.getName(), destUri);
-		if (newParent != null) {
-			newParent.addChild(element);
-		} else {
-            assert library != null;
-            library.add(element);
 		}
 	}
 	//endregion
