@@ -108,7 +108,7 @@ public class ResTree {
 		}
 	}
 	//endregion
-	//region Direct ResTree interactions
+	//region Direct ResTree Interactions
 	@Nullable
 	public static List<DiskElement> load_library(@NonNull Uri uri) {
 		List<DiskElement> elements = new ArrayList<>();
@@ -260,13 +260,15 @@ public class ResTree {
 		}
         return null; // If we have found nothing, return null.
     }
-	public static DiskElement get_parent(DiskElement element){
+	@Nullable
+	public static Directory get_parent(DiskElement element){
 		if (element == null) return null;
 		if (library == null) return null;
 		List<String> childPath = getLocalElementPath(element, library, new ArrayList<>());
 		if (childPath == null) return null;
 		childPath.remove(childPath.size() - 1);
-        return get_element_at_path(childPath);
+		if (childPath.isEmpty() || get_element_at_path(childPath) == null) return null;
+        return (Directory) get_element_at_path(childPath);
 	}
 	//endregion
 	//region SAF thingy
@@ -413,12 +415,68 @@ public class ResTree {
 			return;
 		}
 
-		Directory parent = (Directory) get_parent(element);
+		Directory parent = get_parent(element);
 		if (parent == null) {
 			if (library == null) return;
 			library.remove(element);
 		} else {
 			parent.removeChild(element);
+		}
+	}
+
+	public static void move_file(@NonNull DiskElement element, @NonNull List<String> path) {
+		if (get_parent(element) == get_element_at_path(path)) {
+			Log.w(Global.APP_TAG, "Element already in target path");
+			return;
+		}
+        Directory newParent = (Directory) get_element_at_path(path);
+		Uri parent_uri;
+		if (newParent == null) {
+			parent_uri = library_root;
+		} else {
+			parent_uri = newParent.getUri();
+		}
+
+		Context context = Global.getInstance();
+
+		DocumentFile sourceFile = DocumentFile.fromSingleUri(context, element.getUri());
+		DocumentFile targetDir = DocumentFile.fromTreeUri(context, parent_uri);
+
+		if (targetDir == null) {
+			Log.e(Global.APP_TAG, "New Parent not valid");
+			return;
+		}
+
+		DocumentFile newFile;
+        newFile = targetDir.createFile(Objects.requireNonNull(sourceFile.getType()), Objects.requireNonNull(sourceFile.getName()));
+        if (newFile == null) {
+			Log.e(Global.APP_TAG, "New File not created");
+			return;
+		}
+		Uri destUri = newFile.getUri();
+
+		try (InputStream in = context.getContentResolver().openInputStream(element.getUri());
+			 OutputStream out = context.getContentResolver().openOutputStream(destUri)) {
+			byte[] buf = new byte[8192];
+			int len;
+			while (true) {
+                assert in != null;
+                if (!((len = in.read(buf)) > 0)) break;
+                assert out != null;
+                out.write(buf, 0, len);
+			}
+		} catch (IOException e) {
+			Log.e(Global.APP_TAG, "Error moving file", e);
+			return;
+		}
+
+		delete_file(element);
+		element.move(element.getName(), destUri);
+		if (newParent != null) {
+			newParent.addChild(element);
+		} else {
+            assert library != null;
+            library.add(element);
 		}
 	}
 	//endregion

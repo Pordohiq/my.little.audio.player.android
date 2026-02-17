@@ -202,4 +202,20 @@
 			
 			android:src="@drawable/action_element_trash" />
 	</LinearLayout>
+	<FrameLayout
+		android:id="@+id/action_move_dialog"
+		android:visibility="gone"
+		android:layout_width="300dp"
+		android:layout_height="40dp"
+		android:layout_gravity="center"
+		android:background="@drawable/action_move_button_shape">
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+
+			android:text="@string/action_element_move"
+			android:textColor="@color/darkGrey"
+			android:textSize="20sp"/>
+	</FrameLayout>
 </FrameLayout>

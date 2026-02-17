@@ -1,5 +1,9 @@
 package my.little.audio.player.android;
 
+// This file is part of 'my.little.audio.player.android'
+// It is published on GitHub under the MIT License:
+// https://github.com/lomjek/my.little.audio.player.android
+
 import my.little.audio.player.android.Action.Action;
 import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.ResTree.Directory;
@@ -28,8 +32,6 @@ import java.util.List;
 public class Global extends Application {
 	public static final String APP_TAG = "myLittleAudioPlayer";
 	private static Global instance;
-	
-	public static final Action action = new Action();
 	
 	public enum PlayBackState {
 		PLAYING,

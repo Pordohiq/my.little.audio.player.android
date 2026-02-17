@@ -1,7 +1,7 @@
 package my.little.audio.player.android.FileView;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on github under the LGPL License:
+// It is published on GitHub under the LGPL License:
 // https://github.com/lomjek/my.little.audio.player.android
 
 import android.content.Context;
@@ -21,6 +21,7 @@ import my.little.audio.player.android.ResTree.Music;
 import my.little.audio.player.android.Signals;
 
 public class MusicBlock extends LinearLayout {
+	private LinearLayout block;
 	private ImageView mainIcon;
 	private TextView musicName;
 	private ImageView moreIcon;
@@ -39,6 +40,7 @@ public class MusicBlock extends LinearLayout {
 	
 	private void init(Context context){
 		LayoutInflater.from(context).inflate(R.layout.music_block_layout, this, true);
+		block = findViewById(R.id.music_block);
 		
 		mainIcon = findViewById(R.id.music_icon);
 		musicName = findViewById(R.id.music_name);
@@ -46,6 +48,8 @@ public class MusicBlock extends LinearLayout {
 		
 		Signals.subscribeToEvent("onAudioSet", this::onAudioSet);
 		Signals.subscribeToEvent("onActionElementChanged", this::check_more_icon);
+		Signals.subscribeToEvent("onLockStateChanged", this::on_lockState_changed);
+		on_lockState_changed();
 	}
 	
 	private void check_more_icon() {
@@ -71,8 +75,28 @@ public class MusicBlock extends LinearLayout {
 		musicName.setText(music.getName());
 		onAudioSet();
 		// Hook up buttons
-		mainIcon.setOnClickListener(view -> Global.setAudio(music, true));
-		musicName.setOnClickListener(view -> Global.setAudio(music, true));
-		moreIcon.setOnClickListener(view -> Action.set_element(music));
+		mainIcon.setOnClickListener(view -> mainClick());
+		musicName.setOnClickListener(view -> mainClick());
+
+		moreIcon.setOnClickListener(view -> secondClick());
+	}
+
+	private void mainClick(){
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.AUDIO) return; // If locked, do nothing
+		Global.setAudio(music, true);
+	}
+
+	private void secondClick() {
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.AUDIO) return; // If locked, do nothing
+		Action.set_element(music);
+	}
+
+	private void on_lockState_changed(){
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.AUDIO) {
+			block.setAlpha(0.5f);
+		}
+		else {
+			block.setAlpha(1f);
+		}
 	}
 }

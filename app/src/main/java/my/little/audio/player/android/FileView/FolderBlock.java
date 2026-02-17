@@ -1,7 +1,7 @@
 package my.little.audio.player.android.FileView;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on github under the LGPL License:
+// It is published on GitHub under the MIT License:
 // https://github.com/lomjek/my.little.audio.player.android
 
 import android.content.Context;
@@ -22,6 +22,7 @@ import my.little.audio.player.android.Signals;
 
 public class FolderBlock extends LinearLayout {
 	// Nodes
+	private LinearLayout block;
 	private ImageView folderIcon;
 	private TextView folderName;
 	private ImageView moreIcon;
@@ -40,11 +41,15 @@ public class FolderBlock extends LinearLayout {
 	
 	private void init(Context context){
 		LayoutInflater.from(context).inflate(R.layout.folder_block_layout, this, true);
+		block = findViewById(R.id.folder_block);
+
 		folderIcon = findViewById(R.id.folder_icon);
 		folderName = findViewById(R.id.folder_name);
 		moreIcon = findViewById(R.id.more_icon);
 		
 		Signals.subscribeToEvent("onActionElementChanged", this::check_more_icon);
+		Signals.subscribeToEvent("onLockStateChanged", this::on_lockState_changed);
+		on_lockState_changed();
 	}
 	
 	private void check_more_icon() {
@@ -59,12 +64,30 @@ public class FolderBlock extends LinearLayout {
 		folder = dir;
 		folderName.setText(folder.getName());
 		// Onclick
-		folderIcon.setOnClickListener(view -> Global.enterSubfolder(dir));
-		folderName.setOnClickListener(view -> Global.enterSubfolder(dir));
-		moreIcon.setOnClickListener(view -> Action.set_element(dir));
+		folderIcon.setOnClickListener(view -> mainClick());
+		folderName.setOnClickListener(view -> mainClick());
+		moreIcon.setOnClickListener(view -> secondClick());
 		// Connection with ACTION
 		check_more_icon();
 		
 	}
-	
+
+	private void mainClick(){
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.FOLDER) return; // If locked, do nothing
+		Global.enterSubfolder(folder);
+	}
+
+	private void secondClick() {
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.FOLDER) return; // If locked, do nothing
+		Action.set_element(folder);
+	}
+
+	private void on_lockState_changed(){
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.FOLDER) {
+			block.setAlpha(0.5f);
+		}
+		else {
+			block.setAlpha(1f);
+		}
+	}
 }

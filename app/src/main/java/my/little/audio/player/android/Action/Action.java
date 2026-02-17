@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import my.little.audio.player.android.Global;
 import my.little.audio.player.android.R;
@@ -26,10 +27,26 @@ import my.little.audio.player.android.Signals;
 public class Action {
 	@Nullable
 	private static DiskElement currentElement = null;
-	
+
+	//region lockState
+	public enum LockState {
+		NONE,
+		AUDIO,
+		FOLDER,
+		ALL
+	}
+	private static LockState lockState = LockState.NONE;
+	public static LockState get_lockState() { return lockState; }
+	public static void set_lockState(LockState state) {
+		lockState = state;
+		Signals.emitSignal("onLockStateChanged");
+	}
+	//endregion
 	public Action() {
 		Signals.createEvent("onActionElementChanged");
+		Signals.createEvent("onLockStateChanged");
 		Signals.createEvent("requestLibRootPathFromSysDialog");
+
 		Signals.subscribeToEvent("onPathChanged", Action::unset_element);
 	}
 	
@@ -121,6 +138,13 @@ public class Action {
 	}
 	//endregion
 	//region ActionBar_element functions
+	public static void move_file(@NonNull DiskElement element, @NonNull List<String> path) {
+		Log.i(Global.APP_TAG, "Moving file " + element.getName() + " to new path: " + String.join("/", path));
+		ResTree.move_file(element, path);
+		unset_element();
+		Signals.emitSignal("onPathChanged");
+	}
+
 	public static void delete_element() {
 		Log.i(Global.APP_TAG, "Deleting element");
 		ResTree.delete_file(get_element());
