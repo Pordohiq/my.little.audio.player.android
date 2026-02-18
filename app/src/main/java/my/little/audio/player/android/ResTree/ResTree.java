@@ -29,31 +29,12 @@ import androidx.annotation.Nullable;
 import androidx.documentfile.provider.DocumentFile;
 
 import my.little.audio.player.android.Global;
-import my.little.audio.player.android.Signals;
 
 public class ResTree {
 	public static Uri library_root;
 	@Nullable
 	public static List<DiskElement> library;
 	public static List<DiskElement> current_folder;
-	
-	public static void init(Context context) {
-		library_root = read_path_config(context);
-		if (library_root != null) {
-			Log.i(Global.APP_TAG, "Library root: " + library_root);
-			library = load_library(library_root);
-			current_folder = library;
-		}
-	}
-	
-	public static void reload_from_disk(Context context) {
-		Log.v(Global.APP_TAG, "Reloading library path from disk");
-		library_root = read_path_config(context);
-		Log.v(Global.APP_TAG, "Reloading library tree from disk");
-		library = null;
-		library = load_library(library_root);
-		current_folder = library;
-	}
 	
 	//region Path config
 	@Nullable
@@ -110,7 +91,7 @@ public class ResTree {
 	//endregion
 	//region ResTree Interactions
 	@Nullable
-	public static List<DiskElement> load_library(@NonNull Uri uri) {
+	private static List<DiskElement> load_library(@NonNull Uri uri) {
 		List<DiskElement> elements = new ArrayList<>();
 		ContentResolver resolver = Global.getInstance().getContentResolver();
 		Uri childrenUri;
@@ -208,8 +189,8 @@ public class ResTree {
 	}
 	
 	@Nullable
-	public static DiskElement get_element_at_path(List<String> sd_path) {
-		if (sd_path == null || sd_path.isEmpty()) {
+	private static DiskElement get_element_at_path(@NonNull List<String> sd_path) {
+		if (sd_path.isEmpty()) {
 			return null;
 		}
 		
@@ -241,8 +222,9 @@ public class ResTree {
 		
 		return null;
 	}
+
 	@Nullable
-	public static List<String> getLocalElementPath(@NonNull DiskElement element, @Nullable List<DiskElement> data, @Nullable List<String> path) {
+	private static List<String> get_local_element_path(@NonNull DiskElement element, @Nullable List<DiskElement> data, @Nullable List<String> path) {
 		if (library == null) return null;
 		if (data == null) data = library;
 		if (path == null) path = new ArrayList<>();
@@ -257,17 +239,18 @@ public class ResTree {
 				if (((Directory) disk_element).getChildCount() <= 0) continue; // Check that the dir has children, else skip.
 				List<String> new_path = new ArrayList<>(path);
 				new_path.add(disk_element.getName());
-				List<String> result = getLocalElementPath(element, ((Directory) disk_element).getChildren(), new_path);
+				List<String> result = get_local_element_path(element, ((Directory) disk_element).getChildren(), new_path);
 				if (result == null) continue;
 				return result;
 			}
 		}
         return null; // If we have found nothing, return null.
     }
+
 	@Nullable
-	public static Directory get_parent(DiskElement element){
+	private static Directory get_parent(DiskElement element){
 		if (element == null || library == null) return null;
-		List<String> childPath = getLocalElementPath(element, library, new ArrayList<>());
+		List<String> childPath = get_local_element_path(element, library, new ArrayList<>());
 		if (childPath == null) return null;
 		childPath.remove(childPath.size() - 1);
 		if (childPath.isEmpty() || get_element_at_path(childPath) == null) { return null; }
@@ -301,9 +284,7 @@ public class ResTree {
 	}
 
 	private static void SAF_delete_element(@NonNull Uri uri) throws IOException {
-		Context context = Global.getInstance();
-
-		DocumentFile documentFile = DocumentFile.fromTreeUri(context, uri);
+		DocumentFile documentFile = get_DocumentFile_from_Uri(uri);
 
 		if (documentFile == null) {
 			throw new IOException("Source Element not valid");
@@ -341,13 +322,8 @@ public class ResTree {
 	private static Uri SAF_copy_element(@NonNull Uri sourceUri, @NonNull Uri targetParentUri) throws IOException {
 		Context context = Global.getInstance();
 
-		DocumentFile sourceFile;
-		if (DocumentsContract.isTreeUri(sourceUri)) {
-			sourceFile = DocumentFile.fromTreeUri(context, sourceUri);
-		} else {
-			sourceFile = DocumentFile.fromSingleUri(context, sourceUri);
-		}
-		DocumentFile targetDir = DocumentFile.fromTreeUri(context, targetParentUri);
+		DocumentFile sourceFile = get_DocumentFile_from_Uri(sourceUri);
+		DocumentFile targetDir = get_DocumentFile_from_Uri(targetParentUri);
 
 		if (sourceFile == null || targetDir == null) {
 			throw new IOException("Source or Target Dir not valid");
@@ -355,8 +331,65 @@ public class ResTree {
 
 		return SAF_copy_element(context, sourceFile, targetDir);
 	}
+
+	@Nullable
+	private static Uri SAF_rename_element(@NonNull DocumentFile file, @NonNull String newName) {
+		if (file.exists()) {
+			String displayName = file.getName();
+			String extension = "";
+
+			if (displayName != null) {
+				int lastDot = displayName.lastIndexOf(".");
+				if (lastDot != -1) {
+					extension = displayName.substring(lastDot);
+				}
+			}
+
+			String finalName = newName;
+			if (!extension.isEmpty() && !newName.toLowerCase().endsWith(extension.toLowerCase())) {
+				finalName = newName + extension;
+			}
+
+			if (file.renameTo(finalName)) {
+				return file.getUri();
+			}
+		}
+		return null;
+	}
+
+	@Nullable
+	private	static Uri SAF_rename_element(@NonNull Uri uri, @NonNull String newName) {
+		DocumentFile file = get_DocumentFile_from_Uri(uri);
+		if (file == null) return null;
+		return SAF_rename_element(file, newName);
+	}
+
+	@Nullable
+    private static DocumentFile get_DocumentFile_from_Uri(@NonNull Uri uri) {
+		DocumentFile file;
+		if (DocumentsContract.isTreeUri(uri)) {
+			file = DocumentFile.fromTreeUri(Global.getInstance(), uri);
+		} else {
+			file = DocumentFile.fromSingleUri(Global.getInstance(), uri);
+		}
+		return file;
+	}
+
+	@Nullable
+    private static String get_fileName_from_Uri(@NonNull Uri uri) {
+		return Objects.requireNonNull(get_DocumentFile_from_Uri(uri)).getName();
+	}
 	//endregion
 	//region API
+	public static void init(Context context) {
+		library_root = read_path_config(context);
+		if (library_root != null) {
+			Log.i(Global.APP_TAG, "Library root: " + library_root);
+			library = load_library(library_root);
+			current_folder = library;
+		}
+	}
+
 	public static void add_audio_file(@NonNull Uri audio_uri, @NonNull List<String> path){
 		Uri destUri;
 		if (path.isEmpty()) {
@@ -371,11 +404,14 @@ public class ResTree {
 		}
 
 		try {
-			SAF_copy_element(audio_uri, destUri);
+			Uri new_uri = SAF_copy_element(audio_uri, destUri);
+			String new_name = get_fileName_from_Uri(new_uri);
+			assert new_name != null;
+
 			Music file = new Music(
-					Objects.requireNonNull(DocumentFile.fromTreeUri(Global.getInstance(), audio_uri)).getName(),
+					new_name,
 					audio_uri,
-					Objects.requireNonNull(audio_uri.getLastPathSegment()).split("\\.")[1]
+					new_name.split("\\.")[1]
 			);
 
 			if (path.isEmpty()) {
@@ -390,6 +426,15 @@ public class ResTree {
 		} catch (IOException e) {
 			Log.e(Global.APP_TAG, "Error adding audio file to library root ", e);
 		}
+	}
+
+	public static void reload_from_disk(Context context) {
+		Log.v(Global.APP_TAG, "Reloading library path from disk");
+		library_root = read_path_config(context);
+		Log.v(Global.APP_TAG, "Reloading library tree from disk");
+		library = null;
+		library = load_library(library_root);
+		current_folder = library;
 	}
 
 	public static void create_new_folder(@NonNull List<String> path, String folder_name) {
@@ -419,7 +464,6 @@ public class ResTree {
 			}
 
 			current_folder = load_folder(Global.getPath());
-			Signals.emitSignal("onPathChanged");
 		}
 	}
 
@@ -464,7 +508,7 @@ public class ResTree {
 
 			delete_file(element);
 
-			element.move(element.getName(), newUri);
+			element.move(get_fileName_from_Uri(newUri), newUri);
 
 			if (targetParent instanceof Directory) {
 				((Directory) targetParent).addChild(element);
@@ -475,6 +519,20 @@ public class ResTree {
 		} catch (IOException e) {
 			Log.e(Global.APP_TAG, "Error moving element", e);
 		}
+	}
+
+	public static void rename_file(DiskElement element, String newName) {
+		if (element == null) {
+			Log.e(Global.APP_TAG, "Element not found");
+			return;
+		}
+		try {
+			Uri newUri = SAF_rename_element(element.getUri(), newName);
+			if (newUri == null) throw new Exception("The new Uri is not valid");
+			element.move(get_fileName_from_Uri(newUri), newUri);
+		} catch (Exception e) {
+			Log.e(Global.APP_TAG, "Error renaming file", e);
+        }
 	}
 
 	public static void delete_file(DiskElement element) {

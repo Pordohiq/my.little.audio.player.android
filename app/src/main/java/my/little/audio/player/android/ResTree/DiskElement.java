@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 abstract public class DiskElement {
 	protected String name;
+	@NonNull
 	private Uri elementUri;
 	
 	public DiskElement (String new_name, @NonNull Uri new_uri) {
@@ -24,8 +25,7 @@ abstract public class DiskElement {
 	public String getName() {
 		return name;
 	}
-	
-	public Uri getUri() {
-		return elementUri;
-	}
+
+	@NonNull
+	public Uri getUri() { return elementUri; }
 }

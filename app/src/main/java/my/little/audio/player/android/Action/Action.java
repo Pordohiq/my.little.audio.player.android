@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import my.little.audio.player.android.Global;
 import my.little.audio.player.android.R;
@@ -67,7 +68,39 @@ public class Action {
 		}
 		Signals.emitSignal("onActionElementChanged");
 	}
-	
+
+	private static void system_string_dialog(@NonNull Context ActivityContext, @NonNull String title, @NonNull Consumer<String> callback, @Nullable String input_text) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(ActivityContext);
+		builder.setTitle(title);
+
+		final EditText input = new EditText(ActivityContext);
+		if (input_text != null) {
+			input.setText(input_text);
+		}
+
+		FrameLayout container = new FrameLayout(ActivityContext);
+		FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+				FrameLayout.LayoutParams.MATCH_PARENT,
+				FrameLayout.LayoutParams.WRAP_CONTENT
+		);
+
+		params.setMargins(48, 20, 48, 20);
+		input.setLayoutParams(params);
+		container.addView(input);
+
+		builder.setView(container);
+
+		builder.setPositiveButton(R.string.global_accept, (dialog, which) -> {
+			String result = input.getText().toString();
+			Log.i("APP_TAG", "The user entered: " + result);
+			callback.accept(result);
+		});
+
+		builder.setNegativeButton(R.string.global_cancel, (dialog, which) -> dialog.cancel());
+
+		builder.show();
+	}
+
 	//region ActionBar_general functions
 	public static void button_refresh() {
 		Log.i(Global.APP_TAG, "Refreshing library");
@@ -99,35 +132,12 @@ public class Action {
 	}
 	
 	public static void request_system_folder_name(Context context) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(context);
-		builder.setTitle(R.string.action_popup_new_folder);
-		
-		final EditText input = new EditText(context);
-		
-		FrameLayout container = new FrameLayout(context);
-		FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-				FrameLayout.LayoutParams.MATCH_PARENT,
-				FrameLayout.LayoutParams.WRAP_CONTENT
-		);
-		params.setMargins(48, 20, 48, 20);
-		input.setLayoutParams(params);
-		container.addView(input);
-		
-		builder.setView(container);
-		
-		builder.setPositiveButton("OK", (dialog, which) -> {
-			String result = input.getText().toString();
-			Log.i(Global.APP_TAG, "New Folder Name: " + result);
-			create_new_folder_at_path(result);
-		});
-		
-		builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-		
-		builder.show();
+		system_string_dialog(context, context.getString(R.string.action_popup_new_folder), Action::create_new_folder_at_path, null);
 	}
 	
-	public static void create_new_folder_at_path(String folderName) {
+	private static void create_new_folder_at_path(String folderName) {
 		ResTree.create_new_folder(Global.getPath(), folderName);
+		Signals.emitSignal("onPathChanged");
 	}
 	
 	public static void reset_app_data(){
@@ -138,6 +148,18 @@ public class Action {
 	}
 	//endregion
 	//region ActionBar_element functions
+	public static void rename_element(Context context) {
+		if (currentElement == null) return;
+		Log.i(Global.APP_TAG, "Renaming element: " + currentElement.getName());
+		system_string_dialog(context, context.getString(R.string.action_element_rename_sysDialog), Action::finish_element_renaming, currentElement.getName());
+	}
+
+	private static void finish_element_renaming(@NonNull String new_name) {
+		ResTree.rename_file(get_element(), new_name);
+		Signals.emitSignal("onPathChanged");
+		unset_element();
+	}
+
 	public static void move_file(@NonNull DiskElement element, @NonNull List<String> path) {
 		Log.i(Global.APP_TAG, "Moving file " + element.getName() + " to new path: " + String.join("/", path));
 		ResTree.move_file(element, path);

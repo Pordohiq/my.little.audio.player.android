@@ -22,4 +22,7 @@
 	<string name="action_element_rename">umbenennen</string>
 	<string name="action_element_trash">löschen</string>
 	<string name="action_element_move">verschiebe</string>
+    <string name="global_accept">passt</string>
+	<string name="global_cancel">Abbruch</string>
+	<string name="action_element_rename_sysDialog">Datei umbennenen</string>
 </resources>

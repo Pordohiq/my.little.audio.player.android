@@ -25,4 +25,7 @@
 	<string name="action_element_info" translatable="false">info</string>
 	<string name="action_element_move">move</string>
 	<string name="action_music_toggle_queue" translatable="false">toggle queue</string>
+	<string name="global_accept">Accept</string>
+	<string name="global_cancel">Cancel</string>
+	<string name="action_element_rename_sysDialog">Rename Element</string>
 </resources>

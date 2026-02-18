@@ -64,8 +64,13 @@ public class ActionBar extends LinearLayout {
 		// Link the Element nodes
 		findViewById(R.id.action_folder_back).setOnClickListener(view -> Action.unset_element());
 		findViewById(R.id.action_music_back).setOnClickListener(view -> Action.unset_element());
+
+		findViewById(R.id.action_folder_rename).setOnClickListener(view -> Action.rename_element(context));
+		findViewById(R.id.action_music_rename).setOnClickListener(view -> Action.rename_element(context));
+
 		findViewById(R.id.action_music_move).setOnClickListener(view -> init_file_moving());
 		findViewById(R.id.action_folder_move).setOnClickListener(view -> init_file_moving());
+
 		findViewById(R.id.action_folder_trash).setOnClickListener(view -> Action.delete_element());
 		findViewById(R.id.action_music_trash).setOnClickListener(view -> Action.delete_element());
 
@@ -77,7 +82,9 @@ public class ActionBar extends LinearLayout {
 	}
 	
 	private void onActionSet() {
-		if (action_move_dialog.getVisibility() == VISIBLE) return;
+		// If you are currently performing a move, DO NOT do anything.
+		if (action_move_dialog.getVisibility() == VISIBLE && original_element != null) return;
+
 		if (Action.get_element() == null){
 			action_general.setVisibility(VISIBLE);
 			action_music.setVisibility(GONE);
@@ -122,5 +129,6 @@ public class ActionBar extends LinearLayout {
 			return;
 		}
 		Action.move_file(original_element, Global.getPath());
+		original_element = null;
 	}
 }
