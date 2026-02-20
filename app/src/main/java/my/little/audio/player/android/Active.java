@@ -1,5 +1,9 @@
 package my.little.audio.player.android;
 
+// This file is part of 'my.little.audio.player.android'
+// It is published on GitHub under the LGPLv3 License:
+// https://github.com/lomjek/my.little.audio.player.android
+
 import android.content.Context;
 
 import android.os.Handler;
@@ -24,6 +28,49 @@ public class Active extends LinearLayout {
 	private ImageView playButton;
 	private ImageView nextButton; // TODO: Hook it up as well
 	
+	//region MXState
+	private ImageView active_mxs_repeat;
+	private ImageView active_mxs_queue;
+	private ImageView active_mxs_shuffle;
+	
+	private void MXInit(){
+		active_mxs_repeat = findViewById(R.id.active_mxs_repeat);
+		active_mxs_queue = findViewById(R.id.active_mxs_queue);
+		active_mxs_shuffle = findViewById(R.id.active_mxs_shuffle);
+		
+		Signals.subscribeToEvent("onMxStateChanged", this::update_mx_buttons);
+		
+		active_mxs_repeat.setOnClickListener(view -> Global.mx_state.toggle_repeat_state());
+		active_mxs_queue.setOnClickListener(view -> Global.mx_state.toggle_queue_state());
+		active_mxs_shuffle.setOnClickListener(view -> Global.mx_state.toggle_shuffle_state());
+	}
+	
+	private void update_mx_buttons(){
+		MixingState.repeat_state repeat_state = Global.mx_state.get_repeat_state();
+		MixingState.queue_state queue_state = Global.mx_state.get_queue_state();
+		MixingState.shuffle_state shuffle_state = Global.mx_state.get_shuffle_state();
+		
+		if (repeat_state == MixingState.repeat_state.NONE){
+			active_mxs_repeat.setImageResource(R.drawable.active_mxs_repeat);
+		} else if (repeat_state == MixingState.repeat_state.ONE) {
+			active_mxs_repeat.setImageResource(R.drawable.active_mxs_repeat_file);
+		} else if (repeat_state == MixingState.repeat_state.QUEUE) {
+			active_mxs_repeat.setImageResource(R.drawable.active_mxs_repeat_active);
+		}
+		
+		if (queue_state == MixingState.queue_state.NONE){
+			active_mxs_queue.setImageResource(R.drawable.active_mxs_queue);
+		} else if (queue_state == MixingState.queue_state.LOADED_QUEUE){
+			active_mxs_queue.setImageResource(R.drawable.active_mxs_queue_active);
+		} else if (queue_state == MixingState.queue_state.DIRECTORY) {
+			active_mxs_queue.setImageResource(R.drawable.active_mxs_folder_queue);
+		} else if (queue_state == MixingState.queue_state.RECURSIVE_DIRECTORY) {
+			active_mxs_queue.setImageResource(R.drawable.active_mxs_folder_queue_recursive);
+		}
+		
+		active_mxs_shuffle.setImageResource(shuffle_state == MixingState.shuffle_state.NONE ? R.drawable.active_mxs_shuffle : R.drawable.active_mxs_shuffle_active);
+	}
+	//endregion
 	//region ProgressBar
 	private SeekBar progressBar;
 	private TextView timeInNode;
@@ -50,7 +97,7 @@ public class Active extends LinearLayout {
 	};
 	
 	@NonNull
-	public static String formatDuration(int totalSeconds) {
+	private static String formatDuration(int totalSeconds) {
 		int h = totalSeconds / 3600;
 		int m = (totalSeconds % 3600) / 60;
 		int s = totalSeconds % 60;
@@ -60,6 +107,40 @@ public class Active extends LinearLayout {
 		} else {
 			return String.format(Locale.getDefault(), "%02d:%02d", m, s);
 		}
+	}
+	
+	private void seekBarInit() {
+		progressBar = findViewById(R.id.progressBar);
+		timeInNode = findViewById(R.id.time_in);
+		timeRemainingNode = findViewById(R.id.time_remaining);
+		
+		progressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				if (fromUser) {
+					timeInNode.setText(formatDuration(progress));
+					timeRemainingNode.setText(formatDuration(Global.getPlayBackDuration() - progress));
+				}
+				
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				if (Global.getPlayBackState() == Global.PlayBackState.PLAYING) {
+					secondHandler.removeCallbacks(secondLoop);
+					Global.setPlayBackState(Global.PlayBackState.PAUSED);
+				}
+			}
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				if (Global.getPlayBackState() == Global.PlayBackState.PAUSED) {
+					Global.seekTo(seekBar.getProgress());
+					Global.setPlayBackState(Global.PlayBackState.PLAYING);
+					secondLoop.run();
+				}
+			}
+		});
 	}
 	//endregion
 	//region INIT
@@ -81,9 +162,8 @@ public class Active extends LinearLayout {
 		playButton = findViewById(R.id.playButton);
 		nextButton = findViewById(R.id.nextButton);
 		
-		progressBar = findViewById(R.id.progressBar);
-		timeInNode = findViewById(R.id.time_in);
-		timeRemainingNode = findViewById(R.id.time_remaining);
+		seekBarInit();
+		MXInit();
 		
 		// Hook up all the Signals
 		playButton.setOnClickListener(view -> {
@@ -94,33 +174,7 @@ public class Active extends LinearLayout {
 			}
 			// TODO: Get the new song, if the pb state is NONE
 		});
-		progressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				if (fromUser) {
-					timeInNode.setText(formatDuration(progress));
-					timeRemainingNode.setText(formatDuration(Global.getPlayBackDuration() - progress));
-				}
-			
-			}
-			
-			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) {
-				if (Global.getPlayBackState() == Global.PlayBackState.PLAYING) {
-					secondHandler.removeCallbacks(secondLoop);
-					Global.setPlayBackState(Global.PlayBackState.PAUSED);
-				}
-			}
-			
-			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) {
-				if (Global.getPlayBackState() == Global.PlayBackState.PAUSED) {
-					Global.seekTo(seekBar.getProgress());
-					Global.setPlayBackState(Global.PlayBackState.PLAYING);
-					secondLoop.run();
-				}
-			}
-		});
+		
 		Signals.subscribeToEvent("onPBStateChanged", this::onPbStateChanged);
 		Signals.subscribeToEvent("onAudioSet", this::onAudioSet);
 	}

@@ -28,4 +28,7 @@
 	<string name="global_accept">Accept</string>
 	<string name="global_cancel">Cancel</string>
 	<string name="action_element_rename_sysDialog">Rename Element</string>
+    <string name="active_mxs_toggle_repeat">toggle repeat</string>
+	<string name="active_mxs_toggle_queue">toggle queue</string>
+	<string name="active_mxs_toggle_shuffle">toggle shuffle</string>
 </resources>

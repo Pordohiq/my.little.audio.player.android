@@ -1,7 +1,7 @@
 package my.little.audio.player.android.FileView;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the MIT License:
+// It is published on GitHub under the LGPLv3 License:
 // https://github.com/lomjek/my.little.audio.player.android
 
 import android.content.Context;

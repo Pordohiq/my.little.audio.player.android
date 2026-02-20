@@ -1,17 +1,19 @@
 package my.little.audio.player.android;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the MIT License:
+// It is published on GitHub under the LGPLv3 License:
 // https://github.com/lomjek/my.little.audio.player.android
 
 import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.ResTree.Directory;
 import my.little.audio.player.android.ResTree.Music;
+import my.little.audio.player.android.queues.Queue;
 
 import android.app.Application;
 
 import android.content.ComponentName;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -31,7 +33,9 @@ import java.util.List;
 public class Global extends Application {
 	public static final String APP_TAG = "myLittleAudioPlayer";
 	private static Global instance;
-	
+
+	public static MixingState mx_state = new MixingState();
+
 	public enum PlayBackState {
 		PLAYING,
 		PAUSED,

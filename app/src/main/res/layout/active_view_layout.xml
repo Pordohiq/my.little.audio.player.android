@@ -20,7 +20,7 @@
 			android:gravity="center"
 			android:textAlignment="center"
 			android:textColor="@color/lightGrey" />
-			
+	
 	</ScrollView>
 	<FrameLayout
 		android:layout_width="match_parent"
@@ -95,7 +95,8 @@
 				android:layout_width="50dp"
 				android:layout_height="50dp"
 				android:contentDescription="@string/active_pb_play_pause"
-				android:src="@drawable/active_pb_play" />
+				android:src="@drawable/active_pb_play"
+				tools:ignore="RedundantDescriptionCheck" />
 			<ImageView
 				android:id="@+id/nextButton"
 				android:layout_width="50dp"
@@ -109,12 +110,34 @@
 			android:layout_height="50dp"
 			android:layout_weight="1"/>
 		<LinearLayout
-			android:layout_width="150dp"
+			android:id="@+id/active_mxs_container"
+			android:layout_width="wrap_content"
 			android:layout_height="50dp"
 			android:orientation="horizontal"
 			android:layout_weight="0">
-		
+			
+			<ImageView
+				android:id="@+id/active_mxs_repeat"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
+				android:contentDescription="@string/active_mxs_toggle_repeat"
+				android:src="@drawable/active_mxs_repeat" />
+			
+			<ImageView
+				android:id="@+id/active_mxs_queue"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
+				android:contentDescription="@string/active_mxs_toggle_repeat"
+				android:src="@drawable/active_mxs_queue" />
+			
+			
+			<ImageView
+				android:id="@+id/active_mxs_shuffle"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
+				android:contentDescription="@string/active_mxs_toggle_shuffle"
+				android:src="@drawable/active_mxs_shuffle" />
 		</LinearLayout>
 	</LinearLayout>
-	
+
 </LinearLayout>

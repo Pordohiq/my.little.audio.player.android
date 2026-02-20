@@ -25,4 +25,7 @@
     <string name="global_accept">passt</string>
 	<string name="global_cancel">Abbruch</string>
 	<string name="action_element_rename_sysDialog">Datei umbennenen</string>
+    <string name="active_mxs_toggle_repeat">"Wiederholung auswählen "</string>
+	<string name="active_mxs_toggle_queue">Warteliste auswählen</string>
+	<string name="active_mxs_toggle_shuffle">Durchmischung auswählen</string>
 </resources>

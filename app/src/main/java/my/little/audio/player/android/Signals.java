@@ -1,5 +1,9 @@
 package my.little.audio.player.android;
 
+// This file is part of 'my.little.audio.player.android'
+// It is published on GitHub under the LGPLv3 License:
+// https://github.com/lomjek/my.little.audio.player.android
+
 import android.util.Log;
 import androidx.annotation.NonNull;
 import java.util.List;
@@ -30,7 +34,7 @@ public class Signals {
 		if (!events.containsKey(eventName)) {
 			createEvent(eventName);
 		}
-		events.get(eventName).add(callback);
+		Objects.requireNonNull(events.get(eventName)).add(callback);
 	}
 	
 	public static void unsubscribeFromEvent(@NonNull String eventName, Runnable callback) {
