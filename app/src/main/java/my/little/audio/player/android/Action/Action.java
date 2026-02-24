@@ -24,16 +24,17 @@ import my.little.audio.player.android.R;
 import my.little.audio.player.android.ResTree.DiskElement;
 import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.Signals;
+import my.little.audio.player.android.queues.Queue;
+import my.little.audio.player.android.queues.Queues;
 
 public class Action {
-	@Nullable
-	private static DiskElement currentElement = null;
-
 	//region lockState
 	public enum LockState {
 		NONE,
 		AUDIO,
 		FOLDER,
+		DISK_ELEMENT,
+		QUEUE,
 		ALL
 	}
 	private static LockState lockState = LockState.NONE;
@@ -45,11 +46,16 @@ public class Action {
 	//endregion
 	public Action() {
 		Signals.createEvent("onActionElementChanged");
+		Signals.createEvent("onActionQueueChanged");
 		Signals.createEvent("onLockStateChanged");
 		Signals.createEvent("requestLibRootPathFromSysDialog");
 
 		Signals.subscribeToEvent("onPathChanged", Action::unset_element);
 	}
+	
+	//region DiskElement
+	@Nullable
+	private static DiskElement currentElement = null;
 	
 	public static void unset_element() {
 		Log.i(Global.APP_TAG, "Unsetting element");
@@ -68,7 +74,29 @@ public class Action {
 		}
 		Signals.emitSignal("onActionElementChanged");
 	}
-
+	//endregion
+	//region Queue
+	@Nullable
+	private static Queue currentQueue = null;
+	
+	public static Queue get_queue() { return currentQueue; }
+	
+	public static void unset_queue(){
+		Log.i(Global.APP_TAG, "Unsetting queue");
+		currentQueue = null;
+		Signals.emitSignal("onActionQueueChanged");
+	}
+	
+	public static void set_queue(@NonNull Queue queue){
+		Log.i(Global.APP_TAG, "Setting queue: " + queue.getName());
+		if (queue == currentQueue) {
+			unset_queue();
+		} else {
+			currentQueue = queue;
+		}
+		Signals.emitSignal("onActionQueueChanged");
+	}
+	//endregion
 	private static void system_string_dialog(@NonNull Context ActivityContext, @NonNull String title, @NonNull Consumer<String> callback, @Nullable String input_text) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(ActivityContext);
 		builder.setTitle(title);
@@ -131,8 +159,12 @@ public class Action {
 		ResTree.add_audio_file(path, Global.getPath());
 	}
 	
-	public static void request_system_folder_name(Context context) {
-		system_string_dialog(context, context.getString(R.string.action_popup_new_folder), Action::create_new_folder_at_path, null);
+	public static void request_system_folder_name(Context ActivityContext) {
+		system_string_dialog(ActivityContext, Global.getInstance().getString(R.string.action_popup_new_folder), Action::create_new_folder_at_path, null);
+	}
+	
+	public static void request_system_queue_name(Context ActivityContext){
+		system_string_dialog(ActivityContext, Global.getInstance().getString(R.string.action_popup_new_queue), Queues::create_new_queue, null);
 	}
 	
 	private static void create_new_folder_at_path(String folderName) {
@@ -150,12 +182,12 @@ public class Action {
 	//region ActionBar_element functions
 	public static void rename_element(Context context) {
 		if (currentElement == null) return;
-		Log.i(Global.APP_TAG, "Renaming element: " + currentElement.getName());
-		system_string_dialog(context, context.getString(R.string.action_element_rename_sysDialog), Action::finish_element_renaming, currentElement.getName());
+		Log.i(Global.APP_TAG, "Renaming element: " + ((DiskElement) currentElement).getName());
+		system_string_dialog(context, context.getString(R.string.action_element_rename_sysDialog), Action::finish_element_renaming, ((DiskElement) currentElement).getName());
 	}
 
 	private static void finish_element_renaming(@NonNull String new_name) {
-		ResTree.rename_file(get_element(), new_name);
+		ResTree.rename_file(((DiskElement) currentElement), new_name);
 		Signals.emitSignal("onPathChanged");
 		unset_element();
 	}
@@ -169,7 +201,7 @@ public class Action {
 
 	public static void delete_element() {
 		Log.i(Global.APP_TAG, "Deleting element");
-		ResTree.delete_file(get_element());
+		ResTree.delete_file(((DiskElement) currentElement));
 		unset_element();
 		Signals.emitSignal("onPathChanged");
 	}

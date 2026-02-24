@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import java.util.Locale;
+
+import my.little.audio.player.android.queues.Queues;
 
 public class Active extends LinearLayout {
 	private TextView title;
@@ -39,10 +42,23 @@ public class Active extends LinearLayout {
 		active_mxs_shuffle = findViewById(R.id.active_mxs_shuffle);
 		
 		Signals.subscribeToEvent("onMxStateChanged", this::update_mx_buttons);
+		Signals.subscribeToEvent("onDisplayStateChanged", this::update_mx_buttons);
+		update_mx_buttons();
 		
 		active_mxs_repeat.setOnClickListener(view -> Global.mx_state.toggle_repeat_state());
 		active_mxs_queue.setOnClickListener(view -> Global.mx_state.toggle_queue_state());
 		active_mxs_shuffle.setOnClickListener(view -> Global.mx_state.toggle_shuffle_state());
+		
+		active_mxs_queue.setOnLongClickListener(v -> {
+			display_queues();
+			return true;
+		});
+	}
+	
+	private void display_queues(){
+		Global.setDisplayState(Global.DisplayState.QUEUES);
+		Log.i(Global.APP_TAG, "Should now show queues.");
+		Signals.emitSignal("onDisplayStateChanged");
 	}
 	
 	private void update_mx_buttons(){
@@ -59,9 +75,17 @@ public class Active extends LinearLayout {
 		}
 		
 		if (queue_state == MixingState.queue_state.NONE){
-			active_mxs_queue.setImageResource(R.drawable.active_mxs_queue);
+			if(Global.getDisplayState() == Global.DisplayState.DISK_ELEMENT){
+				active_mxs_queue.setImageResource(R.drawable.active_mxs_queue);
+			} else {
+				active_mxs_queue.setImageResource(R.drawable.active_mxs_queue_edit);
+			}
 		} else if (queue_state == MixingState.queue_state.LOADED_QUEUE){
-			active_mxs_queue.setImageResource(R.drawable.active_mxs_queue_active);
+			if (Global.getDisplayState() == Global.DisplayState.DISK_ELEMENT){
+				active_mxs_queue.setImageResource(R.drawable.active_mxs_queue_active);
+			} else {
+				active_mxs_queue.setImageResource(R.drawable.active_mxs_queue_edit_active);
+			}
 		} else if (queue_state == MixingState.queue_state.DIRECTORY) {
 			active_mxs_queue.setImageResource(R.drawable.active_mxs_folder_queue);
 		} else if (queue_state == MixingState.queue_state.RECURSIVE_DIRECTORY) {

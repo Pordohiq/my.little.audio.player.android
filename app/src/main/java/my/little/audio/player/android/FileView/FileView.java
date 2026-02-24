@@ -19,8 +19,10 @@ import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.ResTree.DiskElement;
 import my.little.audio.player.android.ResTree.Directory;
 import my.little.audio.player.android.ResTree.Music;
+import my.little.audio.player.android.queues.Queue;
 
 import my.little.audio.player.android.R;
+import my.little.audio.player.android.queues.Queues;
 
 public class FileView extends LinearLayout {
 	private TextView pathDisplay;
@@ -42,9 +44,38 @@ public class FileView extends LinearLayout {
 		fileContainer = findViewById(R.id.fileContainer);
 		updateFileView();
 		Signals.subscribeToEvent("onPathChanged", this::updateFileView);
+		Signals.subscribeToEvent("onDisplayStateChanged", this::updateFileView);
+		Signals.subscribeToEvent("onQueueLibChanged", this::updateFileView);
 	}
 	
 	public void updateFileView () {
+		if (Global.getDisplayState() == Global.DisplayState.QUEUES){
+			draw_queues();
+		} else if (Global.getDisplayState() == Global.DisplayState.DISK_ELEMENT) {
+			draw_diskElements();
+		} else {
+			Log.e(Global.APP_TAG, "Unknown display state: " + Global.getDisplayState() + " in FileView");
+		}
+	}
+	
+	private void draw_queues(){
+		fileContainer.removeAllViews();
+		
+		String path_formatted = getContext().getString(R.string.file_view_queuePath) + String.join("/", Global.getPath());
+		pathDisplay.setText(path_formatted);
+		
+		BackBlock backBlock = new BackBlock(getContext());
+		backBlock.override_mainClick(() -> Global.setDisplayState(Global.DisplayState.DISK_ELEMENT));
+		fileContainer.addView(backBlock);
+		
+		for (Queue que : Queues.get_queues()) {
+			QueueBlock block = new QueueBlock(getContext());
+			block.setUp(que);
+			fileContainer.addView(block);
+		}
+	}
+	
+	private void draw_diskElements(){
 		if (ResTree.library == null) {
 			return;
 		}

@@ -28,4 +28,6 @@
     <string name="active_mxs_toggle_repeat">"Wiederholung auswählen "</string>
 	<string name="active_mxs_toggle_queue">Warteliste auswählen</string>
 	<string name="active_mxs_toggle_shuffle">Durchmischung auswählen</string>
+	<string name="file_view_queuePath">WARTESCHLANGEN://</string>
+	<string name="action_popup_new_queue">Name der neuen Warteschlange:</string>
 </resources>

@@ -27,6 +27,10 @@ public class ActionBar extends LinearLayout {
 	private View action_music;
 	private View action_folder;
 	private View action_move_dialog;
+	
+	private View add_music_button;
+	private View add_folder_button;
+	private View add_queue_button;
 
 	private DiskElement original_element;
 	
@@ -54,9 +58,16 @@ public class ActionBar extends LinearLayout {
 		action_folder = findViewById(R.id.action_folder);
 		action_move_dialog = findViewById(R.id.action_move_dialog);
 		
+		// Get the buttons
+		add_music_button = findViewById(R.id.action_general_add_music);
+		add_folder_button = findViewById(R.id.action_general_add_folder);
+		add_queue_button = findViewById(R.id.action_general_add_queue);
+		
 		// Link the general nodes
-		findViewById(R.id.action_general_add_music).setOnClickListener(view -> Action.open_new_audio_file_dialog());
-		findViewById(R.id.action_general_add_folder).setOnClickListener(view -> Action.request_system_folder_name(context));
+		add_music_button.setOnClickListener(view -> Action.open_new_audio_file_dialog());
+		add_folder_button.setOnClickListener(view -> Action.request_system_folder_name(context));
+		add_queue_button.setOnClickListener(view -> Action.request_system_queue_name(context));
+		
 		findViewById(R.id.action_general_refresh).setOnClickListener(view -> Action.button_refresh());
 		findViewById(R.id.action_general_set_library).setOnClickListener(view -> Action.open_new_lib_root_dialog());
 		findViewById(R.id.action_general_settings).setOnClickListener(view -> Signals.emitSignal("onTogglePreferences"));
@@ -79,6 +90,8 @@ public class ActionBar extends LinearLayout {
 		
 		Signals.subscribeToEvent("onActionElementChanged", this::onActionSet);
 		onActionSet();
+		Signals.subscribeToEvent("onDisplayStateChanged", this::onDisplayStateChanged);
+		onDisplayStateChanged();
 	}
 	
 	private void onActionSet() {
@@ -107,6 +120,19 @@ public class ActionBar extends LinearLayout {
 			action_move_dialog.setVisibility(GONE);
 			Log.e(Global.APP_TAG, "This state is very confusing and should not happen. Action.get_element() is of type:" + Action.get_element().getClass().getName());
 			Action.unset_element();
+		}
+	}
+	
+	private void onDisplayStateChanged(){
+		Action.unset_element();
+		if (Global.getDisplayState() == Global.DisplayState.DISK_ELEMENT){
+			add_queue_button.setVisibility(GONE);
+			add_music_button.setVisibility(VISIBLE);
+			add_folder_button.setVisibility(VISIBLE);
+		} else {
+			add_queue_button.setVisibility(VISIBLE);
+			add_music_button.setVisibility(GONE);
+			add_folder_button.setVisibility(GONE);
 		}
 	}
 

@@ -82,17 +82,17 @@ public class MusicBlock extends LinearLayout {
 	}
 
 	private void mainClick(){
-		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.AUDIO) return; // If locked, do nothing
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.AUDIO || Action.get_lockState() == Action.LockState.DISK_ELEMENT) return; // If locked, do nothing
 		Global.setAudio(music, true);
 	}
 
 	private void secondClick() {
-		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.AUDIO) return; // If locked, do nothing
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.AUDIO || Action.get_lockState() == Action.LockState.DISK_ELEMENT) return; // If locked, do nothing
 		Action.set_element(music);
 	}
 
 	private void on_lockState_changed(){
-		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.AUDIO) {
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.AUDIO || Action.get_lockState() == Action.LockState.DISK_ELEMENT) {
 			block.setAlpha(0.5f);
 		}
 		else {

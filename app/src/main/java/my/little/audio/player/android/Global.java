@@ -8,6 +8,7 @@ import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.ResTree.Directory;
 import my.little.audio.player.android.ResTree.Music;
 import my.little.audio.player.android.queues.Queue;
+import my.little.audio.player.android.queues.Queues;
 
 import android.app.Application;
 
@@ -33,6 +34,20 @@ import java.util.List;
 public class Global extends Application {
 	public static final String APP_TAG = "myLittleAudioPlayer";
 	private static Global instance;
+	
+	//region DisplayState
+	public enum DisplayState {
+		DISK_ELEMENT,
+		QUEUES,
+		QUEUE_CONTENT
+	}
+	private static DisplayState displayState = DisplayState.DISK_ELEMENT;
+	public static DisplayState getDisplayState(){ return displayState; }
+	public static void setDisplayState(DisplayState new_displayState){
+		displayState = new_displayState;
+		Signals.emitSignal("onDisplayStateChanged");
+	}
+	//endregion
 
 	public static MixingState mx_state = new MixingState();
 
@@ -81,9 +96,13 @@ public class Global extends Application {
 		Signals.createEvent("onAudioSet");
 		Signals.createEvent("onPBStateChanged");
 		Signals.createEvent("onSongFinished");
+		Signals.createEvent("onDisplayStateChanged");
 		
 		// Load the Resource Tree
 		ResTree.init(this);
+		
+		// Load the Queues
+		Queues.init();
 		
 		// Connect to the Service AudioPlayer
 		SessionToken sessionToken = new SessionToken(this,

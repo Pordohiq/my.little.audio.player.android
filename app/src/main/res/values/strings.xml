@@ -31,4 +31,6 @@
     <string name="active_mxs_toggle_repeat">toggle repeat</string>
 	<string name="active_mxs_toggle_queue">toggle queue</string>
 	<string name="active_mxs_toggle_shuffle">toggle shuffle</string>
+	<string name="file_view_queuePath">QUEUES://</string>
+	<string name="action_popup_new_queue">Enter new Queue name:</string>
 </resources>

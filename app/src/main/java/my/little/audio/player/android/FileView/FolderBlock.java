@@ -73,17 +73,17 @@ public class FolderBlock extends LinearLayout {
 	}
 
 	private void mainClick(){
-		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.FOLDER) return; // If locked, do nothing
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.FOLDER || Action.get_lockState() == Action.LockState.DISK_ELEMENT) return; // If locked, do nothing
 		Global.enterSubfolder(folder);
 	}
 
 	private void secondClick() {
-		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.FOLDER) return; // If locked, do nothing
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.FOLDER || Action.get_lockState() == Action.LockState.DISK_ELEMENT) return; // If locked, do nothing
 		Action.set_element(folder);
 	}
 
 	private void on_lockState_changed(){
-		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.FOLDER) {
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.FOLDER || Action.get_lockState() == Action.LockState.DISK_ELEMENT) {
 			block.setAlpha(0.5f);
 		}
 		else {

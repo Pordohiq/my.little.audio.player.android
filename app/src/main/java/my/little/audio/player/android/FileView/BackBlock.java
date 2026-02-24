@@ -8,6 +8,7 @@ import android.content.Context;
 
 import android.util.AttributeSet;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import android.widget.LinearLayout;
@@ -19,7 +20,8 @@ import my.little.audio.player.android.Signals;
 
 public class BackBlock extends LinearLayout {
 	private LinearLayout block;
-
+	private Runnable main_runnable = Global::leaveSubfolder;
+	
 	public BackBlock(Context context) {
 		super(context);
 		init(context);
@@ -42,15 +44,20 @@ public class BackBlock extends LinearLayout {
 
 	private void mainClick(){
 		if (Action.get_lockState() == Action.LockState.ALL) return; // If locked, do nothing
-		Global.leaveSubfolder();
+		main_runnable.run();
 	}
 
 	private void on_lockState_changed(){
-		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.FOLDER) {
+		if (Action.get_lockState() == Action.LockState.ALL) {
 			block.setAlpha(0.5f);
 		}
 		else {
 			block.setAlpha(1f);
 		}
+	}
+	
+	public void override_mainClick(Runnable override_mainClick){
+		Log.i(Global.APP_TAG, "Overriding mainClick on back block");
+		main_runnable = override_mainClick;
 	}
 }

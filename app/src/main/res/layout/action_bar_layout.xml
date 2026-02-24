@@ -8,7 +8,7 @@
 		android:id="@+id/action_general"
 		android:layout_width="match_parent"
 		android:layout_height="50dp"
-		android:visibility="gone">
+		android:visibility="visible">
 		
 		<ImageView
 			android:id="@+id/action_general_add_music"
@@ -17,6 +17,8 @@
 			android:layout_width="50dp"
 			android:layout_height="50dp"
 			android:layout_weight="1"
+			
+			android:visibility="visible"
 			
 			android:src="@drawable/action_general_add_music" />
 		
@@ -28,7 +30,21 @@
 			android:layout_height="50dp"
 			android:layout_weight="1"
 			
+			android:visibility="visible"
+			
 			android:src="@drawable/action_general_add_folder" />
+		
+		<ImageView
+			android:id="@+id/action_general_add_queue"
+			android:contentDescription="@string/action_general_add_folder"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="4"
+			
+			android:visibility="gone"
+			
+			android:src="@drawable/action_music_queue_add" />
 		
 		<View
 			android:layout_width="2dp"
