@@ -11,16 +11,19 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
 import my.little.audio.player.android.Global;
+import my.little.audio.player.android.MixingState;
 import my.little.audio.player.android.R;
 import my.little.audio.player.android.ResTree.Directory;
 import my.little.audio.player.android.ResTree.DiskElement;
 import my.little.audio.player.android.ResTree.Music;
 import my.little.audio.player.android.Signals;
+import my.little.audio.player.android.queues.Queues;
 
 public class ActionBar extends LinearLayout {
 	private View action_general;
@@ -31,6 +34,8 @@ public class ActionBar extends LinearLayout {
 	private View add_music_button;
 	private View add_folder_button;
 	private View add_queue_button;
+	
+	private ImageView action_music_toggle_queue;
 
 	private DiskElement original_element;
 	
@@ -63,6 +68,8 @@ public class ActionBar extends LinearLayout {
 		add_folder_button = findViewById(R.id.action_general_add_folder);
 		add_queue_button = findViewById(R.id.action_general_add_queue);
 		
+		action_music_toggle_queue = findViewById(R.id.action_music_toggle_queue);
+		
 		// Link the general nodes
 		add_music_button.setOnClickListener(view -> Action.open_new_audio_file_dialog());
 		add_folder_button.setOnClickListener(view -> Action.request_system_folder_name(context));
@@ -79,6 +86,8 @@ public class ActionBar extends LinearLayout {
 		findViewById(R.id.action_folder_rename).setOnClickListener(view -> Action.rename_element(context));
 		findViewById(R.id.action_music_rename).setOnClickListener(view -> Action.rename_element(context));
 
+		action_music_toggle_queue.setOnClickListener(view -> toggle_queue());
+		
 		findViewById(R.id.action_music_move).setOnClickListener(view -> init_file_moving());
 		findViewById(R.id.action_folder_move).setOnClickListener(view -> init_file_moving());
 
@@ -92,6 +101,7 @@ public class ActionBar extends LinearLayout {
 		onActionSet();
 		Signals.subscribeToEvent("onDisplayStateChanged", this::onDisplayStateChanged);
 		onDisplayStateChanged();
+		Signals.subscribeToEvent("onQueueLibChanged", this::verify_add_to_queue_button);
 	}
 	
 	private void onActionSet() {
@@ -113,6 +123,8 @@ public class ActionBar extends LinearLayout {
 			action_music.setVisibility(VISIBLE);
 			action_folder.setVisibility(GONE);
 			action_move_dialog.setVisibility(GONE);
+			
+			verify_add_to_queue_button();
 		} else {
 			action_general.setVisibility(VISIBLE);
 			action_music.setVisibility(GONE);
@@ -156,5 +168,25 @@ public class ActionBar extends LinearLayout {
 		}
 		Action.move_file(original_element, Global.getPath());
 		original_element = null;
+	}
+	
+	private void verify_add_to_queue_button(){
+		boolean can_add_to_queue = Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE && Queues.get_active_queue() != null;
+		if(can_add_to_queue) {
+			action_music_toggle_queue.setAlpha(1f);
+		} else {
+			action_music_toggle_queue.setAlpha(0.5f);
+		}
+		
+		if (can_add_to_queue && Action.get_element() instanceof Music && Queues.get_active_queue().has_song((Music) Action.get_element())) {
+			action_music_toggle_queue.setImageResource(R.drawable.action_music_queue_remove);
+		} else {
+			action_music_toggle_queue.setImageResource(R.drawable.action_music_queue_add);
+		}
+	}
+	
+	private void toggle_queue() {
+		if (!(Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE && Queues.get_active_queue() != null) || Action.get_element() == null || Queues.get_active_queue() == null) return;
+		Queues.add_music_to_queue((Music) Action.get_element(), Queues.get_active_queue());
 	}
 }

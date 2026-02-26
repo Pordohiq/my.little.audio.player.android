@@ -9,8 +9,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.jetbrains.annotations.Contract;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,11 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import my.little.audio.player.android.Global;
+import my.little.audio.player.android.MixingState;
+import my.little.audio.player.android.ResTree.Music;
+import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.Signals;
 
 public class Queues {
 	@NonNull
-	private static final List<Queue> loaded_queues = new ArrayList<>();
+	public static final List<Queue> loaded_queues = new ArrayList<>();
 	@Nullable
 	private static Queue active_queue;
 	
@@ -69,14 +70,48 @@ public class Queues {
 		if (!content.isEmpty()) {
 			String[] lines = content.split("\n");
 			for (String line : lines) {
+				Log.v(Global.APP_TAG, "Loading queue: " + line);
 				loaded_queues.add(new Queue(line));
+			}
+		}
+	}
+	
+	public static void print_queues(){
+		for (Queue queue : loaded_queues) {
+			Log.v(Global.APP_TAG, queue.toString());
+		}
+		if (active_queue != null) Log.v(Global.APP_TAG, "Active queue: " + active_queue);
+	}
+	
+	private static void cleanup_queues(){
+		if (ResTree.library == null) {
+			Log.w(Global.APP_TAG, "Library not loaded, skipping cleanup");
+			return;
+		}
+		for (Queue queue : loaded_queues) {
+			for (Music music : queue.get_songs()) {
+				if (ResTree.get_local_element_path(music, null, null) == null){
+					queue.remove_song(music);
+				}
 			}
 		}
 	}
 	
 	public static void init(){
 		read_queues();
+		print_queues();
+		cleanup_queues();
+		save_queues();
 		Signals.createEvent("onQueueLibChanged");
+		Signals.createEvent("onQueueSet");
+		
+		Signals.subscribeToEvent("onMxStateChanged", Queues::on_mx_state_changed);
+	}
+	
+	private static void on_mx_state_changed(){
+		if (Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE && active_queue == null){
+			Global.mx_state.toggle_queue_state();
+		}
 	}
 	
 	public static void create_new_queue(@NonNull String name){
@@ -92,11 +127,30 @@ public class Queues {
 	
 	public static void set_active_queue(@NonNull Queue queue){
 		if (!loaded_queues.contains(queue)) return;
+		if (queue == active_queue) unset_active_queue();
 		active_queue = queue;
+		Global.mx_state.activate_loaded_queue();
+		Signals.emitSignal("onQueueSet");
+	}
+	
+	public static void unset_active_queue(){
+		active_queue = null;
+		if (Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE) Global.mx_state.toggle_queue_state();
 	}
 	
 	@Nullable
 	public static Queue get_active_queue(){
 		return active_queue;
+	}
+	
+	public static void add_music_to_queue(@NonNull Music music, @NonNull Queue queue){
+		if (queue.has_song(music)) {
+			queue.remove_song(music);
+		} else {
+			queue.add_song(music);
+		}
+		Log.v(Global.APP_TAG, queue.toString());
+		save_queues();
+		Signals.emitSignal("onQueueLibChanged");
 	}
 }

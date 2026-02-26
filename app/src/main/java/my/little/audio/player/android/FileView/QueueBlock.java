@@ -77,8 +77,10 @@ public class QueueBlock extends LinearLayout {
 		queueName.setOnClickListener(view -> mainClick());
 		moreIcon.setOnClickListener(view -> secondClick());
 		// Connection with ACTION
+		Signals.subscribeToEvent("onActionQueueChanged", this::check_more_icon);
 		check_more_icon();
-		
+		Signals.subscribeToEvent("onQueueSet", this::check_main_icon);
+		check_main_icon();
 	}
 	
 	private void mainClick(){

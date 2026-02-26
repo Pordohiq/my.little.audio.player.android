@@ -90,6 +90,11 @@ public class MixingState {
 		}
 		Signals.emitSignal("onMxStateChanged");
 	}
+	
+	public void activate_loaded_queue(){
+		current_queue_state = queue_state.LOADED_QUEUE;
+		Signals.emitSignal("onMxStateChanged");
+	}
 	//endregion
 	
 	public MixingState () {

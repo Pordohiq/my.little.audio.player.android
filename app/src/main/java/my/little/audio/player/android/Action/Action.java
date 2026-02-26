@@ -47,6 +47,7 @@ public class Action {
 	public Action() {
 		Signals.createEvent("onActionElementChanged");
 		Signals.createEvent("onActionQueueChanged");
+		
 		Signals.createEvent("onLockStateChanged");
 		Signals.createEvent("requestLibRootPathFromSysDialog");
 

@@ -189,7 +189,7 @@ public class ResTree {
 	}
 	
 	@Nullable
-	private static DiskElement get_element_at_path(@NonNull List<String> sd_path) {
+	public static DiskElement get_element_at_path(@NonNull List<String> sd_path) {
 		if (sd_path.isEmpty()) {
 			return null;
 		}
@@ -224,7 +224,7 @@ public class ResTree {
 	}
 
 	@Nullable
-	private static List<String> get_local_element_path(@NonNull DiskElement element, @Nullable List<DiskElement> data, @Nullable List<String> path) {
+	public static List<String> get_local_element_path(@NonNull DiskElement element, @Nullable List<DiskElement> data, @Nullable List<String> path) {
 		if (library == null) return null;
 		if (data == null) data = library;
 		if (path == null) path = new ArrayList<>();
@@ -255,6 +255,21 @@ public class ResTree {
 		childPath.remove(childPath.size() - 1);
 		if (childPath.isEmpty() || get_element_at_path(childPath) == null) { return null; }
         return (Directory) get_element_at_path(childPath);
+	}
+	
+	@Nullable
+	public static DiskElement get_element_by_Uri(@NonNull Uri needed_uri, @Nullable List<DiskElement> data){
+		if (library == null) return null;
+		if (data == null) data = library;
+		for (DiskElement element : data){
+			if (element.getUri() == needed_uri){
+				return element;
+			}
+			if (element instanceof Directory){
+				return get_element_by_Uri(needed_uri, ((Directory) element).getChildren());
+			}
+		}
+		return null;
 	}
 	//endregion
 	//region SAF Interactions

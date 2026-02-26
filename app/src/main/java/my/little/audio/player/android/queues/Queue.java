@@ -11,17 +11,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import my.little.audio.player.android.Global;
+import my.little.audio.player.android.ResTree.DiskElement;
+import my.little.audio.player.android.ResTree.Music;
+import my.little.audio.player.android.ResTree.ResTree;
 
 public class Queue {
 	protected String name;
-	protected List<Uri> contents;
+	protected List<Music> contents;
 	
 	private int position = -1;
 	
-	public Queue(@NonNull String new_name, @NonNull List<Uri> new_contents){
+	public Queue(@NonNull String new_name, @NonNull List<Music> new_contents){
 		contents = new_contents;
 		name = new_name;
 	}
@@ -32,11 +37,15 @@ public class Queue {
 		String[] parts = asString.split(">", 2);
 		this.name = parts[0];
 		
+		String paths = parts[1];
 		this.contents = new ArrayList<>();
-		if (parts.length > 1 && !parts[1].isEmpty()) {
-			String[] uriStrings = parts[1].split(",");
-			for (String s : uriStrings) {
-				this.contents.add(Uri.parse(s));
+		if (!paths.isEmpty()) {
+			String[] local_paths = paths.split(":");
+			for (String s : local_paths) {
+				if (Objects.equals(s, "")) continue;
+				List<String> list = Arrays.asList(s.split("/"));
+				Music music = (Music) ResTree.get_element_at_path(list);
+				contents.add(music);
 			}
 		}
 	}
@@ -44,7 +53,7 @@ public class Queue {
 	public int get_song_count() { return contents.size(); }
 	
 	@Nullable
-	public Uri get_next_song(boolean loop){
+	public Music get_next_song(boolean loop){
 		try {
 			position ++;
 			
@@ -57,22 +66,41 @@ public class Queue {
 	@NonNull @Override
 	public String toString() {
 		StringBuilder result = new StringBuilder(name + ">");
-		for (Uri uri : contents) {
-			result.append(uri.toString());
+		for (Music song : contents) {
+			result.append(":");
+			List<String> path = ResTree.get_local_element_path(song, null, null);
+			if (path == null) continue;
+			boolean first_run = true;
+			for (String part : path) {
+				if (first_run) {
+					first_run = false;
+				} else {
+					result.append("/");
+				}
+				result.append(part);
+			}
 		}
 		return result.toString();
 	}
 	
-	public void add_song(@NonNull Uri song) {
-		contents.add(song);
+	public void add_song(@NonNull Music song) {
+		if (!contents.contains(song)) contents.add(song);
 	}
 	
-	public void remove_song(@NonNull Uri song) {
+	public void remove_song(@NonNull Music song) {
 		contents.remove(song);
+	}
+	
+	public boolean has_song(Music song){
+		return contents.contains(song);
 	}
 	
 	
 	public String getName() {
 		return name;
+	}
+	
+	public List<Music> get_songs() {
+		return new ArrayList<>(contents);
 	}
 }

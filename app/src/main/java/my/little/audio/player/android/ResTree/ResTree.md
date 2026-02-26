@@ -23,7 +23,7 @@ By themselves they don't directly interact with the storage on the phone but rat
 - **`get_element_at_path(List<String> sd_path)`** This function returns the DiskElement that is found at the specific path. If no DiskElement is found the function returns null.
 - **`get_local_element_path(DiskElement element, List<DiskElement> data, List<String> path)`** This returns the `List<String>` internal path of a file in the structure.
 - **`get_parent(DiskElement element)`** This function returns the parent of the given element.
-
+- **`get_element_by_Uri(Uri needed_uri, null)`** This function finds the element with the Uri and returns null if not found. This method is recursive.
 ## SAF Interactions
 These are private methods that are used by the API section and are the ones that actually *do stuff* on the disk. (Quite honestly these are the functions, where I pretty much rely on AI, because I am very much confused, what DocumentUri and TreeUri and another Uri and java Uri, and I am confused.)
 
@@ -67,4 +67,4 @@ These are the functions that are exposed and actively used by other parts of the
 - **`rename_file(DiskElement element, String newName)`** This function renames a file. It takes a DiskElement and a String and Updates the structure.
 - **`delete_file(DiskElement element)`** This function deletes a file from the library.
 
-*LomJek, 18.2.2026*
+*LomJek, 25.2.2026*
