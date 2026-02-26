@@ -93,9 +93,13 @@ public class Global extends Application {
 		instance = this;
 		
 		Signals.createEvent("onPathChanged");
+		
 		Signals.createEvent("onAudioSet");
+		
 		Signals.createEvent("onPBStateChanged");
+		
 		Signals.createEvent("onSongFinished");
+		
 		Signals.createEvent("onDisplayStateChanged");
 		
 		// Load the Resource Tree
@@ -221,6 +225,28 @@ public class Global extends Application {
 		}catch (ArithmeticException aex) {
 			return 0;
 		}
+	}
+	
+	public static void play_next(){
+		if(mx_state.get_queue_state() == MixingState.queue_state.NONE){
+			if (mx_state.get_repeat_state() == MixingState.repeat_state.ONE){
+				setAudio(current_audio, true);
+			} else {
+				Signals.emitSignal("onSongFinished");
+			}
+			return;
+		}
+		
+		MixingState.queue_state[] queue_states = {MixingState.queue_state.DIRECTORY, MixingState.queue_state.RECURSIVE_DIRECTORY, MixingState.queue_state.LOADED_QUEUE};
+		if (Arrays.asList(queue_states).contains(mx_state.get_queue_state()) && mx_state.get_repeat_state() == MixingState.repeat_state.NONE) {
+			Queue cur_queue = Queues.get_active_queue();
+			if (cur_queue == null) return;
+			Music next_song = cur_queue.get_next_song(false);
+			if (next_song == null) return;
+			setAudio(next_song, true);
+			return;
+		}
+		// TODO: Are there any more states?
 	}
 	
 	public static void seekTo(int seconds) {

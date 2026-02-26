@@ -12,7 +12,6 @@ import android.util.AttributeSet;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -22,14 +21,12 @@ import androidx.annotation.NonNull;
 
 import java.util.Locale;
 
-import my.little.audio.player.android.queues.Queues;
-
 public class Active extends LinearLayout {
 	private TextView title;
 	
 	private ImageView previousButton; // TODO: Hook it up
 	private ImageView playButton;
-	private ImageView nextButton; // TODO: Hook it up as well
+	private ImageView nextButton;
 	
 	//region MXState
 	private ImageView active_mxs_repeat;
@@ -186,6 +183,8 @@ public class Active extends LinearLayout {
 		playButton = findViewById(R.id.playButton);
 		nextButton = findViewById(R.id.nextButton);
 		
+		nextButton.setOnClickListener(view -> Global.play_next());
+		
 		seekBarInit();
 		MXInit();
 		
@@ -201,6 +200,8 @@ public class Active extends LinearLayout {
 		
 		Signals.subscribeToEvent("onPBStateChanged", this::onPbStateChanged);
 		Signals.subscribeToEvent("onAudioSet", this::onAudioSet);
+		Signals.subscribeToEvent("onMxStateChanged", this::onMxStateChanged);
+		Signals.subscribeToEvent("onSongFinished", this::onSongFinished);
 	}
 	//endregion
 	//region Signals
@@ -214,10 +215,26 @@ public class Active extends LinearLayout {
 		}
 	}
 	
+	private void onMxStateChanged() {
+		if (Global.mx_state.get_queue_state() == MixingState.queue_state.NONE || Global.mx_state.get_repeat_state() == MixingState.repeat_state.ONE){
+			nextButton.setAlpha(0.5f);
+		} else {
+			nextButton.setAlpha(1f);
+		}
+	}
+	
 	private void onAudioSet() {
 		title.setText(Global.current_audio.getName());
 		progressBar.setMax(Global.getPlayBackDuration());
 		progressBar.setProgress(0);
+	}
+	
+	private void onSongFinished(){
+		title.setText(getContext().getString(R.string.active_title_none));
+		progressBar.setProgress(1);
+		progressBar.setMax(1);
+		timeInNode.setText("--:--");
+		timeRemainingNode.setText("--:--");
 	}
 	//endregion
 }

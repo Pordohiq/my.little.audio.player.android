@@ -4,7 +4,6 @@ package my.little.audio.player.android.queues;
 // It is published on GitHub under the LGPLv3 License:
 // https://github.com/lomjek/my.little.audio.player.android
 
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Objects;
 
 import my.little.audio.player.android.Global;
-import my.little.audio.player.android.ResTree.DiskElement;
 import my.little.audio.player.android.ResTree.Music;
 import my.little.audio.player.android.ResTree.ResTree;
 
@@ -56,7 +54,11 @@ public class Queue {
 	public Music get_next_song(boolean loop){
 		try {
 			position ++;
-			
+			if (position  >= get_song_count()){
+				if (loop) position = 0;
+				else return null;
+			}
+			return contents.get(position);
 		} catch (IndexOutOfBoundsException indexOutOfBoundsException) {
 			Log.e(Global.APP_TAG, "Index out of bounds, when getting queue element from " + name);
 		}
