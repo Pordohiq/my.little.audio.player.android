@@ -106,11 +106,34 @@ public class Queues {
 		Signals.createEvent("onQueueSet");
 		
 		Signals.subscribeToEvent("onMxStateChanged", Queues::on_mx_state_changed);
+		Signals.subscribeToEvent("onPathChanged", Queues::on_path_changed);
+	}
+	
+	private static void on_path_changed(){
+		if (active_queue == null) {
+			return;
+		}
+		if (active_queue instanceof FolderQueue) {
+			if (((FolderQueue) active_queue).is_recursive()){
+				if (!ResTree.is_subPath(Global.getPath(), ((FolderQueue) active_queue).get_path())) {
+					Global.mx_state.deactivate_queue();
+				}
+			} else{
+				Global.mx_state.deactivate_queue();
+			}
+		}
 	}
 	
 	private static void on_mx_state_changed(){
+		Log.i(Global.APP_TAG, Global.mx_state.get_queue_state().toString());
 		if (Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE && active_queue == null){
 			Global.mx_state.toggle_queue_state();
+		} else if (Global.mx_state.get_queue_state() == MixingState.queue_state.DIRECTORY) {
+			active_queue = new FolderQueue(Global.getPath(), false);
+			Signals.emitSignal("onQueueSet");
+		} else if (Global.mx_state.get_queue_state() == MixingState.queue_state.RECURSIVE_DIRECTORY) {
+			active_queue = new FolderQueue(Global.getPath(), true);
+			Signals.emitSignal("onQueueSet");
 		}
 	}
 	

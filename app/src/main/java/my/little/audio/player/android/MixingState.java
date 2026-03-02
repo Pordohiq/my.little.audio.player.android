@@ -95,6 +95,13 @@ public class MixingState {
 		current_queue_state = queue_state.LOADED_QUEUE;
 		Signals.emitSignal("onMxStateChanged");
 	}
+	
+	public void deactivate_queue(){
+		current_queue_state = queue_state.NONE;
+		if (current_repeat_state == repeat_state.QUEUE) current_repeat_state = repeat_state.ONE;
+		current_shuffle_state = shuffle_state.NONE;
+		Signals.emitSignal("onMxStateChanged");
+	}
 	//endregion
 	
 	public MixingState () {

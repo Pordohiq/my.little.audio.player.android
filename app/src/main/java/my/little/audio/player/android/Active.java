@@ -201,6 +201,7 @@ public class Active extends LinearLayout {
 		Signals.subscribeToEvent("onPBStateChanged", this::onPbStateChanged);
 		Signals.subscribeToEvent("onAudioSet", this::onAudioSet);
 		Signals.subscribeToEvent("onMxStateChanged", this::onMxStateChanged);
+		onMxStateChanged();
 		Signals.subscribeToEvent("onSongFinished", this::onSongFinished);
 	}
 	//endregion
@@ -221,6 +222,7 @@ public class Active extends LinearLayout {
 		} else {
 			nextButton.setAlpha(1f);
 		}
+		update_mx_buttons();
 	}
 	
 	private void onAudioSet() {

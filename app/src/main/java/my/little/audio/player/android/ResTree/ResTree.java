@@ -271,6 +271,25 @@ public class ResTree {
 		}
 		return null;
 	}
+	
+	@NonNull
+	public static List<Music> get_musics_at_path(@NonNull List<String> path, boolean recursive, @Nullable List<DiskElement> data) {
+		List<Music> result = new ArrayList<>();
+		List<DiskElement> elements = load_folder(path);
+		if (elements == null) return new ArrayList<>();
+		
+		for (DiskElement element : elements) {
+			if (element instanceof Music){
+				result.add((Music) element);
+			} else if (recursive && element instanceof Directory) {
+				List<String> subPath = new ArrayList<>(path);
+				subPath.add(element.getName());
+				result.addAll(get_musics_at_path(subPath, true, data));
+			}
+		}
+		return result;
+	}
+	
 	//endregion
 	//region SAF Interactions
 	@Nullable
@@ -403,6 +422,13 @@ public class ResTree {
 			library = load_library(library_root);
 			current_folder = library;
 		}
+	}
+	
+	public static boolean is_subPath(@NonNull List<String> list, @NonNull List<String> prefix) {
+		if (prefix.size() > list.size()) {
+			return false;
+		}
+		return list.subList(0, prefix.size()).equals(prefix);
 	}
 
 	public static void add_audio_file(@NonNull Uri audio_uri, @NonNull List<String> path){
