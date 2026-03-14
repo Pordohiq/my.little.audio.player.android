@@ -22,8 +22,9 @@ public class Queue {
 	protected String name;
 	protected List<Music> contents;
 	
-	private int position = -1;
+	protected int position = -1;
 	
+	//region Con/Destruction
 	public Queue(@NonNull String new_name, @NonNull List<Music> new_contents){
 		contents = new_contents;
 		name = new_name;
@@ -48,23 +49,6 @@ public class Queue {
 		}
 	}
 	
-	public int get_song_count() { return contents.size(); }
-	
-	@Nullable
-	public Music get_next_song(boolean loop){
-		try {
-			position ++;
-			if (position  >= get_song_count()){
-				if (loop) position = 0;
-				else return null;
-			}
-			return contents.get(position);
-		} catch (IndexOutOfBoundsException indexOutOfBoundsException) {
-			Log.e(Global.APP_TAG, "Index out of bounds, when getting queue element from " + name);
-		}
-		return null;
-	}
-	
 	@NonNull @Override
 	public String toString() {
 		StringBuilder result = new StringBuilder(name + ">");
@@ -84,6 +68,30 @@ public class Queue {
 		}
 		return result.toString();
 	}
+	//endregion
+	
+	public int get_song_count() { return contents.size(); }
+	
+	@Nullable
+	public Music get_next_song(boolean loop){
+		return get_next_song(loop, contents);
+	}
+	
+	protected Music get_next_song(boolean loop, @NonNull List<Music> songs){
+		if (songs.isEmpty()) return null;
+		try {
+			position ++;
+			if (position  >= get_song_count()){
+				if (loop) position = 0;
+				else return null;
+			}
+			return songs.get(position);
+		} catch (IndexOutOfBoundsException indexOutOfBoundsException) {
+			Log.e(Global.APP_TAG, "Index out of bounds, when getting queue element from " + name);
+		}
+		return null;
+	}
+	
 	
 	public void add_song(@NonNull Music song) {
 		if (!contents.contains(song)) contents.add(song);
@@ -98,7 +106,7 @@ public class Queue {
 	}
 	
 	
-	public String getName() {
+	public String get_name() {
 		return name;
 	}
 	

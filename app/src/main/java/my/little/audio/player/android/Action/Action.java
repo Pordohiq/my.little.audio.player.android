@@ -89,7 +89,7 @@ public class Action {
 	}
 	
 	public static void set_queue(@NonNull Queue queue){
-		Log.i(Global.APP_TAG, "Setting queue: " + queue.getName());
+		Log.i(Global.APP_TAG, "Setting queue: " + queue.get_name());
 		if (queue == currentQueue) {
 			unset_queue();
 		} else {

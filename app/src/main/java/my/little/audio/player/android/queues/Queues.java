@@ -135,6 +135,10 @@ public class Queues {
 			active_queue = new FolderQueue(Global.getPath(), true);
 			Signals.emitSignal("onQueueSet");
 		}
+		if (Global.mx_state.get_shuffle_state() == MixingState.shuffle_state.ON) {
+			if (active_queue == null) return;
+			active_queue = new ShuffledQueue(active_queue);
+		}
 	}
 	
 	public static void create_new_queue(@NonNull String name){

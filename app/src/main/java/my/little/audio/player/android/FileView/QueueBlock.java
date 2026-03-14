@@ -71,7 +71,7 @@ public class QueueBlock extends LinearLayout {
 	
 	public void setUp(Queue new_queue) {
 		queue = new_queue;
-		queueName.setText(queue.getName());
+		queueName.setText(queue.get_name());
 		// Onclick
 		queueIcon.setOnClickListener(view -> mainClick());
 		queueName.setOnClickListener(view -> mainClick());
