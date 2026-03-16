@@ -14,7 +14,7 @@ public class FolderQueue extends Queue {
 	public FolderQueue(@NonNull List<String> path, boolean recursive){
 		super("__folder_queue__", ResTree.get_musics_at_path(new ArrayList<>(path), recursive, null));
 		this.recursive = recursive;
-		this.path = path;
+		this.path = new ArrayList<>(path);
 	}
 	
 	@NonNull
