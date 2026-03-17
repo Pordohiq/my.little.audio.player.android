@@ -4,6 +4,8 @@ package my.little.audio.player.android;
 // It is published on GitHub under the LGPLv3 License:
 // https://github.com/lomjek/my.little.audio.player.android
 
+// @ {} [] # \ || !=
+
 import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.ResTree.Directory;
 import my.little.audio.player.android.ResTree.Music;
@@ -269,7 +271,7 @@ public class Global extends Application {
 			setAudio(next_song, true);
 			return;
 		}
-		// TODO: Are there any more states?
+		Log.e(Global.APP_TAG, "When you are here, something really weird must have happened...");
 	}
 	
 	public static void seekTo(int seconds) {

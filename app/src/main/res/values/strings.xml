@@ -33,4 +33,6 @@
 	<string name="active_mxs_toggle_shuffle">toggle shuffle</string>
 	<string name="file_view_queuePath">QUEUES://</string>
 	<string name="action_popup_new_queue">Enter new Queue name:</string>
+	<string name="music_queue_content_block_move_down">move down</string>
+	<string name="music_queue_content_block_move_up">move up</string>
 </resources>

@@ -29,7 +29,8 @@ public class Queues {
 	@Nullable
 	private static Queue active_queue;
 	
-	private static void save_queues(){
+	//region Loading/Saving
+	public static void save_queues(){
 		StringBuilder queues_as_string = new StringBuilder();
 		for (Queue queue: loaded_queues) {
 			queues_as_string.append(queue.toString()).append("\n");
@@ -96,6 +97,7 @@ public class Queues {
 			}
 		}
 	}
+	//endregion
 	
 	public static void init(){
 		read_queues();
@@ -109,16 +111,21 @@ public class Queues {
 		Signals.subscribeToEvent("onPathChanged", Queues::on_path_changed);
 	}
 	
+	//region Signals
 	private static void on_path_changed(){
 		if (active_queue == null) {
 			return;
 		}
 		if (active_queue instanceof FolderQueue) {
 			if (((FolderQueue) active_queue).is_recursive()){
-				if (!ResTree.is_subPath(Global.getPath(), ((FolderQueue) active_queue).get_path())) {
+				List<String> glob_path = Global.getPath();
+				List<String> rfq_path = ((FolderQueue) active_queue).get_path();
+				
+				if (!ResTree.is_subPath(glob_path, rfq_path)) {
 					Global.mx_state.deactivate_queue();
 				}
-			} else{
+			}
+			else{
 				Global.mx_state.deactivate_queue();
 			}
 		}
@@ -126,6 +133,13 @@ public class Queues {
 	
 	private static void on_mx_state_changed(){
 		Log.i(Global.APP_TAG, Global.mx_state.get_queue_state().toString());
+		
+		if (Global.mx_state.get_queue_state() == MixingState.queue_state.NONE) {
+			unset_active_queue();
+			Signals.emitSignal("onQueueSet");
+			return;
+		}
+		
 		if (Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE && active_queue == null){
 			Global.mx_state.toggle_queue_state();
 		} else if (Global.mx_state.get_queue_state() == MixingState.queue_state.DIRECTORY) {
@@ -135,11 +149,13 @@ public class Queues {
 			active_queue = new FolderQueue(Global.getPath(), true);
 			Signals.emitSignal("onQueueSet");
 		}
+		
 		if (Global.mx_state.get_shuffle_state() == MixingState.shuffle_state.ON) {
 			if (active_queue == null) return;
 			active_queue = new ShuffledQueue(active_queue);
 		}
 	}
+	//endregion
 	
 	public static void create_new_queue(@NonNull String name){
 		loaded_queues.add(new Queue(name, new ArrayList<>()));

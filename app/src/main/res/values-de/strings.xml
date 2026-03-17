@@ -30,4 +30,6 @@
 	<string name="active_mxs_toggle_shuffle">Durchmischung auswählen</string>
 	<string name="file_view_queuePath">WARTESCHLANGEN://</string>
 	<string name="action_popup_new_queue">Name der neuen Warteschlange:</string>
+	<string name="music_queue_content_block_move_down">verschieben nach unten</string>
+	<string name="music_queue_content_block_move_up">verschieben nach oben</string>
 </resources>

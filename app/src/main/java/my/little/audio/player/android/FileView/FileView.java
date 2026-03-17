@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.List;
+
 import my.little.audio.player.android.Global;
 import my.little.audio.player.android.Signals;
 import my.little.audio.player.android.ResTree.ResTree;
@@ -53,6 +55,8 @@ public class FileView extends LinearLayout {
 			draw_queues();
 		} else if (Global.getDisplayState() == Global.DisplayState.DISK_ELEMENT) {
 			draw_diskElements();
+		} else if (Global.getDisplayState() == Global.DisplayState.QUEUE_CONTENT) {
+			draw_queue_contents();
 		} else {
 			Log.e(Global.APP_TAG, "Unknown display state: " + Global.getDisplayState() + " in FileView");
 		}
@@ -104,6 +108,25 @@ public class FileView extends LinearLayout {
 			else {
 				Log.w(Global.APP_TAG, "Unknown element type: " + element.getClass().getName());
 			}
+		}
+	}
+	
+	private void draw_queue_contents(){
+		fileContainer.removeAllViews();
+		if (Queues.get_active_queue() == null) return;
+		List<Music> songs = Queues.get_active_queue().get_songs();
+		
+		String formatted_path = getContext().getString(R.string.file_view_queuePath) + Queues.get_active_queue().get_name();
+		pathDisplay.setText(formatted_path);
+		
+		BackBlock back = new BackBlock(getContext());
+		back.override_mainClick(() -> Global.setDisplayState(Global.DisplayState.QUEUES));
+		fileContainer.addView(back);
+		
+		for (Music element : songs) {
+			MusicQueueBlock block = new MusicQueueBlock(getContext());
+			block.setUp(element, Queues.get_active_queue());
+			fileContainer.addView(block);
 		}
 	}
 }

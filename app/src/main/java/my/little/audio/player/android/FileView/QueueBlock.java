@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import my.little.audio.player.android.Action.Action;
+import my.little.audio.player.android.Global;
 import my.little.audio.player.android.R;
 import my.little.audio.player.android.Signals;
 import my.little.audio.player.android.queues.Queue;
@@ -72,10 +73,15 @@ public class QueueBlock extends LinearLayout {
 	public void setUp(Queue new_queue) {
 		queue = new_queue;
 		queueName.setText(queue.get_name());
+		
 		// Onclick
 		queueIcon.setOnClickListener(view -> mainClick());
 		queueName.setOnClickListener(view -> mainClick());
 		moreIcon.setOnClickListener(view -> secondClick());
+		
+		queueIcon.setOnLongClickListener(view -> longPress());
+		queueName.setOnLongClickListener(view -> longPress());
+		
 		// Connection with ACTION
 		Signals.subscribeToEvent("onActionQueueChanged", this::check_more_icon);
 		check_more_icon();
@@ -94,8 +100,15 @@ public class QueueBlock extends LinearLayout {
 		Action.set_queue(queue);
 	}
 	
+	private boolean longPress() {
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.QUEUE) return false; // If locked, do nothing
+		Queues.set_active_queue(queue);
+		Global.setDisplayState(Global.DisplayState.QUEUE_CONTENT);
+		return true;
+	}
+	
 	private void on_lockState_changed(){
-		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.FOLDER) {
+		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.QUEUE) {
 			block.setAlpha(0.5f);
 		}
 		else {

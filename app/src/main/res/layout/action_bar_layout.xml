@@ -234,4 +234,13 @@
 			android:textColor="@color/darkGrey"
 			android:textSize="20sp"/>
 	</FrameLayout>
+	<TextView
+		android:id="@+id/action_queue_title_name"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center"
+		android:textSize="24sp"
+		android:visibility="gone"
+		android:textColor="@color/lightestGrey"
+		android:text="" />
 </FrameLayout>

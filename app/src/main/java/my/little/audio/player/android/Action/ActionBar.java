@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -30,6 +31,8 @@ public class ActionBar extends LinearLayout {
 	private View action_music;
 	private View action_folder;
 	private View action_move_dialog;
+	
+	private TextView queue_title_name;
 	
 	private View add_music_button;
 	private View add_folder_button;
@@ -69,6 +72,8 @@ public class ActionBar extends LinearLayout {
 		add_queue_button = findViewById(R.id.action_general_add_queue);
 		
 		action_music_toggle_queue = findViewById(R.id.action_music_toggle_queue);
+		
+		queue_title_name = findViewById(R.id.action_queue_title_name);
 		
 		// Link the general nodes
 		add_music_button.setOnClickListener(view -> Action.open_new_audio_file_dialog());
@@ -139,12 +144,27 @@ public class ActionBar extends LinearLayout {
 		Action.unset_element();
 		if (Global.getDisplayState() == Global.DisplayState.DISK_ELEMENT){
 			add_queue_button.setVisibility(GONE);
+			queue_title_name.setVisibility(GONE);
 			add_music_button.setVisibility(VISIBLE);
 			add_folder_button.setVisibility(VISIBLE);
+			action_general.setVisibility(VISIBLE);
+		} else if (Global.getDisplayState() == Global.DisplayState.QUEUE_CONTENT) {
+			queue_title_name.setVisibility(VISIBLE);
+			if (Queues.get_active_queue() == null){
+				Log.e(Global.APP_TAG, "The Display State is set to Queue Content but there is no active queue...");
+				return;
+			}
+			queue_title_name.setText(Queues.get_active_queue().get_name());
+			add_queue_button.setVisibility(GONE);
+			add_music_button.setVisibility(GONE);
+			action_general.setVisibility(GONE);
+			add_folder_button.setVisibility(GONE);
 		} else {
 			add_queue_button.setVisibility(VISIBLE);
+			action_general.setVisibility(VISIBLE);
 			add_music_button.setVisibility(GONE);
 			add_folder_button.setVisibility(GONE);
+			queue_title_name.setVisibility(GONE);
 		}
 	}
 

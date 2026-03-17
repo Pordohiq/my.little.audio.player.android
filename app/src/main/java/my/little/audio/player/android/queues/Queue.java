@@ -105,12 +105,29 @@ public class Queue {
 		return contents.contains(song);
 	}
 	
-	
 	public String get_name() {
 		return name;
 	}
 	
 	public List<Music> get_songs() {
 		return new ArrayList<>(contents);
+	}
+	
+	public void move_song_up(Music song){
+		if (!contents.contains(song)) return;
+		int index = contents.indexOf(song);
+		if (index == 0) return;
+		Music tmp = contents.get(index - 1);
+		contents.set(index - 1, contents.get(index));
+		contents.set(index, tmp);
+	}
+	
+	public void move_song_down(Music song){
+		if (!contents.contains(song)) return;
+		int index = contents.indexOf(song);
+		if (index == contents.size() - 1) return;
+		Music tmp = contents.get(index + 1);
+		contents.set(index + 1, contents.get(index));
+		contents.set(index, tmp);
 	}
 }

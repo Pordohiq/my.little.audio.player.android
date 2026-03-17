@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/music_queue_block"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal"
+	android:gravity="center_vertical"
+	android:minHeight="50dp">
+	
+	<ImageView
+		android:id="@+id/music_c_icon"
+		android:layout_width="50dp"
+		android:layout_height="50dp"
+		android:src="@drawable/block_music" />
+	
+	<TextView
+		android:id="@+id/music_c_name"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:gravity="center_vertical"
+		android:minHeight="50dp"
+		android:text=""
+		android:textSize="25sp" />
+	
+	<ImageView
+		android:id="@+id/up_icon"
+		android:layout_width="50dp"
+		android:layout_height="50dp"
+		android:src="@drawable/back"
+		android:rotation="90"
+		android:contentDescription="@string/music_queue_content_block_move_up" />
+	
+	<ImageView
+		android:id="@+id/down_icon"
+		android:layout_width="50dp"
+		android:layout_height="50dp"
+		android:src="@drawable/back"
+		android:rotation="270"
+		android:contentDescription="@string/music_queue_content_block_move_down" />
+</LinearLayout>
