@@ -4,11 +4,12 @@
 	android:layout_height="50dp"
 	android:orientation="horizontal"
 	android:background="@color/middleGrey">
+	
 	<LinearLayout
 		android:id="@+id/action_general"
 		android:layout_width="match_parent"
 		android:layout_height="50dp"
-		android:visibility="visible">
+		android:visibility="gone">
 		
 		<ImageView
 			android:id="@+id/action_general_add_music"
@@ -210,6 +211,57 @@
 		
 		<ImageView
 			android:id="@+id/action_folder_trash"
+			android:contentDescription="@string/action_element_trash"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_element_trash" />
+	</LinearLayout>
+	<LinearLayout
+		android:id="@+id/action_queue"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:visibility="visible">
+		
+		<ImageView
+			android:id="@+id/action_queue_back"
+			android:contentDescription="@string/global_back"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/back" />
+		
+		<View
+			android:layout_width="2dp"
+			android:layout_height="match_parent"
+			android:background="@color/lightGrey"/>
+		
+		<ImageView
+			android:id="@+id/action_queue_rename"
+			android:contentDescription="@string/action_element_rename"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_element_rename" />
+		
+		<ImageView
+			android:id="@+id/action_queue_info"
+			android:contentDescription="@string/action_element_info"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/action_element_info" />
+		
+		<ImageView
+			android:id="@+id/action_queue_trash"
 			android:contentDescription="@string/action_element_trash"
 			
 			android:layout_width="50dp"

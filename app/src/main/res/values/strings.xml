@@ -35,4 +35,5 @@
 	<string name="action_popup_new_queue">Enter new Queue name:</string>
 	<string name="music_queue_content_block_move_down">move down</string>
 	<string name="music_queue_content_block_move_up">move up</string>
+	<string name="action_queue_rename_sysDialog">Rename Queue</string>
 </resources>

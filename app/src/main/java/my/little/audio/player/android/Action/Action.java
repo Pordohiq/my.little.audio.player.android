@@ -132,10 +132,12 @@ public class Action {
 
 	//region ActionBar_general functions
 	public static void button_refresh() {
+		set_lockState(Action.LockState.ALL);
 		Log.i(Global.APP_TAG, "Refreshing library");
 		Global.setPath(new ArrayList<>());
 		ResTree.reload_from_disk(Global.getInstance());
 		Signals.emitSignal("onPathChanged");
+		set_lockState(Action.LockState.NONE);
 	}
 	
 	public static void open_new_lib_root_dialog(){
@@ -183,12 +185,12 @@ public class Action {
 	//region ActionBar_element functions
 	public static void rename_element(Context context) {
 		if (currentElement == null) return;
-		Log.i(Global.APP_TAG, "Renaming element: " + ((DiskElement) currentElement).getName());
-		system_string_dialog(context, context.getString(R.string.action_element_rename_sysDialog), Action::finish_element_renaming, ((DiskElement) currentElement).getName());
+		Log.i(Global.APP_TAG, "Renaming element: " + currentElement.getName());
+		system_string_dialog(context, context.getString(R.string.action_element_rename_sysDialog), Action::finish_element_renaming, currentElement.getName());
 	}
 
 	private static void finish_element_renaming(@NonNull String new_name) {
-		ResTree.rename_file(((DiskElement) currentElement), new_name);
+		ResTree.rename_file(currentElement, new_name);
 		Signals.emitSignal("onPathChanged");
 		unset_element();
 	}
@@ -202,9 +204,29 @@ public class Action {
 
 	public static void delete_element() {
 		Log.i(Global.APP_TAG, "Deleting element");
-		ResTree.delete_file(((DiskElement) currentElement));
+		ResTree.delete_file(currentElement);
 		unset_element();
 		Signals.emitSignal("onPathChanged");
+	}
+	//endregion
+	//region ActionBar_queue functions
+	public static void rename_queue(Context context) {
+		if (currentQueue == null) return;
+		system_string_dialog(context, context.getString(R.string.action_queue_rename_sysDialog), Action::finish_queue_renaming, currentQueue.get_name());
+	}
+	
+	private static void finish_queue_renaming(@NonNull String new_name) {
+		if (currentQueue == null) return;
+		Queues.rename_queue(currentQueue, new_name);
+		unset_queue();
+	}
+	
+	public static void trash_queue(){
+		if (currentQueue == null) return;
+		Queues.loaded_queues.remove(currentQueue);
+		Queues.save_queues();
+		Signals.emitSignal("onQueueLibChanged");
+		unset_queue();
 	}
 	//endregion
 }

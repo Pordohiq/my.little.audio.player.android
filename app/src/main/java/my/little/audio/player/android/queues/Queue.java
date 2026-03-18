@@ -130,4 +130,8 @@ public class Queue {
 		contents.set(index + 1, contents.get(index));
 		contents.set(index, tmp);
 	}
+	
+	public void set_name(@NonNull String new_name) {
+		name = new_name;
+	}
 }

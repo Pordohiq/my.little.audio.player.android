@@ -196,4 +196,11 @@ public class Queues {
 		save_queues();
 		Signals.emitSignal("onQueueLibChanged");
 	}
+	
+	public static void rename_queue(@NonNull Queue queue, @NonNull String new_name){
+		if (!loaded_queues.contains(queue)) return;
+		queue.set_name(new_name);
+		save_queues();
+		Signals.emitSignal("onQueueLibChanged");
+	}
 }

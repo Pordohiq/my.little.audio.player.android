@@ -147,7 +147,7 @@ public class Global extends Application {
 			return PlayBackState.NONE;
 		} else if (exoState == Player.STATE_ENDED) {
 			Signals.emitSignal("onSongFinished");
- 			play_next();
+			play_next();
 			return PlayBackState.NONE;
 		} else if (exoState == Player.STATE_READY || exoState == Player.STATE_BUFFERING) {
 			return playWhenReady ? PlayBackState.PLAYING : PlayBackState.PAUSED;

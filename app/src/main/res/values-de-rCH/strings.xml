@@ -32,4 +32,5 @@
 	<string name="action_popup_new_queue">Name der neuen Warteschlange:</string>
 	<string name="music_queue_content_block_move_down">abe schiebe</string>
 	<string name="music_queue_content_block_move_up">ufe schiebe</string>
+	<string name="action_queue_rename_sysDialog">Warteschlange umbenenne</string>
 </resources>
