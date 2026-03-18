@@ -128,6 +128,15 @@ public class Queues {
 			else{
 				Global.mx_state.deactivate_queue();
 			}
+		} else if (active_queue instanceof ShuffledQueue && ((ShuffledQueue) active_queue).upcast() instanceof FolderQueue) {
+			FolderQueue fq = (FolderQueue) ((ShuffledQueue) active_queue).upcast();
+			if (fq.is_recursive()) {
+				if(!ResTree.is_subPath(Global.getPath(), fq.get_path())){
+					Global.mx_state.deactivate_queue();
+				}
+			} else {
+				Global.mx_state.deactivate_queue();
+			}
 		}
 	}
 	
