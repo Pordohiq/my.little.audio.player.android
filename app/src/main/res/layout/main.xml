@@ -26,6 +26,13 @@
 		android:orientation="vertical"
 		android:visibility="visible" />
 	
+	<my.little.audio.player.android.fileInfo.fileInfoAudio
+		android:id="@+id/info_audio"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+		
+	</my.little.audio.player.android.fileInfo.fileInfoAudio>
+	
 	<my.little.audio.player.android.Action.ActionBar
 		android:layout_width="match_parent"
 		android:layout_height="50dp" />

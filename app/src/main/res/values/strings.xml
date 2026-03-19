@@ -36,4 +36,14 @@
 	<string name="music_queue_content_block_move_down">move down</string>
 	<string name="music_queue_content_block_move_up">move up</string>
 	<string name="action_queue_rename_sysDialog">Rename Queue</string>
+	<string name="info_audio_file_size">"File size: "</string>
+	<string name="info_audio_title">"Title: "</string>
+	<string name="info_audio_bitrate">"Bitrate: "</string>
+	<string name="info_audio_artist">"Artist: "</string>
+	<string name="info_audio_bit_depth">"Bit depth: "</string>
+	<string name="info_audio_album" translatable="false">"Album: "</string>
+	<string name="info_audio_sample_rate">"Sample rate: "</string>
+	<string name="info_audio_year">"Year: "</string>
+	<string name="info_audio_channels">"Channels: "</string>
+	<string name="info_audio_codec">"Encoding: "</string>
 </resources>

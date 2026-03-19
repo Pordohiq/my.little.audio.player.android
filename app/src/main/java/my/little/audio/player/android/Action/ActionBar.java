@@ -24,7 +24,6 @@ import my.little.audio.player.android.ResTree.Directory;
 import my.little.audio.player.android.ResTree.DiskElement;
 import my.little.audio.player.android.ResTree.Music;
 import my.little.audio.player.android.Signals;
-import my.little.audio.player.android.queues.Queue;
 import my.little.audio.player.android.queues.Queues;
 
 public class ActionBar extends LinearLayout {
@@ -97,6 +96,8 @@ public class ActionBar extends LinearLayout {
 		findViewById(R.id.action_queue_rename).setOnClickListener(view -> Action.rename_queue(context));
 
 		action_music_toggle_queue.setOnClickListener(view -> toggle_queue());
+		
+		findViewById(R.id.action_music_info).setOnClickListener(view -> Signals.emitSignal("requestShowInfoAudio"));
 		
 		findViewById(R.id.action_music_move).setOnClickListener(view -> init_file_moving());
 		findViewById(R.id.action_folder_move).setOnClickListener(view -> init_file_moving());

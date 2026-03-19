@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:background="@color/middleGrey"
+	android:visibility="visible">
+	
+	<HorizontalScrollView
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent">
+		
+		<TableLayout
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:stretchColumns="*">
+			
+			<TableRow
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				
+				<TextView
+					android:id="@+id/info_audio_title"
+					android:text="@string/info_audio_title"
+					android:textColor="@color/lightGrey"
+					android:textSize="20sp"
+					android:layout_marginEnd="8dp" />
+				
+				<TextView
+					android:id="@+id/info_audio_bitrate"
+					android:text="@string/info_audio_bitrate"
+					android:textColor="@color/lightGrey"
+					android:textSize="20sp"
+					android:layout_marginEnd="8dp" />
+			</TableRow>
+			
+			<TableRow
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				
+				<TextView
+					android:id="@+id/info_audio_artist"
+					android:text="@string/info_audio_artist"
+					android:textColor="@color/lightGrey"
+					android:textSize="20sp"
+					android:layout_marginEnd="8dp"/>
+				
+				<TextView
+					android:id="@+id/info_audio_bit_depth"
+					android:text="@string/info_audio_bit_depth"
+					android:textColor="@color/lightGrey"
+					android:textSize="20sp"
+					android:layout_marginEnd="8dp" />
+			</TableRow>
+			
+			<TableRow
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				
+				<TextView
+					android:id="@+id/info_audio_album"
+					android:text="@string/info_audio_album"
+					android:textColor="@color/lightGrey"
+					android:textSize="20sp"
+					android:layout_marginEnd="8dp" />
+				
+				<TextView
+					android:id="@+id/info_audio_sample_rate"
+					android:text="@string/info_audio_sample_rate"
+					android:textColor="@color/lightGrey"
+					android:textSize="20sp"
+					android:layout_marginEnd="8dp" />
+			</TableRow>
+			
+			<TableRow
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				
+				<TextView
+					android:id="@+id/info_audio_year"
+					android:text="@string/info_audio_year"
+					android:textColor="@color/lightGrey"
+					android:textSize="20sp"
+					android:layout_marginEnd="8dp" />
+				
+				<TextView
+					android:id="@+id/info_audio_channels"
+					android:text="@string/info_audio_channels"
+					android:textColor="@color/lightGrey"
+					android:textSize="20sp"
+					android:layout_marginEnd="8dp" />
+			</TableRow>
+		</TableLayout>
+	</HorizontalScrollView>
+	
+	<TextView
+		android:id="@+id/info_audio_file_size"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/info_audio_file_size"
+		android:textColor="@color/lightGrey"
+		android:textSize="20sp" />
+	
+	<View
+		android:layout_width="match_parent"
+		android:background="@color/lightGrey"
+		android:layout_height="2dp" />
+</LinearLayout>
