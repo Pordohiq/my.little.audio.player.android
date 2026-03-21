@@ -1,6 +1,6 @@
 [versions]
 agp = "9.1.0"
-media3 = "1.9.2"
+media3 = "1.9.3"
 app-compat = "1.7.1"
 documentfile = "1.1.0"
 

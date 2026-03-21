@@ -138,7 +138,7 @@ public class Active extends LinearLayout {
 		progressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				if (fromUser) {
+				if (fromUser && (Global.getPlayBackState() != Global.PlayBackState.NONE)) {
 					timeInNode.setText(formatDuration(progress));
 					timeRemainingNode.setText(formatDuration(Global.getPlayBackDuration() - progress));
 				}
@@ -210,9 +210,11 @@ public class Active extends LinearLayout {
 		if(Global.getPlayBackState() == Global.PlayBackState.PLAYING) {
 			playButton.setImageResource(R.drawable.active_pb_pause);
 			secondLoop.run();
+			progressBar.setEnabled(true);
 		} else {
 			playButton.setImageResource(R.drawable.active_pb_play);
 			secondHandler.removeCallbacks(secondLoop);
+			if (Global.getPlayBackState() == Global.PlayBackState.NONE) progressBar.setEnabled(false);
 		}
 	}
 	
