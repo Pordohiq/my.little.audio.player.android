@@ -67,8 +67,12 @@ public class fileInfoAudio extends LinearLayout {
 		String title = (String) info.get("title");
 		if (title == null) title = "-";
 		
-		String bitrate = (String) info.get("bitrate");
-		if (bitrate == null) bitrate = "0";
+		String bitrateStr = (String) info.get("bitrate");
+		int bitrate = 0;
+		if (bitrateStr != null) {
+			bitrate = Integer.parseInt(bitrateStr);
+		}
+		bitrate /= 1000;
 		
 		String artist = (String) info.get("artist");
 		if (artist == null) artist = "-";
@@ -94,7 +98,7 @@ public class fileInfoAudio extends LinearLayout {
 		Long file_size = (Long) info.get("file_size");
 		if (file_size == null) file_size = (long) 0;
 		
-		display_data(title, bitrate, artist, bit_depth, encoding, album, sample_rate, year, channels, file_size);
+		display_data(title, String.valueOf(bitrate), artist, bit_depth, encoding, album, sample_rate, year, channels, file_size);
 	}
 	
 	public void display_data(@NonNull String title, @NonNull String bitrate, @NonNull String artist, int bit_depth, @NonNull String encoding, @NonNull String album, int sample_rate, int year, int channels, Long file_size){
@@ -103,7 +107,7 @@ public class fileInfoAudio extends LinearLayout {
 		String title_name = getContext().getString(R.string.info_audio_title) + title;
 		info_audio_title.setText(title_name);
 		
-		String bit_rate = getContext().getString(R.string.info_audio_bitrate) + bitrate + " b/s";
+		String bit_rate = getContext().getString(R.string.info_audio_bitrate) + bitrate + " kb/s";
 		info_audio_bitrate.setText(bit_rate);
 		
 		String artist_name = getContext().getString(R.string.info_audio_artist) + artist;
