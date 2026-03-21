@@ -98,6 +98,9 @@ public class fileInfoAudio extends LinearLayout {
 		Long file_size = (Long) info.get("file_size");
 		if (file_size == null) file_size = (long) 0;
 		
+		this.removeAllViews();
+		init(getContext());
+		
 		display_data(title, String.valueOf(bitrate), artist, bit_depth, encoding, album, sample_rate, year, channels, file_size);
 	}
 	
