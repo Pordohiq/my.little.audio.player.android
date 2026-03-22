@@ -72,11 +72,18 @@ public class Queue {
 	
 	public int get_song_count() { return contents.size(); }
 	
+	//region Audio Playback
 	@Nullable
 	public Music get_next_song(boolean loop){
 		return get_next_song(loop, contents);
 	}
 	
+	@Nullable
+	public Music get_previous_song(boolean loop){
+		return get_previous_song(loop, contents);
+	}
+	
+	@Nullable
 	protected Music get_next_song(boolean loop, @NonNull List<Music> songs){
 		if (songs.isEmpty()) return null;
 		try {
@@ -92,6 +99,22 @@ public class Queue {
 		return null;
 	}
 	
+	@Nullable
+	protected Music get_previous_song(boolean loop, @NonNull List<Music> songs){
+		if (songs.isEmpty()) return null;
+		try {
+			position --;
+			if (position < 0){
+				if (loop) position = get_song_count() - 1;
+				else return null;
+			}
+			return songs.get(position);
+		} catch (IndexOutOfBoundsException indexOutOfBoundsException) {
+			Log.e(Global.APP_TAG, "Index out of bounds, when getting queue element from " + name);
+		}
+		return null;
+	}
+	//endregion
 	
 	public void add_song(@NonNull Music song) {
 		if (!contents.contains(song)) contents.add(song);

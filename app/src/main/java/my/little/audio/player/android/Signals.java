@@ -37,13 +37,6 @@ public class Signals {
 		Objects.requireNonNull(events.get(eventName)).add(callback);
 	}
 	
-	public static void unsubscribeFromEvent(@NonNull String eventName, Runnable callback) {
-		List<Runnable> callbacks = events.get(eventName);
-		if (callbacks != null) {
-			callbacks.remove(callback);
-		}
-	}
-	
 	public static void emitSignal(@NonNull String eventName) {
 		Log.d("Global.APP_TAG", "Emitting signal: " + eventName);
 		List<Runnable> callbacks = events.get(eventName);

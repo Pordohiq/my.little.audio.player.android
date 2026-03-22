@@ -274,6 +274,43 @@ public class Global extends Application {
 		Log.e(Global.APP_TAG, "When you are here, something really weird must have happened...");
 	}
 	
+	public static void play_previous(){
+		if(mx_state.get_queue_state() == MixingState.queue_state.NONE){
+			if (mx_state.get_repeat_state() == MixingState.repeat_state.ONE){
+				setAudio(current_audio, true);
+			} else {
+				quit_song();
+			}
+			return;
+		}
+		
+		MixingState.queue_state[] queue_states = {MixingState.queue_state.DIRECTORY, MixingState.queue_state.RECURSIVE_DIRECTORY, MixingState.queue_state.LOADED_QUEUE};
+		if (Arrays.asList(queue_states).contains(mx_state.get_queue_state())) {
+			Queue cur_queue = Queues.get_active_queue();
+			if (cur_queue == null) return;
+			
+			Music next_song;
+			if (mx_state.get_repeat_state() == MixingState.repeat_state.NONE){
+				next_song = cur_queue.get_previous_song(false);
+			} else if (mx_state.get_repeat_state() == MixingState.repeat_state.QUEUE) {
+				next_song = cur_queue.get_previous_song(true);
+			} else {
+				Log.e(APP_TAG, "Unknown repeat state: " + mx_state.get_repeat_state());
+				quit_song();
+				return;
+			}
+			
+			
+			if (next_song == null) {
+				quit_song();
+				return;
+			}
+			setAudio(next_song, true);
+			return;
+		}
+		Log.e(Global.APP_TAG, "When you are here, something really weird must have happened...");
+	}
+	
 	public static void seekTo(int seconds) {
 		mediaController.seekTo(seconds * 1000L);
 	}

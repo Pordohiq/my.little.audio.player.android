@@ -18,22 +18,37 @@ public class ShuffledQueue extends Queue {
 		super(derivative.get_name(), derivative.get_songs());
 		shuffle_seed = (int)(Math.random() * (100));
 		this.derivative = derivative;
-		re_shuffle();
+		re_shuffle(true);
 	}
 	
-	private void re_shuffle(){
-		shuffle_seed ++;
+	private void re_shuffle(boolean direction){
+		if(direction) shuffle_seed ++;
+		else shuffle_seed --;
+		
 		shuffled_songs = get_songs();
 		Collections.shuffle(shuffled_songs, new Random(shuffle_seed));
 	}
 	
 	@Nullable @Override
 	public Music get_next_song(boolean loop) {
+		if (position >= get_song_count()) position = -1;
 		Music next_song = super.get_next_song(false, shuffled_songs);
 		if (next_song == null && loop){
-			re_shuffle();
+			re_shuffle(true);
 			super.position = -1;
 			next_song = super.get_next_song(false, shuffled_songs);
+		}
+		return next_song;
+	}
+	
+	@Nullable @Override
+	public Music get_previous_song(boolean loop) {
+		if (position == -1) position = shuffled_songs.toArray().length;
+		Music next_song = super.get_previous_song(false, shuffled_songs);
+		if (next_song == null && loop){
+			re_shuffle(false);
+			super.position = shuffled_songs.toArray().length;
+			next_song = super.get_previous_song(false, shuffled_songs);
 		}
 		return next_song;
 	}

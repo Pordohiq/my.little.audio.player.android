@@ -24,7 +24,7 @@ import java.util.Locale;
 public class Active extends LinearLayout {
 	private TextView title;
 	
-	private ImageView previousButton; // TODO: Hook it up
+	private ImageView previousButton;
 	private ImageView playButton;
 	private ImageView nextButton;
 	
@@ -184,6 +184,7 @@ public class Active extends LinearLayout {
 		nextButton = findViewById(R.id.nextButton);
 		
 		nextButton.setOnClickListener(view -> Global.play_next());
+		previousButton.setOnClickListener(view -> Global.play_previous());
 		
 		seekBarInit();
 		MXInit();
@@ -195,7 +196,7 @@ public class Active extends LinearLayout {
 			} else if (Global.getPlayBackState() == Global.PlayBackState.PAUSED) {
 				Global.setPlayBackState(Global.PlayBackState.PLAYING);
 			}
-			// TODO: Get the new song, if the pb state is NONE
+			if (Global.getPlayBackState() == Global.PlayBackState.NONE) Global.play_next();
 		});
 		
 		Signals.subscribeToEvent("onPBStateChanged", this::onPbStateChanged);
@@ -221,8 +222,10 @@ public class Active extends LinearLayout {
 	private void onMxStateChanged() {
 		if (Global.mx_state.get_queue_state() == MixingState.queue_state.NONE || Global.mx_state.get_repeat_state() == MixingState.repeat_state.ONE){
 			nextButton.setAlpha(0.5f);
+			previousButton.setAlpha(0.5f);
 		} else {
 			nextButton.setAlpha(1f);
+			previousButton.setAlpha(1f);
 		}
 		update_mx_buttons();
 	}
