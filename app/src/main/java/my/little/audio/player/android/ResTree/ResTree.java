@@ -4,7 +4,9 @@ package my.little.audio.player.android.ResTree;
 // It is published on GitHub under the LGPLv3 License:
 // https://github.com/lomjek/my.little.audio.player.android
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.io.File;
 import java.nio.file.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -50,8 +53,19 @@ public class ResTree {
 		
 		try {
 			if (pathConfigFile.exists()) {
-				byte[] bytes = Files.readAllBytes(pathConfigFile.toPath());
-				content = new String(bytes, StandardCharsets.UTF_8).trim();
+				if (android.os.Build.VERSION.SDK_INT >= 26) {
+					byte[] bytes = Files.readAllBytes(pathConfigFile.toPath());
+					content = new String(bytes, StandardCharsets.UTF_8).trim();
+				} else {
+					try (FileInputStream fis = new FileInputStream(pathConfigFile)) {
+						byte[] bytes = new byte[(int) pathConfigFile.length()];
+						int char_read = fis.read(bytes);
+						if (char_read <= 0) throw new IOException();
+						content = new String(bytes, StandardCharsets.UTF_8).trim();
+					} catch (IOException e) {
+						Log.e(Global.APP_TAG, "Error reading path config in legacy ResTree");
+					}
+				}
 			}
 		} catch (IOException e) {
 			Log.e(Global.APP_TAG, "Error reading path config");
@@ -80,13 +94,31 @@ public class ResTree {
 		File filesDir = context.getFilesDir();
 		if (filesDir == null) return;
 		
-		Path pathConfig = filesDir.toPath().resolve("library.path");
-		
-		try {
-			Files.write(pathConfig, newPath.toString().getBytes(StandardCharsets.UTF_8));
-		} catch (IOException e) {
-			Log.e(Global.APP_TAG, "Error writing path config, new path: " + newPath);
+		if (android.os.Build.VERSION.SDK_INT >= 26) {
+			Path pathConfig = filesDir.toPath().resolve("library.path");
+			
+			try {
+				Files.write(pathConfig, newPath.toString().getBytes(StandardCharsets.UTF_8));
+			} catch (IOException e) {
+				Log.e(Global.APP_TAG, "Error writing path config, new path: " + newPath);
+			}
+		} else {
+			File pathConfigFile = new File(filesDir, "library.path");
+			
+			try {
+				if (!pathConfigFile.exists()) {
+					boolean success = pathConfigFile.createNewFile();
+					if (!success) throw new IOException();
+				}
+				
+				try (FileOutputStream fos = new FileOutputStream(pathConfigFile)) {
+					fos.write(newPath.toString().getBytes(StandardCharsets.UTF_8));
+				}
+			} catch (IOException e) {
+				Log.e(Global.APP_TAG, "Error writing path config in legacy ResTree, new path: " + newPath);
+			}
 		}
+		
 	}
 	//endregion
 	//region ResTree Interactions
@@ -148,11 +180,19 @@ public class ResTree {
 			Log.w(Global.APP_TAG, "Query failed: " + uri, e);
 		}
 		
-		elements.sort((o1, o2) -> {
-			String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
-			String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
-			return name1.compareTo(name2);
-		});
+		if (android.os.Build.VERSION.SDK_INT >= 24) {
+			elements.sort((o1, o2) -> {
+				String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
+				String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
+				return name1.compareTo(name2);
+			});
+		} else {
+			Collections.sort(elements, (o1, o2) -> {
+				String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
+				String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
+				return name1.compareTo(name2);
+			});
+		}
 		return elements;
 	}
 	
@@ -180,11 +220,19 @@ public class ResTree {
 		
 		if (elements == null) return null;
 		
-		elements.sort((o1, o2) -> {
-			String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
-			String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
-			return name1.compareTo(name2);
-		});
+		if (android.os.Build.VERSION.SDK_INT >= 24) {
+			elements.sort((o1, o2) -> {
+				String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
+				String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
+				return name1.compareTo(name2);
+			});
+		} else {
+			Collections.sort(elements, (o1, o2) -> {
+				String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
+				String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
+				return name1.compareTo(name2);
+			});
+		}
 		return elements;
 	}
 	
@@ -257,7 +305,7 @@ public class ResTree {
         return (Directory) get_element_at_path(childPath);
 	}
 	
-	@Nullable
+/*	@Nullable
 	public static DiskElement get_element_by_Uri(@NonNull Uri needed_uri, @Nullable List<DiskElement> data){
 		if (library == null) return null;
 		if (data == null) data = library;
@@ -270,10 +318,10 @@ public class ResTree {
 			}
 		}
 		return null;
-	}
+	}*/
 	
 	@NonNull
-	public static List<Music> get_musics_at_path(@NonNull List<String> path, boolean recursive, @Nullable List<DiskElement> data) {
+	public static List<Music> get_musics_at_path(@NonNull List<String> path, boolean recursive) {
 		List<Music> result = new ArrayList<>();
 		List<DiskElement> elements = load_folder(path);
 		if (elements == null) return new ArrayList<>();
@@ -284,7 +332,7 @@ public class ResTree {
 			} else if (recursive && element instanceof Directory) {
 				List<String> subPath = new ArrayList<>(path);
 				subPath.add(element.getName());
-				result.addAll(get_musics_at_path(subPath, true, data));
+				result.addAll(get_musics_at_path(subPath, true));
 			}
 		}
 		return result;
@@ -401,10 +449,21 @@ public class ResTree {
 	@Nullable
     private static DocumentFile get_DocumentFile_from_Uri(@NonNull Uri uri) {
 		DocumentFile file;
-		if (DocumentsContract.isTreeUri(uri)) {
-			file = DocumentFile.fromTreeUri(Global.getInstance(), uri);
+		if (android.os.Build.VERSION.SDK_INT >= 26) {
+			if (DocumentsContract.isTreeUri(uri)) {
+				file = DocumentFile.fromTreeUri(Global.getInstance(), uri);
+			} else {
+				file = DocumentFile.fromSingleUri(Global.getInstance(), uri);
+			}
 		} else {
-			file = DocumentFile.fromSingleUri(Global.getInstance(), uri);
+			String path = uri.getPath();
+			boolean isTreeUri = path != null && path.contains("/tree/");
+			
+			if (isTreeUri) {
+				file = DocumentFile.fromTreeUri(Global.getInstance(), uri);
+			} else {
+				file = DocumentFile.fromSingleUri(Global.getInstance(), uri);
+			}
 		}
 		return file;
 	}

@@ -4,12 +4,15 @@ package my.little.audio.player.android.queues;
 // It is published on GitHub under the LGPLv3 License:
 // https://github.com/lomjek/my.little.audio.player.android
 
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -39,12 +42,29 @@ public class Queues {
 		File filesDir = Global.getInstance().getFilesDir();
 		if (filesDir == null) return;
 		
-		Path pathConfig = filesDir.toPath().resolve("queues.list");
-		
-		try {
-			Files.write(pathConfig, queues_as_string.toString().getBytes(StandardCharsets.UTF_8));
-		} catch (IOException e) {
-			Log.e(Global.APP_TAG, "Error writing path config, new path: " + queues_as_string);
+		if (Build.VERSION.SDK_INT >= 26) {
+			Path pathConfig = filesDir.toPath().resolve("queues.list");
+			
+			try {
+				Files.write(pathConfig, queues_as_string.toString().getBytes(StandardCharsets.UTF_8));
+			} catch (IOException e) {
+				Log.e(Global.APP_TAG, "Error writing path config, new path: " + queues_as_string);
+			}
+		} else {
+			File pathConfigFile = new File(filesDir, "queues.list");
+			
+			try{
+				if (!pathConfigFile.exists()) {
+					boolean success = pathConfigFile.createNewFile();
+					if (!success) throw new IOException();
+				}
+				
+				try (FileOutputStream fos = new FileOutputStream(pathConfigFile)) {
+					fos.write(queues_as_string.toString().getBytes(StandardCharsets.UTF_8));
+				}
+			} catch (IOException e) {
+				Log.e(Global.APP_TAG, "Error writing path config in legacy Queues, new path: " + queues_as_string);
+			}
 		}
 	}
 	
@@ -56,16 +76,30 @@ public class Queues {
 		File pathConfigFile = new File(filesDir, "queues.list");
 		String content = "";
 		
-		try {
-			if (pathConfigFile.exists()) {
-				byte[] bytes = Files.readAllBytes(pathConfigFile.toPath());
-				content = new String(bytes, StandardCharsets.UTF_8).trim();
+		if (Build.VERSION.SDK_INT >= 26) {
+			try {
+				if (pathConfigFile.exists()) {
+					byte[] bytes = Files.readAllBytes(pathConfigFile.toPath());
+					content = new String(bytes, StandardCharsets.UTF_8).trim();
+				}
+			} catch (IOException e) {
+				Log.e(Global.APP_TAG, "Error reading queue save file.");
+				return;
+			} catch (Exception e) {
+				Log.e(Global.APP_TAG, "There was exception, when trying to read queue save file.");
 			}
-		} catch (IOException e) {
-			Log.e(Global.APP_TAG, "Error reading queue save file.");
-			return;
-		} catch (Exception e) {
-			Log.e(Global.APP_TAG, "There was exception, when trying to read queue save file.");
+		} else {
+			try (FileInputStream fis = new FileInputStream(pathConfigFile)) {
+				if (pathConfigFile.exists()) {
+					byte[] bytes = new byte[(int) pathConfigFile.length()];
+					int char_read = fis.read(bytes);
+					if (char_read <= 0) throw new IOException();
+					content = new String(bytes, StandardCharsets.UTF_8).trim();
+				}
+			} catch (IOException e) {
+				Log.e(Global.APP_TAG, "Error reading queue save file in legacy Queues.");
+				return;
+			}
 		}
 		
 		if (!content.isEmpty()) {
