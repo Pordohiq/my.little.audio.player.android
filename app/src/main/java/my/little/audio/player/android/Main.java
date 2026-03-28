@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.activity.ComponentActivity;
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
@@ -49,6 +50,26 @@ public class Main extends ComponentActivity {
 		if (ResTree.library_root == null){
 			Action.open_new_lib_root_dialog();
 		}
+		
+		//Set up Back Button
+		getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+			@Override
+			public void handleOnBackPressed() {
+				if (Action.get_element() != null) {
+					Action.unset_element();
+				} else if (Action.get_queue() != null){
+					Action.unset_queue();
+				} else if (Global.getDisplayState() == Global.DisplayState.QUEUE_CONTENT) {
+					Global.setDisplayState(Global.DisplayState.QUEUES);
+				} else if (Global.getDisplayState() == Global.DisplayState.QUEUES) {
+					Global.setDisplayState(Global.DisplayState.DISK_ELEMENT);
+				} else if (!Global.getPath().isEmpty()) {
+					Global.leaveSubfolder();
+				} else {
+					finish();
+				}
+			}
+		});
 		
 		Signals.emitSignal("onPBStateChanged");
 	}
