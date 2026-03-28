@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.io.File;
 import java.nio.file.*;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -180,19 +179,11 @@ public class ResTree {
 			Log.w(Global.APP_TAG, "Query failed: " + uri, e);
 		}
 		
-		if (android.os.Build.VERSION.SDK_INT >= 24) {
-			elements.sort((o1, o2) -> {
-				String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
-				String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
-				return name1.compareTo(name2);
-			});
-		} else {
-			Collections.sort(elements, (o1, o2) -> {
-				String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
-				String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
-				return name1.compareTo(name2);
-			});
-		}
+		elements.sort((o1, o2) -> {
+			String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
+			String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
+			return name1.compareTo(name2);
+		});
 		return elements;
 	}
 	
@@ -220,19 +211,11 @@ public class ResTree {
 		
 		if (elements == null) return null;
 		
-		if (android.os.Build.VERSION.SDK_INT >= 24) {
-			elements.sort((o1, o2) -> {
-				String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
-				String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
-				return name1.compareTo(name2);
-			});
-		} else {
-			Collections.sort(elements, (o1, o2) -> {
-				String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
-				String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
-				return name1.compareTo(name2);
-			});
-		}
+		elements.sort((o1, o2) -> {
+			String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
+			String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
+			return name1.compareTo(name2);
+		});
 		return elements;
 	}
 	
@@ -305,6 +288,7 @@ public class ResTree {
         return (Directory) get_element_at_path(childPath);
 	}
 	
+// This function is not needed, but if ever it is, then uncomment
 /*	@Nullable
 	public static DiskElement get_element_by_Uri(@NonNull Uri needed_uri, @Nullable List<DiskElement> data){
 		if (library == null) return null;

@@ -12,7 +12,7 @@ public class FolderQueue extends Queue {
 	protected List<String> path;
 	
 	public FolderQueue(@NonNull List<String> path, boolean recursive){
-		super("__folder_queue__", ResTree.get_musics_at_path(new ArrayList<>(path), recursive, null));
+		super("__folder_queue__", ResTree.get_musics_at_path(new ArrayList<>(path), recursive));
 		this.recursive = recursive;
 		this.path = new ArrayList<>(path);
 	}

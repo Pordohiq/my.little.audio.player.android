@@ -93,22 +93,6 @@ public class Global extends Application {
 		super.onCreate();
 		instance = this;
 		
-		Signals.createEvent("onPathChanged");
-		
-		Signals.createEvent("onAudioSet");
-		
-		Signals.createEvent("onPBStateChanged");
-		
-		Signals.createEvent("onSongFinished");
-		
-		Signals.createEvent("onDisplayStateChanged");
-		
-		// Load the Resource Tree
-		ResTree.init(this);
-		
-		// Load the Queues
-		Queues.init();
-		
 		// Connect to the Service AudioPlayer
 		SessionToken sessionToken = new SessionToken(this,
 				new ComponentName(this, AudioPlayer.class));
@@ -130,6 +114,24 @@ public class Global extends Application {
 		
 		// Welcome the User
 		Log.i(APP_TAG, "Welcome to my LittleAudioPlayer");
+	}
+	
+	public void set_up(){
+		Signals.createEvent("onPathChanged");
+		
+		Signals.createEvent("onAudioSet");
+		
+		Signals.createEvent("onPBStateChanged");
+		
+		Signals.createEvent("onSongFinished");
+		
+		Signals.createEvent("onDisplayStateChanged");
+		
+		// Load the Resource Tree
+		ResTree.init(this);
+		
+		// Load the Queues
+		Queues.init();
 	}
 	
 	@Override
