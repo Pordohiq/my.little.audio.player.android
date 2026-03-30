@@ -6,7 +6,7 @@
 	<string name="active_title_none">NONE</string>
 	<string name="active_pb_previous_song">previous song</string>
 	<string name="active_pb_play_pause">play button</string>
-	<string name="active_pb_next_song">next song</string>
+	<string name="active_pb_next_song">"This is \"my Little Audio Player\" a project that I have been working on for quite a while now. It is a good, little Audio Player, that can play Audio Files on your phone from a folder, but also supports the "</string>
 	<string name="action_general_add_music">add music</string>
 	<string name="action_general_add_folder">add a folder</string>
 	<string name="action_general_refresh">refresh the library</string>
@@ -46,4 +46,9 @@
 	<string name="info_audio_year">"Year: "</string>
 	<string name="info_audio_channels">"Channels: "</string>
 	<string name="info_audio_codec">"Encoding: "</string>
+	<string name="introduction_text">"This is \"my Little Audio Player\", a project that I have been working on for quite a time now. It is not only a simple audio player, but you can also create queues of audio files to play back in a specific order or just shuffle or what ever you want. I have created this project with much passion and energy and although I felt like giving up sometimes in this long journey, I am happy to have brought this app so far. I whish you to enjoy! "</string>
+	<string name="introduction_active">This is where you can see the current audio file being played back. With the buttons on the left, you can pause and resume audio playback and skip to the next or previous item in queue. In the top you will see the name of the audio file and just below that there is a slider which inidicates the progress through a song. With the buttons on the right you can change the MixingState aka: In what order do I play back the files? What happenes, when the song is finished? With a long press on the middle button on the right you open the queue menu, where you can create and select queues.</string>
+	<string name="introduction_forward">next</string>
+	<string name="introduction_skip">skip</string>
+	<string name="introduction_action">This is the Action Bar. You will find it in the bottom. With this you can do actions on the current library. Short description of icons: You can add a Audio File from somewhere else, create a folder, reload the whole tree from disk, set a new library path and access the settings page. In this bar there will be also actions on certain files and queues.</string>
 </resources>

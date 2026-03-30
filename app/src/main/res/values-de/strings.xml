@@ -42,4 +42,9 @@
 	<string name="info_audio_channels">"Kanäle: "</string>
 	<string name="info_audio_sample_rate">"Abtastrate: "</string>
 	<string name="info_audio_codec">"Codierung: "</string>
+	<string name="introduction_text">"Vor sich haben Sie \"meine kleine Audiowiedergabeanwendung\", ein Projekt, welches mich schon länger begleitet. Es ist nicht nur eine Anwendung, um ihre Audiodateien wiederzugeben, man kann auch Warteschlangen ersellen, um die Reihenfolge der wiedergegebenen Audiodateien zu steuern. Ich habe dieses Projekt auf die Beine gestellt, weil es für lange Zeit mein Traum war, und obwohl ich einige Male mit der Entwicklung aufgeben wollte, bin ich glücklich mit dem Resultat. Ich wünsche Ihnen viel Spass! "</string>
+	<string name="introduction_active">"Hier kann man die Datei sehen, welche momentan wiedegegeben wird. Mit den Knöpfen links kann man die Wiedergabe steuern: Man kann ein Lied überspringen, oder es anhalten. Oben findet man den Namen der wiedergegebenen Audiodatei. Unt gerade unter dem sieht man den Fortschritt durch ein Lied in einem Scheiberegler. Die Knöpfe rechts bestimmen, in welcher Reihenfolge die Dateien abgespielt werden. Wenn man lange auf den mittleren Knopf drückt, kann man Warteschlangen erstellen und bearbeiten. "</string>
+	<string name="introduction_forward">Nächster</string>
+	<string name="introduction_skip">überspringen</string>
+	<string name="introduction_action">Das hier ist der Balken für Aktionen. Der Balken wird sich unten befinden. In diesem Balken kann man Aktionen in der Sammlung der Lieder machen: Du kannst eine Datei hinzufügen, du kannst einen neuen Ordner erstellen, den ganzen Ordner neu laden, einen neuen Pfad zur Liedsammlung setzten oder die Einstellungen anschauen. In diesem Balken wird man auch andere Aktionen für spezifische Dateien ausführen können.</string>
 </resources>
