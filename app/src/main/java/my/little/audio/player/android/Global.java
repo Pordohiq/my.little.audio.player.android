@@ -20,8 +20,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
+import androidx.media3.common.Tracks;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 
@@ -59,6 +62,8 @@ public class Global extends Application {
 	}
 	private static PlayBackState current_playbackState = PlayBackState.NONE;
 	
+	public static final List<Music> invalid_files = new ArrayList<>();
+	
 	// Status on current song
 	public static Music current_audio;
 	
@@ -76,6 +81,23 @@ public class Global extends Application {
 			Player.Listener.super.onPlayWhenReadyChanged(playWhenReady, reason);
 			current_playbackState = mapCustomPBState(mediaController.getPlaybackState(), playWhenReady);
 			Signals.emitSignal("onPBStateChanged");
+		}
+		
+		@Override
+		public void onPlayerError(@NonNull PlaybackException error) {
+			invalid_files.add(current_audio);
+			quit_song();
+			Signals.emitSignal("onSongFinished");
+		}
+		
+		@Override
+		public void onTracksChanged(@NonNull Tracks tracks) {
+			boolean hasAudio = tracks.isTypeSelected(C.TRACK_TYPE_AUDIO);
+			if (!hasAudio) {
+				invalid_files.add(current_audio);
+				quit_song();
+				Signals.emitSignal("onSongFinished");
+			}
 		}
 	};
 	

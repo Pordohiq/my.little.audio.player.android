@@ -1,7 +1,7 @@
 package my.little.audio.player.android.Action;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the LGPL License:
+// It is published on GitHub under the LGPLv3 License:
 // https://github.com/lomjek/my.little.audio.player.android
 
 import android.content.Context;
@@ -214,7 +214,7 @@ public class ActionBar extends LinearLayout {
 	}
 	
 	private void toggle_queue() {
-		if (!(Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE && Queues.get_active_queue() != null) || Action.get_element() == null || Queues.get_active_queue() == null) return;
+		if (!(Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE && Queues.get_active_queue() != null) || Action.get_element() == null) return;
 		Queues.add_music_to_queue((Music) Action.get_element(), Queues.get_active_queue());
 	}
 }

@@ -1,5 +1,9 @@
 package my.little.audio.player.android.FileView;
 
+// This file is part of 'my.little.audio.player.android'
+// It is published on GitHub under the LGPLv3 License:
+// https://github.com/lomjek/my.little.audio.player.android
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -20,10 +24,6 @@ public class MusicQueueBlock extends LinearLayout {
 	private Music song;
 	private Queue queue;
 	
-	private ImageView up_button;
-	private ImageView down_button;
-	
-	private ImageView icon;
 	private TextView name;
 	
 	public MusicQueueBlock(Context context) {
@@ -39,8 +39,8 @@ public class MusicQueueBlock extends LinearLayout {
 	private void init(Context context){
 		LayoutInflater.from(context).inflate(R.layout.music_queue_content_block, this, true);
 		
-		up_button = findViewById(R.id.up_icon);
-		down_button = findViewById(R.id.down_icon);
+		ImageView up_button = findViewById(R.id.up_icon);
+		ImageView down_button = findViewById(R.id.down_icon);
 		
 		up_button.setOnClickListener(view -> {
 			if (queue == null || song == null) return;
@@ -55,7 +55,6 @@ public class MusicQueueBlock extends LinearLayout {
 			Queues.save_queues();
 		});
 		
-		icon = findViewById(R.id.music_c_icon);
 		name = findViewById(R.id.music_c_name);
 	}
 	
@@ -63,8 +62,5 @@ public class MusicQueueBlock extends LinearLayout {
 		song = music;
 		this.queue = queue;
 		name.setText(music.getName());
-		
 	}
-	
-	
 }

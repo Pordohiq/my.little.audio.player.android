@@ -8,7 +8,6 @@ import android.content.Context;
 
 import android.util.AttributeSet;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 
 import android.widget.ImageView;
@@ -59,14 +58,15 @@ public class MusicBlock extends LinearLayout {
 	
 	private void check_main_icon() {
 		if (music == null) return;
-		if (music == Global.current_audio) {
+		if (Global.invalid_files.contains(music)) {
+			mainIcon.setImageResource(R.drawable.block_music_invalid);
+		} else if (music == Global.current_audio) {
 			mainIcon.setImageResource(R.drawable.block_music_active);
 		} else if (Queues.get_active_queue() != null && Queues.get_active_queue().has_song(music)){
 			mainIcon.setImageResource(R.drawable.block_music_queue);
 		} else {
 			mainIcon.setImageResource(R.drawable.block_music);
 		}
-		//TODO: Invalid files
 	}
 	
 	public void setUp(Music mus) {
@@ -88,6 +88,7 @@ public class MusicBlock extends LinearLayout {
 		Signals.subscribeToEvent("onAudioSet", this::check_main_icon);
 		Signals.subscribeToEvent("onQueueLibChanged", this::check_main_icon);
 		Signals.subscribeToEvent("onQueueSet", this::check_main_icon);
+		Signals.subscribeToEvent("onSongFinished", this::check_main_icon);
 		check_main_icon();
 	}
 
