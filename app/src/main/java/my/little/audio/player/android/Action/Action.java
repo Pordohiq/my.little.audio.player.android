@@ -2,7 +2,7 @@ package my.little.audio.player.android.Action;
 
 // This file is part of 'my.little.audio.player.android'
 // It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -372,9 +372,8 @@ public class Action {
 		if (currentElement == null) return null;
 		
 		HashMap<String, Object> info = new HashMap<>();
-		MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 		
-		try {
+		try (MediaMetadataRetriever retriever = new MediaMetadataRetriever()) {
 			retriever.setDataSource(Global.getInstance(), currentElement.getUri());
 			
 			info.put("title", retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
@@ -390,10 +389,10 @@ public class Action {
 			// File size still comes from your helper
 			info.put("file_size", getFileSize(Global.getInstance(), currentElement.getUri()));
 			
+		} catch (IOException ex) {
+			Log.e(Global.APP_TAG, "Error making the Metadata retriever: " + ex);
 		} catch (Exception e) {
 			Log.e(Global.APP_TAG, "Error: " + e);
-		} finally {
-			try { retriever.release(); } catch (IOException e) {Log.e(Global.APP_TAG, "Error: " + e);}
 		}
 		
 		return info;

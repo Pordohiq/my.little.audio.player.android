@@ -6,7 +6,7 @@
 	<string name="active_title_none">NONE</string>
 	<string name="active_pb_previous_song">previous song</string>
 	<string name="active_pb_play_pause">play button</string>
-	<string name="active_pb_next_song">"This is \"my Little Audio Player\" a project that I have been working on for quite a while now. It is a good, little Audio Player, that can play Audio Files on your phone from a folder, but also supports the "</string>
+	<string name="active_pb_next_song">next song</string>
 	<string name="action_general_add_music">add music</string>
 	<string name="action_general_add_folder">add a folder</string>
 	<string name="action_general_refresh">refresh the library</string>
