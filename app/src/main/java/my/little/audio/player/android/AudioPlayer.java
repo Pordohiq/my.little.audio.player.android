@@ -45,8 +45,10 @@ public class AudioPlayer extends MediaSessionService {
         String artistName = artist != null ? artist.toString() : "";
         Uri artworkUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.global_app_icon);
         
+		String title = Global.current_audio == null ? "" : Global.current_audio.getName() + "_test";
+		
         MediaMetadata metadata = new MediaMetadata.Builder()
-                .setTitle(Global.current_audio.getName() + "_test")
+                .setTitle(title)
                 .setArtist(artistName)
                 .setArtworkUri(artworkUri)
                 .build();
@@ -111,15 +113,17 @@ class CustomNotificationProvider implements MediaNotification.Provider {
         }
         String artistName = artist != null ? artist.toString() : "";
         Uri artworkUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.drawable.global_app_icon);
-        
-        MediaMetadata metadata = new MediaMetadata.Builder()
-                .setTitle(Global.current_audio.getName() + "_test")
+	    
+	    String title = Global.current_audio == null ? "" : Global.current_audio.getName() + "_test";
+	    
+	    MediaMetadata metadata = new MediaMetadata.Builder()
+			    .setTitle(title)
                 .setArtist(artistName)
                 .setArtworkUri(artworkUri)
                 .build();
         
         mediaSession.getPlayer().setPlaylistMetadata(metadata);
-        
+		
         return defaultMediaNotificationProvider.createNotification(
                 mediaSession,
                 customLayout,
