@@ -220,7 +220,7 @@ public class Active extends LinearLayout {
 	}
 	
 	private void onMxStateChanged() {
-		if (Global.mx_state.get_queue_state() == MixingState.queue_state.NONE || Global.mx_state.get_repeat_state() == MixingState.repeat_state.ONE){
+		if (Global.mx_state.get_queue_state() == MixingState.queue_state.NONE && Global.mx_state.get_repeat_state() == MixingState.repeat_state.NONE){
 			nextButton.setAlpha(0.5f);
 			previousButton.setAlpha(0.5f);
 		} else {
