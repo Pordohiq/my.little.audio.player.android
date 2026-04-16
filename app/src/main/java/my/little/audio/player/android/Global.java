@@ -69,6 +69,8 @@ public class Global extends Application {
 	
 	private static MediaController mediaController;
 	private static final Player.Listener pb_listener  = new Player.Listener() {
+		private boolean is_first_error = true;
+		
 		@Override
 		public void onPlaybackStateChanged(int playbackState) {
 			Player.Listener.super.onPlaybackStateChanged(playbackState);
@@ -85,6 +87,12 @@ public class Global extends Application {
 		
 		@Override
 		public void onPlayerError(@NonNull PlaybackException error) {
+			if (is_first_error && Global.current_audio != null) {
+				is_first_error = false;
+				setAudio(Global.current_audio, true);
+				return;
+			}
+			is_first_error = true;
 			invalid_files.add(current_audio);
 			quit_song();
 			Signals.emitSignal("onSongFinished");
@@ -93,7 +101,13 @@ public class Global extends Application {
 		@Override
 		public void onTracksChanged(@NonNull Tracks tracks) {
 			boolean hasAudio = tracks.isTypeSelected(C.TRACK_TYPE_AUDIO);
-			if (!hasAudio) {
+			if (hasAudio) {
+				is_first_error = true;
+			} else {
+				if (is_first_error) {
+					is_first_error = false;
+					return;
+				}
 				invalid_files.add(current_audio);
 				quit_song();
 				Signals.emitSignal("onSongFinished");
