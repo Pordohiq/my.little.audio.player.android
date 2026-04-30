@@ -6,6 +6,7 @@ package my.little.audio.player.android;
 
 // @ {} [] # \ || !=
 
+import my.little.audio.player.android.Action.Action;
 import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.ResTree.Directory;
 import my.little.audio.player.android.ResTree.Music;
@@ -16,15 +17,19 @@ import android.app.Application;
 
 import android.content.ComponentName;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import androidx.annotation.OptIn;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.common.Tracks;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 
@@ -33,6 +38,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Global extends Application {
@@ -124,6 +130,7 @@ public class Global extends Application {
 			"ape", "mpc", "wv", "ra", "rm", "amr", "mid"
 	);
 	
+	@OptIn(markerClass = UnstableApi.class)
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -131,7 +138,7 @@ public class Global extends Application {
 		
 		// Connect to the Service AudioPlayer
 		SessionToken sessionToken = new SessionToken(this,
-				new ComponentName(this, AudioPlayer.class));
+				new ComponentName(this, AudioService.class));
 		
 		ListenableFuture<MediaController> controllerFuture =
 				new MediaController.Builder(this, sessionToken).buildAsync();
@@ -224,8 +231,30 @@ public class Global extends Application {
 	//region AudioLogic
 	public static void setAudio(@NonNull Music audio, boolean playImmediately) {
 		Global.current_audio = audio;
+		
+		String title = audio.getName();
+		String artist = "";
+		HashMap<String, Object> info = Action.get_audio_info(audio);
+		if (info.get("title") != null) {
+			title = (String) info.get("title");
+		}
+		if (info.get("artist") != null) {
+			artist = (String) info.get("artist");
+		}
+		
+		Uri artWorkUri = Uri.parse("android.resource://" + getInstance().getPackageName() + "/" + R.drawable.global_app_icon_webp);
+		
+		MediaMetadata metadata = new MediaMetadata.Builder()
+				.setTitle(title)
+				.setArtist(artist)
+				.setArtworkUri(artWorkUri)
+				.build();
+		
 		mediaController.setMediaItem(
-				new MediaItem.Builder().setUri(audio.getUri()).build()
+				new MediaItem.Builder()
+						.setUri(audio.getUri())
+						.setMediaMetadata(metadata)
+						.build()
 		);
 		mediaController.prepare();
 		

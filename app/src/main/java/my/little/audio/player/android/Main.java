@@ -5,9 +5,7 @@ package my.little.audio.player.android;
 // https://github.com/lomjek/my.little.audio.player.android
 
 import android.content.Intent;
-
 import android.net.Uri;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +14,6 @@ import androidx.activity.ComponentActivity;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-
 
 import my.little.audio.player.android.Action.Action;
 import my.little.audio.player.android.Prefrences.Preferences;

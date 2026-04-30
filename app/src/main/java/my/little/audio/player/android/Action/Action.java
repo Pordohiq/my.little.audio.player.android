@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 import my.little.audio.player.android.Global;
 import my.little.audio.player.android.R;
 import my.little.audio.player.android.ResTree.DiskElement;
+import my.little.audio.player.android.ResTree.Music;
 import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.Signals;
 import my.little.audio.player.android.queues.Queue;
@@ -368,26 +369,31 @@ public class Action {
 	}
 	
 	@Nullable
-	public static HashMap<String, Object> get_audio_info() {
+	public static HashMap<String, Object> get_audio_info(){
 		if (currentElement == null) return null;
-		
+		if (!(currentElement instanceof Music)) return null;
+		return get_audio_info((Music) currentElement);
+	}
+	
+	@NonNull
+	public static HashMap<String, Object> get_audio_info(@NonNull Music audio) {
 		HashMap<String, Object> info = new HashMap<>();
 		
 		try (MediaMetadataRetriever retriever = new MediaMetadataRetriever()) {
-			retriever.setDataSource(Global.getInstance(), currentElement.getUri());
+			retriever.setDataSource(Global.getInstance(), audio.getUri());
 			
 			info.put("title", retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
 			info.put("artist", retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
 			info.put("album", retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
 			info.put("year", retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR));
 			info.put("bitrate", retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE));
-			info.put("channels", getChannelCount(currentElement.getUri()));
-			info.put("sample_rate", getSampleRate(currentElement.getUri()));
-			info.put("bit_depth", getBitDepth(currentElement.getUri()));
-			info.put("encoding", getMimeType(currentElement.getUri()));
+			info.put("channels", getChannelCount(audio.getUri()));
+			info.put("sample_rate", getSampleRate(audio.getUri()));
+			info.put("bit_depth", getBitDepth(audio.getUri()));
+			info.put("encoding", getMimeType(audio.getUri()));
 			
 			// File size still comes from your helper
-			info.put("file_size", getFileSize(Global.getInstance(), currentElement.getUri()));
+			info.put("file_size", getFileSize(Global.getInstance(), audio.getUri()));
 			
 		} catch (IOException ex) {
 			Log.e(Global.APP_TAG, "Error making the Metadata retriever: " + ex);
