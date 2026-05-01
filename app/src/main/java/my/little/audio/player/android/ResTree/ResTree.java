@@ -4,6 +4,7 @@ package my.little.audio.player.android.ResTree;
 // It is published on GitHub under the LGPLv3 License:
 // https://github.com/lomjek/my.little.audio.player.android
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -642,6 +643,30 @@ public class ResTree {
 			library.remove(element);
 		} else {
 			parent.removeChild(element);
+		}
+	}
+	
+	@Nullable
+	public static byte[] getBytesFromUri(@NonNull Context context, Uri uri) {
+		try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
+			ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+			
+			int bufferSize = 1024;
+			byte[] buffer = new byte[bufferSize];
+			
+			int len;
+			while (true) {
+				assert inputStream != null;
+				
+				if ((len = inputStream.read(buffer)) == -1) break;
+				
+				byteBuffer.write(buffer, 0, len);
+			}
+			
+			return byteBuffer.toByteArray();
+		} catch (IOException e) {
+			Log.e(Global.APP_TAG, "Could not read the file");
+			return null;
 		}
 	}
 	//endregion

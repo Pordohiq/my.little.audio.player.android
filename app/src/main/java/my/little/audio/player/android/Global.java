@@ -17,6 +17,7 @@ import android.app.Application;
 
 import android.content.ComponentName;
 
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.util.Log;
 
@@ -242,12 +243,26 @@ public class Global extends Application {
 			artist = (String) info.get("artist");
 		}
 		
-		Uri artWorkUri = Uri.parse("android.resource://" + getInstance().getPackageName() + "/" + R.drawable.global_app_icon_webp);
+		// Load the thumbnail
+		byte[] art_data;
+		
+		try (MediaMetadataRetriever retriever = new MediaMetadataRetriever()){
+			retriever.setDataSource(getInstance(), audio.getUri());
+			art_data = retriever.getEmbeddedPicture();
+			
+			if (art_data == null) {
+				Uri artWorkUri = Uri.parse("android.resource://" + getInstance().getPackageName() + "/" + R.drawable.global_app_icon_webp);
+				art_data = ResTree.getBytesFromUri(getInstance(), artWorkUri);
+			}
+		} catch (Exception e) {
+			Log.e(APP_TAG, "Couldn't read the artwork from the audio file");
+			return;
+		}
 		
 		MediaMetadata metadata = new MediaMetadata.Builder()
 				.setTitle(title)
 				.setArtist(artist)
-				.setArtworkUri(artWorkUri)
+				.setArtworkData(art_data, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
 				.build();
 		
 		mediaController.setMediaItem(
@@ -329,7 +344,6 @@ public class Global extends Application {
 				quit_song();
 				return;
 			}
-			
 			
 			if (next_song == null) {
 				quit_song();

@@ -10,8 +10,10 @@ import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.media3.common.ForwardingPlayer;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.session.DefaultMediaNotificationProvider;
@@ -57,7 +59,49 @@ public class AudioService extends MediaLibraryService {
 		
 		super.onCreate();
 		ExoPlayer player = new ExoPlayer.Builder(this).build();
-		mediaLibrarySession = new MediaLibrarySession.Builder(this, player, callback).build();
+		
+		ForwardingPlayer forwardingPlayer = new ForwardingPlayer(player){
+			@Override
+			public void seekToNext() {
+				Global.play_next();
+			}
+			
+			@Override
+			public void seekToNextMediaItem() {
+				Global.play_next();
+			}
+			
+			@Override
+			public void seekToPrevious() {
+				Global.play_previous();
+			}
+			
+			@Override
+			public void seekToPreviousMediaItem() {
+				Global.play_previous();
+			}
+
+			@NonNull @Override
+			public Player.Commands getAvailableCommands() {
+				return super.getAvailableCommands().buildUpon()
+						.add(Player.COMMAND_SEEK_TO_NEXT)
+						.add(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
+						.add(Player.COMMAND_SEEK_TO_PREVIOUS)
+						.add(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+						.build();
+			}
+
+			@Override
+			public boolean isCommandAvailable(int command) {
+				return command == Player.COMMAND_SEEK_TO_NEXT
+						|| command == Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM
+						|| command == Player.COMMAND_SEEK_TO_PREVIOUS
+						|| command == Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM
+						|| super.isCommandAvailable(command);
+			}
+		};
+		
+		mediaLibrarySession = new MediaLibrarySession.Builder(this, forwardingPlayer, callback).build();
 		
 		MediaNotification.Provider mediaNotificationProvider = new DefaultMediaNotificationProvider.Builder(this)
 				.setChannelId("channel_id")
