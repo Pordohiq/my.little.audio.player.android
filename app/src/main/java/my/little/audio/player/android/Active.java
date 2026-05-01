@@ -2,7 +2,7 @@ package my.little.audio.player.android;
 
 // This file is part of 'my.little.audio.player.android'
 // It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.content.Context;
 
@@ -204,6 +204,10 @@ public class Active extends LinearLayout {
 		Signals.subscribeToEvent("onMxStateChanged", this::onMxStateChanged);
 		onMxStateChanged();
 		Signals.subscribeToEvent("onSongFinished", this::onSongFinished);
+		
+		if (Global.current_audio != null){
+			title.setText(Global.current_audio.getName());
+		}
 	}
 	//endregion
 	//region Signals

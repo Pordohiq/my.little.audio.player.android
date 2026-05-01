@@ -2,7 +2,7 @@ package my.little.audio.player.android.FileView;
 
 // This file is part of 'my.little.audio.player.android'
 // It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.content.Context;
 
@@ -91,7 +91,10 @@ public class FileView extends LinearLayout {
 		if (!Global.getPath().isEmpty()){
 			fileContainer.addView(new BackBlock(getContext()));
 		}
-		for (DiskElement element : ResTree.current_folder) {
+		List<DiskElement> current = ResTree.load_folder(Global.getPath());
+		if (current == null)
+			return;
+		for (DiskElement element : current) {
 			
 			if (element instanceof Directory) {
 				FolderBlock block = new FolderBlock(getContext());

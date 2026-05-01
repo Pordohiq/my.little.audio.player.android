@@ -2,7 +2,7 @@ package my.little.audio.player.android;
 
 // This file is part of 'my.little.audio.player.android'
 // It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 // @ {} [] # \ || !=
 
@@ -23,6 +23,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
@@ -69,9 +70,11 @@ public class Global extends Application {
 	}
 	private static PlayBackState current_playbackState = PlayBackState.NONE;
 	
+	@NonNull
 	public static final List<Music> invalid_files = new ArrayList<>();
 	
 	// Status on current song
+	@Nullable
 	public static Music current_audio;
 	
 	private static MediaController mediaController;
@@ -203,6 +206,7 @@ public class Global extends Application {
 	}
 	
 	//region Path logic
+	@NonNull
 	private static List<String> path = new ArrayList<>();
 	
 	public static List<String> getPath() {
@@ -321,7 +325,7 @@ public class Global extends Application {
 	
 	public static void play_next(){
 		if(mx_state.get_queue_state() == MixingState.queue_state.NONE){
-			if (mx_state.get_repeat_state() == MixingState.repeat_state.ONE){
+			if (mx_state.get_repeat_state() == MixingState.repeat_state.ONE && current_audio != null){
 				setAudio(current_audio, true);
 			} else {
 				quit_song();
@@ -357,7 +361,7 @@ public class Global extends Application {
 	
 	public static void play_previous(){
 		if(mx_state.get_queue_state() == MixingState.queue_state.NONE){
-			if (mx_state.get_repeat_state() == MixingState.repeat_state.ONE){
+			if (mx_state.get_repeat_state() == MixingState.repeat_state.ONE && current_audio != null){
 				setAudio(current_audio, true);
 			} else {
 				quit_song();

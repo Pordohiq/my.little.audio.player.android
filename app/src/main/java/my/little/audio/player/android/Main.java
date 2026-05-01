@@ -2,7 +2,7 @@ package my.little.audio.player.android;
 
 // This file is part of 'my.little.audio.player.android'
 // It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.content.Intent;
 import android.net.Uri;
@@ -69,6 +69,7 @@ public class Main extends ComponentActivity {
 		});
 		
 		Signals.emitSignal("onPBStateChanged");
+		ResTree.current_folder = ResTree.load_folder(Global.getPath());
 	}
 	
 	@Override
