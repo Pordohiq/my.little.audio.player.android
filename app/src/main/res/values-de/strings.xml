@@ -49,5 +49,5 @@
 	<string name="introduction_action">Das hier ist der Balken für Aktionen. Der Balken wird sich unten befinden. In diesem Balken kann man Aktionen in der Sammlung der Lieder machen: Du kannst eine Datei hinzufügen, du kannst einen neuen Ordner erstellen, den ganzen Ordner neu laden, einen neuen Pfad zur Liedsammlung setzten oder die Einstellungen anschauen. In diesem Balken wird man auch andere Aktionen für spezifische Dateien ausführen können.</string>
 	<string name="info_directory_audio">"UnterAudiodateien: "</string>
 	<string name="info_directory_dirs">"Unterordner: "</string>
-	<string name="info_directory_rec_file_size">Grösse des Ordners:</string>
+	<string name="info_directory_rec_file_size">"Grösse des Ordners: "</string>
 </resources>

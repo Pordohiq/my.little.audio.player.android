@@ -18,6 +18,7 @@ import java.nio.file.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -212,12 +213,14 @@ public class ResTree {
 		
 		if (elements == null) return null;
 		
-		elements.sort((o1, o2) -> {
+		List<DiskElement> sortedElements = new ArrayList<>(elements);
+		sortedElements.sort((o1, o2) -> {
 			String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
 			String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
 			return name1.compareTo(name2);
 		});
-		return elements;
+		
+		return sortedElements;
 	}
 	
 	@Nullable
@@ -308,8 +311,8 @@ public class ResTree {
 	@NonNull
 	public static List<Music> get_musics_at_path(@NonNull List<String> path, boolean recursive) {
 		List<Music> result = new ArrayList<>();
-		List<DiskElement> elements = load_folder(path);
-		if (elements == null) return new ArrayList<>();
+		if (load_folder(path) == null) return new ArrayList<>();
+		List<DiskElement> elements = new ArrayList<>(Objects.requireNonNull(load_folder(path)));
 		
 		for (DiskElement element : elements) {
 			if (element instanceof Music){
@@ -326,8 +329,8 @@ public class ResTree {
 	@NonNull
 	public static List<Directory> get_dirs_at_path(@NonNull List<String> path, boolean recursive){
 		List<Directory> result = new ArrayList<>();
-		List<DiskElement> elements = load_folder(path);
-		if (elements == null) return new ArrayList<>();
+		if (load_folder(path) == null) return new ArrayList<>();
+		List<DiskElement> elements = new ArrayList<>(Objects.requireNonNull(load_folder(path)));
 		
 		for (DiskElement element : elements) {
 			if (element instanceof Directory) {

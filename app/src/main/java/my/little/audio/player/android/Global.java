@@ -42,10 +42,14 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Global extends Application {
 	public static final String APP_TAG = "myLittleAudioPlayer";
 	private static Global instance;
+	
+	public static ExecutorService executor = Executors.newFixedThreadPool(4);
 	
 	//region DisplayState
 	public enum DisplayState {
@@ -60,7 +64,7 @@ public class Global extends Application {
 		Signals.emitSignal("onDisplayStateChanged");
 	}
 	//endregion
-
+	//region Audio Playback
 	public static MixingState mx_state = new MixingState();
 
 	public enum PlayBackState {
@@ -133,6 +137,7 @@ public class Global extends Application {
 			// Other/Less common
 			"ape", "mpc", "wv", "ra", "rm", "amr", "mid"
 	);
+	//endregion
 	
 	@OptIn(markerClass = UnstableApi.class)
 	@Override

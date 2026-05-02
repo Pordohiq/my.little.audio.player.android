@@ -4,6 +4,7 @@ package my.little.audio.player.android.fileInfo;
 // It is published on GitHub under the LGPLv3 License:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -27,6 +28,8 @@ public class fileInfoDirectory extends LinearLayout {
 	private TextView subdirs;
 	private TextView rec_size;
 	
+	private Activity activity;
+	
 	public fileInfoDirectory(Context context) {
 		super(context);
 		init(context);
@@ -38,6 +41,8 @@ public class fileInfoDirectory extends LinearLayout {
 	}
 	
 	private void init(Context context){
+		activity = (Activity) context;
+		
 		LayoutInflater.from(context).inflate(R.layout.info_directory, this, true);
 		subaudiofiles = findViewById(R.id.info_directory_audio);
 		subdirs = findViewById(R.id.info_directory_dirs);
@@ -67,22 +72,24 @@ public class fileInfoDirectory extends LinearLayout {
 			return;
 		}
 		
-		display_data(
-				String.valueOf(ResTree.getDirectorySize(de.getUri())),
-				String.valueOf(ResTree.get_dirs_at_path(path, true).toArray().length),
-				String.valueOf(ResTree.get_musics_at_path(path, true).toArray().length)
-		);
-	}
-	
-	private void display_data(String rec_file_size, String subdirectories, String subaudiofiles){
-		String subfolders = Global.getInstance().getString(R.string.info_directory_dirs) + subdirectories;
-		String subaudios = Global.getInstance().getString(R.string.info_directory_audio) + subaudiofiles;
+		Global.executor.execute(() -> {
+			String subfolders = Global.getInstance().getString(R.string.info_directory_dirs) + ResTree.get_dirs_at_path(path, true).toArray().length;
+			activity.runOnUiThread(() -> subdirs.setText(subfolders));
+		});
 		
-		String rfs = Global.getInstance().getText(R.string.info_directory_rec_file_size) + rec_file_size;
+		Global.executor.execute(() -> {
+			String subaudios = Global.getInstance().getString(R.string.info_directory_audio) + ResTree.get_musics_at_path(path, true).toArray().length;
+			activity.runOnUiThread(() -> this.subaudiofiles.setText(subaudios));
+		});
 		
-		subdirs.setText(subfolders);
-		this.subaudiofiles.setText(subaudios);
-		rec_size.setText(rfs);
+		Global.executor.execute(() -> {
+			String rfs = Global.getInstance().getText(R.string.info_directory_rec_file_size) +  String.valueOf(ResTree.getDirectorySize(de.getUri())) + " B";
+			activity.runOnUiThread(() -> rec_size.setText(rfs));
+		});
+		
+		
+		
+		
 		this.setVisibility(VISIBLE);
 	}
 	

@@ -51,7 +51,7 @@
 	<string name="introduction_forward">next</string>
 	<string name="introduction_skip">skip</string>
 	<string name="introduction_action">This is the Action Bar. You will find it in the bottom. With this you can do actions on the current library. Short description of icons: You can add a Audio File from somewhere else, create a folder, reload the whole tree from disk, set a new library path and access the settings page. In this bar there will be also actions on certain files and queues.</string>
-	<string name="info_directory_audio">SubAudiofiles:</string>
+	<string name="info_directory_audio">"SubAudiofiles: "</string>
 	<string name="info_directory_dirs">"Subfolders: "</string>
 	<string name="info_directory_rec_file_size">"Recursive File Size: "</string>
 </resources>
