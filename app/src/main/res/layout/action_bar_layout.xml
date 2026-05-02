@@ -9,81 +9,81 @@
 		android:id="@+id/action_general"
 		android:layout_width="match_parent"
 		android:layout_height="50dp"
-		android:visibility="visible">
+		android:visibility="gone">
 		
 		<ImageView
 			android:id="@+id/action_general_add_music"
-			android:contentDescription="@string/action_general_add_music"
-			
 			android:layout_width="50dp"
+			
 			android:layout_height="50dp"
 			android:layout_weight="1"
+			android:contentDescription="@string/action_general_add_music"
 			
-			android:visibility="visible"
+			android:src="@drawable/action_general_add_music"
 			
-			android:src="@drawable/action_general_add_music" />
+			android:visibility="visible" />
 		
 		<ImageView
 			android:id="@+id/action_general_add_folder"
-			android:contentDescription="@string/action_general_add_folder"
-			
 			android:layout_width="50dp"
+			
 			android:layout_height="50dp"
 			android:layout_weight="1"
+			android:contentDescription="@string/action_general_add_folder"
 			
-			android:visibility="visible"
+			android:src="@drawable/action_general_add_folder"
 			
-			android:src="@drawable/action_general_add_folder" />
+			android:visibility="visible" />
 		
 		<ImageView
 			android:id="@+id/action_general_add_queue"
-			android:contentDescription="@string/action_general_add_folder"
-			
 			android:layout_width="50dp"
+			
 			android:layout_height="50dp"
 			android:layout_weight="4"
+			android:contentDescription="@string/action_general_add_folder"
 			
-			android:visibility="gone"
+			android:src="@drawable/action_music_queue_add"
 			
-			android:src="@drawable/action_music_queue_add" />
+			android:visibility="gone" />
 		
 		<View
 			android:layout_width="2dp"
 			android:layout_height="match_parent"
-			android:background="@color/lightGrey"/>
+			android:background="@color/lightGrey" />
 		
 		<ImageView
 			android:id="@+id/action_general_refresh"
-			android:contentDescription="@string/action_general_refresh"
+			android:layout_width="50dp"
 			
 			android:layout_height="50dp"
-			android:layout_width="50dp"
 			android:layout_weight="1"
+			android:contentDescription="@string/action_general_refresh"
 			
 			android:src="@drawable/action_general_refresh" />
 		
 		<ImageView
 			android:id="@+id/action_general_set_library"
-			android:contentDescription="@string/action_general_set_library"
-			
 			android:layout_width="50dp"
+			
 			android:layout_height="50dp"
 			android:layout_weight="1"
+			android:contentDescription="@string/action_general_set_library"
 			
 			android:src="@drawable/action_general_set_library" />
 		
 		<View
 			android:layout_width="2dp"
 			android:layout_height="match_parent"
-			android:background="@color/lightGrey"/>
+			android:background="@color/lightGrey" />
 		
 		<ImageView
 			android:id="@+id/action_general_settings"
-			android:contentDescription="@string/action_general_settings"
-			
 			android:layout_width="50dp"
+			
 			android:layout_height="50dp"
 			android:layout_weight="1"
+			android:contentDescription="@string/action_general_settings"
 			
 			android:src="@drawable/action_general_settings" />
 	</LinearLayout>
@@ -270,22 +270,48 @@
 			
 			android:src="@drawable/action_element_trash" />
 	</LinearLayout>
-	<FrameLayout
+	
+	<LinearLayout
 		android:id="@+id/action_move_dialog"
-		android:visibility="gone"
-		android:layout_width="300dp"
-		android:layout_height="40dp"
-		android:layout_gravity="center"
-		android:background="@drawable/action_move_button_shape">
-		<TextView
-			android:layout_width="match_parent"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="horizontal"
+		android:visibility="visible">
+		
+		<ImageView
+			android:id="@+id/action_move_back"
+			android:contentDescription="@string/global_back"
+			
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_weight="1"
+			
+			android:src="@drawable/back" />
+		
+		<FrameLayout
+			android:layout_width="wrap_content"
+			android:layout_height="40dp"
+			android:layout_weight="1"
+			android:layout_gravity="center"
+			android:background="@drawable/action_move_button_shape">
+			
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:gravity="center"
+				
+				android:text="@string/action_element_move"
+				android:textColor="@color/darkGrey"
+				android:textSize="20sp" />
+		</FrameLayout>
+		
+		<View
+			android:layout_width="50dp"
+			android:layout_weight="1"
 			android:layout_height="match_parent"
-			android:gravity="center"
-
-			android:text="@string/action_element_move"
-			android:textColor="@color/darkGrey"
-			android:textSize="20sp"/>
-	</FrameLayout>
+			android:background="@color/middleGrey"/>
+		
+	</LinearLayout>
 	<TextView
 		android:id="@+id/action_queue_title_name"
 		android:layout_width="match_parent"

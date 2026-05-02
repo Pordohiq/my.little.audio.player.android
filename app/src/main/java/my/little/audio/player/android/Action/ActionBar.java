@@ -90,6 +90,11 @@ public class ActionBar extends LinearLayout {
 		// Link the Element nodes
 		findViewById(R.id.action_folder_back).setOnClickListener(view -> Action.unset_element());
 		findViewById(R.id.action_music_back).setOnClickListener(view -> Action.unset_element());
+		findViewById(R.id.action_move_back).setOnClickListener(view -> {
+			this.original_element = null;
+			Action.set_lockState(Action.LockState.NONE);
+			verify_displayed_state();
+		});
 
 		findViewById(R.id.action_folder_rename).setOnClickListener(view -> Action.rename_element(context));
 		findViewById(R.id.action_music_rename).setOnClickListener(view -> Action.rename_element(context));
@@ -188,8 +193,6 @@ public class ActionBar extends LinearLayout {
 	}
 
 	private void finish_file_moving() {
-		action_move_dialog.setVisibility(GONE);
-		action_general.setVisibility(VISIBLE);
 		Action.set_lockState(Action.LockState.NONE);
 		if (original_element == null) {
 			Log.e(Global.APP_TAG, "This state is very confusing and should not happen. original_element is null");
@@ -197,6 +200,7 @@ public class ActionBar extends LinearLayout {
 		}
 		Action.move_file(original_element, Global.getPath());
 		original_element = null;
+		verify_displayed_state();
 	}
 	
 	private void verify_add_to_queue_button(){
