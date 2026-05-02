@@ -8,7 +8,7 @@
 	tools:context=".Main"
 	android:background="@color/darkGrey">
 	
-	<my.little.audio.player.android.Prefrences.Preferences
+	<my.little.audio.player.android.Preferences
 		android:id="@+id/preferences"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
@@ -32,6 +32,13 @@
 		android:layout_height="wrap_content">
 		
 	</my.little.audio.player.android.fileInfo.fileInfoAudio>
+	
+	<my.little.audio.player.android.fileInfo.fileInfoDirectory
+		android:id="@+id/info_dir"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+		
+	</my.little.audio.player.android.fileInfo.fileInfoDirectory>
 	
 	<my.little.audio.player.android.Action.ActionBar
 		android:layout_width="match_parent"

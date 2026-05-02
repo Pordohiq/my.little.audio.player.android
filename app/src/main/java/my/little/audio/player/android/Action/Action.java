@@ -61,6 +61,7 @@ public class Action {
 		Signals.createEvent("requestLibRootPathFromSysDialog");
 		
 		Signals.createEvent("requestShowInfoAudio");
+		Signals.createEvent("requestShowInfoDir");
 
 		Signals.subscribeToEvent("onPathChanged", Action::unset_element);
 	}

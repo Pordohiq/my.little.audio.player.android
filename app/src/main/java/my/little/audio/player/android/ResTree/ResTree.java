@@ -2,7 +2,7 @@ package my.little.audio.player.android.ResTree;
 
 // This file is part of 'my.little.audio.player.android'
 // It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -323,6 +323,25 @@ public class ResTree {
 		return result;
 	}
 	
+	@NonNull
+	public static List<Directory> get_dirs_at_path(@NonNull List<String> path, boolean recursive){
+		List<Directory> result = new ArrayList<>();
+		List<DiskElement> elements = load_folder(path);
+		if (elements == null) return new ArrayList<>();
+		
+		for (DiskElement element : elements) {
+			if (element instanceof Directory) {
+				result.add((Directory) element);
+				if (recursive) {
+					List<String> subPath = new ArrayList<>(path);
+					subPath.add(element.getName());
+					result.addAll(get_dirs_at_path(subPath, true));
+				}
+			}
+		}
+		return result;
+	}
+	
 	//endregion
 	//region SAF Interactions
 	@Nullable
@@ -429,6 +448,26 @@ public class ResTree {
 		DocumentFile file = get_DocumentFile_from_Uri(uri);
 		if (file == null) return null;
 		return SAF_rename_element(file, newName);
+	}
+	
+	public static long getDirectorySize(@NonNull DocumentFile directory) {
+		long totalSize = 0;
+		DocumentFile[] files = directory.listFiles();
+		
+		for (DocumentFile file : files) {
+			if (file.isDirectory()) {
+				totalSize += getDirectorySize(file);
+			} else {
+				totalSize += file.length();
+			}
+		}
+		return totalSize;
+	}
+	
+	public static long getDirectorySize(@NonNull Uri uri){
+		DocumentFile dcf = get_DocumentFile_from_Uri(uri);
+		if (dcf == null) return -1;
+		return getDirectorySize(dcf);
 	}
 
 	@Nullable

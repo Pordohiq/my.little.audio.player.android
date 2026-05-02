@@ -2,7 +2,7 @@ package my.little.audio.player.android.Action;
 
 // This file is part of 'my.little.audio.player.android'
 // It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.content.Context;
 
@@ -98,6 +98,7 @@ public class ActionBar extends LinearLayout {
 		action_music_toggle_queue.setOnClickListener(view -> toggle_queue());
 		
 		findViewById(R.id.action_music_info).setOnClickListener(view -> Signals.emitSignal("requestShowInfoAudio"));
+		findViewById(R.id.action_folder_info).setOnClickListener(view -> Signals.emitSignal("requestShowInfoDir"));
 		
 		findViewById(R.id.action_music_move).setOnClickListener(view -> init_file_moving());
 		findViewById(R.id.action_folder_move).setOnClickListener(view -> init_file_moving());

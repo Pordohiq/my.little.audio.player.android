@@ -1,8 +1,8 @@
-package my.little.audio.player.android.Prefrences;
+package my.little.audio.player.android;
 
 // This file is part of 'my.little.audio.player.android'
 // It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +14,6 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 
 import my.little.audio.player.android.Action.Action;
-import my.little.audio.player.android.R;
-import my.little.audio.player.android.Signals;
 
 public class Preferences extends LinearLayout {
 	private Context ct;
@@ -40,7 +38,7 @@ public class Preferences extends LinearLayout {
 		findViewById(R.id.preferences_action_set_library).setOnClickListener(view -> Action.open_new_lib_root_dialog());
 		findViewById(R.id.preferences_reset_app).setOnClickListener(view -> Action.reset_app_data());
 
-		findViewById(R.id.preferences_github_block).setOnClickListener(view -> open_link("https://github.com/lomjek/my.little.audio.player.android"));
+		findViewById(R.id.preferences_github_block).setOnClickListener(view -> open_link("https://github.com/Pordohiq/my.little.audio.player.android"));
 		findViewById(R.id.preferences_youtube_block).setOnClickListener(view -> open_link("https://www.youtube.com/@pordohiq9000"));
 		findViewById(R.id.preferences_license_block).setOnClickListener(view -> open_link("https://www.gnu.org/licenses/lgpl-3.0-standalone.html"));
 	}
