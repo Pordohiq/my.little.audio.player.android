@@ -2,7 +2,7 @@ package my.little.audio.player.android.ResTree;
 
 // This file is part of 'my.little.audio.player.android'
 // It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.net.Uri;
 

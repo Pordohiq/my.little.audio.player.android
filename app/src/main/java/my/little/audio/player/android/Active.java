@@ -235,7 +235,12 @@ public class Active extends LinearLayout {
 	}
 	
 	private void onAudioSet() {
-		title.setText(Global.current_audio.getName());
+		if (Global.current_audio == null){
+			title.setText(R.string.active_title_none);
+		}else{
+			title.setText(Global.current_audio.getName());
+		}
+		
 		progressBar.setMax(Global.getPlayBackDuration());
 		progressBar.setProgress(0);
 	}
