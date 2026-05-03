@@ -541,8 +541,13 @@ public class ResTree {
 			);
 
 			if (path.isEmpty()) {
-				assert library != null;
+				if (library == null) return;
 				library.add(file);
+				library.sort((o1, o2) -> {
+					String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
+					String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
+					return name1.compareTo(name2);
+				});
 			} else {
 				Directory dir = (Directory) get_element_at_path(path);
 				assert dir != null;

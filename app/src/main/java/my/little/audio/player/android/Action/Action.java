@@ -177,6 +177,7 @@ public class Action {
 	
 	public static void import_music(Uri path) {
 		ResTree.add_audio_file(path, Global.getPath());
+		Signals.emitSignal("onPathChanged");
 	}
 	
 	public static void request_system_folder_name(Context ActivityContext) {
