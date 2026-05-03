@@ -4,6 +4,7 @@ package my.little.audio.player.android;
 // It is published on GitHub under the LGPLv3 License:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -34,7 +35,7 @@ public class Preferences extends LinearLayout {
 		
 		findViewById(R.id.preferences_back_block).setOnClickListener(view -> Signals.emitSignal("onTogglePreferences"));
 		
-		findViewById(R.id.preferences_action_refresh).setOnClickListener(view -> Action.button_refresh());
+		findViewById(R.id.preferences_action_refresh).setOnClickListener(view -> Action.button_refresh((Activity) getContext()));
 		findViewById(R.id.preferences_action_set_library).setOnClickListener(view -> Action.open_new_lib_root_dialog());
 		findViewById(R.id.preferences_reset_app).setOnClickListener(view -> Action.reset_app_data());
 

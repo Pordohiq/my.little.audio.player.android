@@ -4,6 +4,7 @@ package my.little.audio.player.android.Action;
 // It is published on GitHub under the LGPLv3 License:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.database.Cursor;
@@ -143,13 +144,17 @@ public class Action {
 	}
 
 	//region ActionBar_general functions
-	public static void button_refresh() {
+	public static void button_refresh(Activity context) {
 		set_lockState(Action.LockState.ALL);
-		Log.i(Global.APP_TAG, "Refreshing library");
-		Global.setPath(new ArrayList<>());
-		ResTree.reload_from_disk(Global.getInstance());
-		Signals.emitSignal("onPathChanged");
-		set_lockState(Action.LockState.NONE);
+		Global.executor.execute(() -> {
+			Log.i(Global.APP_TAG, "Refreshing library");
+			ResTree.reload_from_disk(Global.getInstance());
+			context.runOnUiThread(() -> {
+				Global.setPath(new ArrayList<>());
+				Signals.emitSignal("onPathChanged");
+				set_lockState(Action.LockState.NONE);
+			});
+		});
 	}
 	
 	public static void open_new_lib_root_dialog(){

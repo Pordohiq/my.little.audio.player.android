@@ -2,7 +2,7 @@ package my.little.audio.player.android;
 
 // This file is part of 'my.little.audio.player.android'
 // It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -14,8 +14,6 @@ import java.util.Objects;
 
 public class Signals {
 	private static final Map<String, List<Runnable>> events = new HashMap<>();
-	
-	private Signals() {}
 	
 	public static void createEvent(@NonNull String eventName) {
 		if (!events.containsKey(eventName)) {

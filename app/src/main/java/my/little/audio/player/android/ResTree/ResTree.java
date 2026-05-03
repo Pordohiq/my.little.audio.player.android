@@ -18,7 +18,6 @@ import java.nio.file.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -585,7 +584,13 @@ public class ResTree {
 			Directory newDir = new Directory(folder_name, newFolderUri);
 
 			if (parentElement == null) {
-				if (library != null) library.add(newDir);
+				if (library == null) return;
+				library.add(newDir);
+				library.sort((o1, o2) -> {
+					String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
+					String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
+					return name1.compareTo(name2);
+				});
 			} else {
 				((Directory) parentElement).addChild(newDir);
 			}
@@ -640,8 +645,13 @@ public class ResTree {
 			if (targetParent instanceof Directory) {
 				((Directory) targetParent).addChild(element);
 			} else {
-				assert library != null;
+				if (library == null) return;
 				library.add(element);
+				library.sort((o1, o2) -> {
+					String name1 = (o1 instanceof Directory ? "0" : "1") + o1.getName().toLowerCase();
+					String name2 = (o2 instanceof Directory ? "0" : "1") + o2.getName().toLowerCase();
+					return name1.compareTo(name2);
+				});
 			}
 		} catch (IOException e) {
 			Log.e(Global.APP_TAG, "Error moving element", e);

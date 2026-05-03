@@ -4,6 +4,7 @@ package my.little.audio.player.android.Action;
 // It is published on GitHub under the LGPLv3 License:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
+import android.app.Activity;
 import android.content.Context;
 
 import android.util.AttributeSet;
@@ -83,7 +84,7 @@ public class ActionBar extends LinearLayout {
 		action_music_toggle_queue = findViewById(R.id.action_music_toggle_queue);
 		
 		//Set up other action_general_nodes
-		findViewById(R.id.action_general_refresh).setOnClickListener(view -> Action.button_refresh());
+		findViewById(R.id.action_general_refresh).setOnClickListener(view -> Action.button_refresh((Activity) getContext()));
 		findViewById(R.id.action_general_set_library).setOnClickListener(view -> Action.open_new_lib_root_dialog());
 		findViewById(R.id.action_general_settings).setOnClickListener(view -> Signals.emitSignal("onTogglePreferences"));
 		
