@@ -53,7 +53,7 @@ public class AudioService extends MediaLibraryService {
 	public void onCreate() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-			NotificationChannel channel = new NotificationChannel("channel_id", "Channel Name", NotificationManager.IMPORTANCE_LOW);
+			NotificationChannel channel = new NotificationChannel("channel_id", getString(R.string.global_app_name), NotificationManager.IMPORTANCE_LOW);
 			notificationManager.createNotificationChannel(channel);
 		}
 		

@@ -19,7 +19,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import java.util.HashMap;
 import java.util.Locale;
+
+import my.little.audio.player.android.Action.Action;
 
 public class Active extends LinearLayout {
 	private TextView title;
@@ -108,7 +111,7 @@ public class Active extends LinearLayout {
 				timeRemainingNode.setText(formatDuration(Global.getPlayBackDuration() - Global.getPlayBackPosition()));
 				
 				if (Global.getPlayBackState() == Global.PlayBackState.PLAYING) {
-					secondHandler.postDelayed(this, 100);
+					secondHandler.postDelayed(this, 250);
 				}
 			} catch (Exception ex) {
 				secondHandler.removeCallbacks(this);
@@ -206,7 +209,12 @@ public class Active extends LinearLayout {
 		Signals.subscribeToEvent("onSongFinished", this::onSongFinished);
 		
 		if (Global.current_audio != null){
-			title.setText(Global.current_audio.getName());
+			String title_str = Global.current_audio.getName();
+			HashMap<String, Object> info = Action.get_audio_info(Global.current_audio);
+			if (info.get("title") != null) {
+				title_str = (String) info.get("title");
+			}
+			title.setText(title_str);
 		}
 	}
 	//endregion
@@ -238,7 +246,12 @@ public class Active extends LinearLayout {
 		if (Global.current_audio == null){
 			title.setText(R.string.active_title_none);
 		}else{
-			title.setText(Global.current_audio.getName());
+			String title_str = Global.current_audio.getName();
+			HashMap<String, Object> info = Action.get_audio_info(Global.current_audio);
+			if (info.get("title") != null) {
+				title_str = (String) info.get("title");
+			}
+			title.setText(title_str);
 		}
 		
 		progressBar.setMax(Global.getPlayBackDuration());

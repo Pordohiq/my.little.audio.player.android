@@ -40,6 +40,7 @@ android {
 
 dependencies {
     implementation(libs.appcompat)
+    implementation(libs.media)
     implementation(libs.documentfile)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.session)
