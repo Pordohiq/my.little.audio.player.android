@@ -24,6 +24,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.DocumentsContract;
+import android.provider.OpenableColumns;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -509,6 +510,7 @@ public class ResTree {
 		}
 	}
 	
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public static boolean is_subPath(@NonNull List<String> list, @NonNull List<String> prefix) {
 		if (prefix.size() > list.size()) {
 			return false;
@@ -725,6 +727,20 @@ public class ResTree {
 			Log.e(Global.APP_TAG, "Could not read the file");
 			return null;
 		}
+	}
+	
+	public static long getFileSize(@NonNull Context context, Uri uri) {
+		long fileSize = -1;
+		Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+		
+		if (cursor != null && cursor.moveToFirst()) {
+			int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+			if (!cursor.isNull(sizeIndex)) {
+				fileSize = cursor.getLong(sizeIndex);
+			}
+			cursor.close();
+		}
+		return fileSize;
 	}
 	//endregion
 }

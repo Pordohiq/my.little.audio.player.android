@@ -7,13 +7,8 @@ package my.little.audio.player.android.Action;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
-import android.database.Cursor;
-import android.media.AudioFormat;
-import android.media.MediaExtractor;
-import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.provider.OpenableColumns;
 import android.util.Log;
 import android.app.AlertDialog;
 import android.widget.EditText;
@@ -248,133 +243,6 @@ public class Action {
 	}
 	//endregion
 	//region info_audio
-	public static long getFileSize(@NonNull Context context, Uri uri) {
-		long fileSize = -1;
-		Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-		
-		if (cursor != null && cursor.moveToFirst()) {
-			int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-			if (!cursor.isNull(sizeIndex)) {
-				fileSize = cursor.getLong(sizeIndex);
-			}
-			cursor.close();
-		}
-		return fileSize;
-	}
-	
-	public static int getChannelCount(Uri uri) {
-		if (uri == null) return -1;
-		
-		MediaExtractor extractor = new MediaExtractor();
-		try {
-			extractor.setDataSource(Global.getInstance(), uri, null);
-			int trackCount = extractor.getTrackCount();
-			
-			for (int i = 0; i < trackCount; i++) {
-				MediaFormat format = extractor.getTrackFormat(i);
-				String mime = format.getString(MediaFormat.KEY_MIME);
-				
-				if (mime != null && mime.startsWith("audio/")) {
-					if (format.containsKey(MediaFormat.KEY_CHANNEL_COUNT)) {
-						return format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
-					}
-				}
-			}
-		} catch (Exception e) {
-			Log.e(Global.APP_TAG, "Error: " + e);
-		} finally {
-			extractor.release();
-		}
-		return -1;
-	}
-	
-	public static int getSampleRate(Uri uri) {
-		if (uri == null) return -1;
-		
-		MediaExtractor extractor = new MediaExtractor();
-		try {
-			extractor.setDataSource(Global.getInstance(), uri, null);
-			int trackCount = extractor.getTrackCount();
-			
-			for (int i = 0; i < trackCount; i++) {
-				MediaFormat format = extractor.getTrackFormat(i);
-				String mime = format.getString(MediaFormat.KEY_MIME);
-				
-				if (mime != null && mime.startsWith("audio/")) {
-					if (format.containsKey(MediaFormat.KEY_SAMPLE_RATE)) {
-						return format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
-					}
-				}
-			}
-		} catch (Exception e) {
-			Log.e(Global.APP_TAG, "Error: " + e);
-		} finally {
-			extractor.release();
-		}
-		return -1;
-	}
-	public static int getBitDepth(Uri uri) {
-		if (uri == null) return -1;
-		
-		MediaExtractor extractor = new MediaExtractor();
-		try {
-			extractor.setDataSource(Global.getInstance(), uri, null);
-			int trackCount = extractor.getTrackCount();
-			
-			for (int i = 0; i < trackCount; i++) {
-				MediaFormat format = extractor.getTrackFormat(i);
-				String mime = format.getString(MediaFormat.KEY_MIME);
-				
-				if (mime != null && mime.startsWith("audio/")) {
-					if (format.containsKey(MediaFormat.KEY_PCM_ENCODING)) {
-						int encoding = format.getInteger(MediaFormat.KEY_PCM_ENCODING);
-						
-						switch (encoding) {
-							case AudioFormat.ENCODING_PCM_8BIT:
-								return 8;
-							case AudioFormat.ENCODING_PCM_24BIT_PACKED:
-							case AudioFormat.ENCODING_PCM_FLOAT:
-								return 24;
-							case AudioFormat.ENCODING_PCM_32BIT:
-								return 32;
-							case AudioFormat.ENCODING_PCM_16BIT:
-							default:
-								return 16;
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			Log.e(Global.APP_TAG, "Error: " + e);
-		} finally {
-			extractor.release();
-		}
-		return -1;
-	}
-	
-	@NonNull
-	public static String getMimeType(@NonNull Uri uri) {
-		MediaExtractor extractor = new MediaExtractor();
-		try {
-			extractor.setDataSource(Global.getInstance(), uri, null);
-			
-			// Loop through tracks to find the audio track
-			for (int i = 0; i < extractor.getTrackCount(); i++) {
-				MediaFormat format = extractor.getTrackFormat(i);
-				String mime = format.getString(MediaFormat.KEY_MIME);
-				
-				if (mime != null && mime.startsWith("audio/")) {
-					return mime; // Returns e.g., "audio/mpeg", "audio/opus"
-				}
-			}
-		} catch (Exception e) {
-			Log.e(Global.APP_TAG, "Error: " + e);
-		} finally {
-			extractor.release();
-		}
-		return "unknown";
-	}
-	
 	@Nullable
 	public static HashMap<String, Object> get_audio_info(){
 		if (currentElement == null) return null;
@@ -394,13 +262,6 @@ public class Action {
 			info.put("album", retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
 			info.put("year", retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR));
 			info.put("bitrate", retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE));
-			info.put("channels", getChannelCount(audio.getUri()));
-			info.put("sample_rate", getSampleRate(audio.getUri()));
-			info.put("bit_depth", getBitDepth(audio.getUri()));
-			info.put("encoding", getMimeType(audio.getUri()));
-			
-			// File size still comes from your helper
-			info.put("file_size", getFileSize(Global.getInstance(), audio.getUri()));
 			
 		} catch (IOException ex) {
 			Log.e(Global.APP_TAG, "Error making the Metadata retriever: " + ex);

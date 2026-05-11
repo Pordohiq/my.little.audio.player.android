@@ -83,12 +83,10 @@ public class fileInfoDirectory extends LinearLayout {
 		});
 		
 		Global.executor.execute(() -> {
-			String rfs = Global.getInstance().getText(R.string.info_directory_rec_file_size) +  String.valueOf(ResTree.getDirectorySize(de.getUri())) + " B";
+			long size = ResTree.getDirectorySize(de.getUri());
+			String rfs = getContext().getText(R.string.info_directory_rec_file_size) + fileInfoTools.formatFileSize(size);
 			activity.runOnUiThread(() -> rec_size.setText(rfs));
 		});
-		
-		
-		
 		
 		this.setVisibility(VISIBLE);
 	}
