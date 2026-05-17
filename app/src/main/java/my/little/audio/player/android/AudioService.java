@@ -21,8 +21,19 @@ import androidx.media3.session.LibraryResult;
 import androidx.media3.session.MediaLibraryService;
 import androidx.media3.session.MediaNotification;
 import androidx.media3.session.MediaSession;
+import androidx.media3.session.SessionError;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import my.little.audio.player.android.ResTree.Directory;
+import my.little.audio.player.android.ResTree.DiskElement;
+import my.little.audio.player.android.ResTree.Music;
+import my.little.audio.player.android.ResTree.ResTree;
 import com.google.common.util.concurrent.ListenableFuture;
 
 @UnstableApi
@@ -38,9 +49,83 @@ public class AudioService extends MediaLibraryService {
 					.setMediaMetadata(new MediaMetadata.Builder()
 							.setIsBrowsable(true)
 							.setIsPlayable(false)
+							.setMediaType(MediaMetadata.MEDIA_TYPE_FOLDER_MIXED)
 							.build())
 					.build();
 			return Futures.immediateFuture(LibraryResult.ofItem(rootItem, params));
+		}
+
+		@NonNull @Override
+		public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> onGetChildren(
+				@NonNull MediaLibrarySession session, @NonNull MediaSession.ControllerInfo browser,
+				@NonNull String parentId, int page, int pageSize, @Nullable LibraryParams params) {
+			List<DiskElement> elements = null;
+			if (parentId.equals("root")) {
+				elements = ResTree.library;
+			} else {
+				DiskElement element = ResTree.get_element_at_path(Arrays.asList(parentId.split("/")));
+				if (element instanceof Directory) {
+					elements = ((Directory) element).getChildren();
+				}
+			}
+
+			if (elements == null) {
+				return Futures.immediateFuture(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
+			}
+
+			List<MediaItem> mediaItems = new ArrayList<>();
+			for (DiskElement element : elements) {
+				String mediaId = parentId.equals("root") ? element.getName() : parentId + "/" + element.getName();
+				MediaMetadata metadata = new MediaMetadata.Builder()
+						.setTitle(element.getName())
+						.setIsBrowsable(element instanceof Directory)
+						.setIsPlayable(element instanceof Music)
+						.setMediaType(element instanceof Directory ? MediaMetadata.MEDIA_TYPE_FOLDER_MIXED : MediaMetadata.MEDIA_TYPE_MUSIC)
+						.build();
+				mediaItems.add(new MediaItem.Builder()
+						.setMediaId(mediaId)
+						.setMediaMetadata(metadata)
+						.setUri(element.getUri())
+						.build());
+			}
+
+			List<MediaItem> resultItems;
+			if (page < 0 || pageSize < 1) {
+				resultItems = mediaItems;
+			} else {
+				int fromIndex = page * pageSize;
+				int toIndex = Math.min(fromIndex + pageSize, mediaItems.size());
+				if (fromIndex >= mediaItems.size()) {
+					resultItems = new ArrayList<>();
+				} else {
+					resultItems = mediaItems.subList(fromIndex, toIndex);
+				}
+			}
+			return Futures.immediateFuture(LibraryResult.ofItemList(resultItems, params));
+		}
+
+		@NonNull @Override
+		public ListenableFuture<LibraryResult<MediaItem>> onGetItem(
+				@NonNull MediaLibrarySession session, @NonNull MediaSession.ControllerInfo browser, @NonNull String mediaId) {
+			if (mediaId.equals("root")) {
+				return onGetLibraryRoot(session, browser, null);
+			}
+			DiskElement element = ResTree.get_element_at_path(Arrays.asList(mediaId.split("/")));
+			if (element == null) {
+				return Futures.immediateFuture(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
+			}
+			MediaMetadata metadata = new MediaMetadata.Builder()
+					.setTitle(element.getName())
+					.setIsBrowsable(element instanceof Directory)
+					.setIsPlayable(element instanceof Music)
+					.setMediaType(element instanceof Directory ? MediaMetadata.MEDIA_TYPE_FOLDER_MIXED : MediaMetadata.MEDIA_TYPE_MUSIC)
+					.build();
+			MediaItem item = new MediaItem.Builder()
+					.setMediaId(mediaId)
+					.setMediaMetadata(metadata)
+					.setUri(element.getUri())
+					.build();
+			return Futures.immediateFuture(LibraryResult.ofItem(item, null));
 		}
 	};
 	

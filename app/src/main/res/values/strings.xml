@@ -24,7 +24,7 @@
 	<string name="action_element_trash">trash</string>
 	<string name="action_element_info" translatable="false">info</string>
 	<string name="action_element_move">move</string>
-	<string name="action_music_toggle_queue" translatable="false">toggle queue</string>
+	<string name="action_music_toggle_queue">toggle queue</string>
 	<string name="global_accept">Accept</string>
 	<string name="global_cancel">Cancel</string>
 	<string name="action_element_rename_sysDialog">Rename Element</string>
@@ -54,4 +54,6 @@
 	<string name="info_directory_audio">"SubAudiofiles: "</string>
 	<string name="info_directory_dirs">"Subfolders: "</string>
 	<string name="info_directory_rec_file_size">"Recursive File Size: "</string>
+	<string name="info_queue_element_count">"Elements in Queue:  "</string>
+	<string name="info_queue_length">"Cumulative length: "</string>
 </resources>

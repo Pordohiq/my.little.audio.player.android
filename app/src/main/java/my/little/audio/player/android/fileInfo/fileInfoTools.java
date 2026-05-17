@@ -14,4 +14,17 @@ public class fileInfoTools {
 		
 		return String.format(Locale.US, "%.2f %s", bytes / Math.pow(1024, digitGroups), units[digitGroups]);
 	}
+	
+	@NonNull
+	public static String formatDuration(long pb_duration) {
+		long h = pb_duration / 3600;
+		long m = (pb_duration % 3600) / 60;
+		long s = pb_duration % 60;
+
+		if (h > 0) {
+			return String.format(Locale.US, "%d:%02d:%02d", h, m, s);
+		} else {
+			return String.format(Locale.US, "%02d:%02d", m, s);
+		}
+	}
 }

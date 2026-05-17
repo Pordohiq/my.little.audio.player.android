@@ -40,6 +40,13 @@
 		
 	</my.little.audio.player.android.fileInfo.fileInfoDirectory>
 	
+	<my.little.audio.player.android.fileInfo.fileInfoQueue
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/info_queue">
+		
+	</my.little.audio.player.android.fileInfo.fileInfoQueue>
+	
 	<my.little.audio.player.android.Action.ActionBar
 		android:layout_width="match_parent"
 		android:layout_height="50dp" />

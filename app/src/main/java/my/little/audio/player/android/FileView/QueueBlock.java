@@ -2,7 +2,7 @@ package my.little.audio.player.android.FileView;
 
 // This file is part of 'my.little.audio.player.android'
 // It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.content.Context;
 
@@ -114,5 +114,13 @@ public class QueueBlock extends LinearLayout {
 		else {
 			block.setAlpha(1f);
 		}
+	}
+	
+	@Override
+	protected void onDetachedFromWindow() {
+		if (queue == Action.get_queue() && queue != null){
+			Action.unset_queue();
+		}
+		super.onDetachedFromWindow();
 	}
 }

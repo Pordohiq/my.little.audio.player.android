@@ -53,6 +53,7 @@ public class fileInfoDirectory extends LinearLayout {
 		Signals.subscribeToEvent("onPathChanged", this::hide);
 		Signals.subscribeToEvent("onActionElementChanged", this::hide);
 		Signals.subscribeToEvent("onActionQueueChanged", this::hide);
+		Signals.subscribeToEvent("onDisplayStateChanged", this::hide);
 	}
 	
 	public void load_data(){

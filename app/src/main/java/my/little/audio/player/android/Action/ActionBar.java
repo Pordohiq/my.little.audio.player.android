@@ -96,6 +96,7 @@ public class ActionBar extends LinearLayout {
 			Action.set_lockState(Action.LockState.NONE);
 			verify_displayed_state();
 		});
+		findViewById(R.id.action_queue_back).setOnClickListener(view -> Action.unset_queue());
 
 		findViewById(R.id.action_folder_rename).setOnClickListener(view -> Action.rename_element(context));
 		findViewById(R.id.action_music_rename).setOnClickListener(view -> Action.rename_element(context));
@@ -105,6 +106,7 @@ public class ActionBar extends LinearLayout {
 		
 		findViewById(R.id.action_music_info).setOnClickListener(view -> Signals.emitSignal("requestShowInfoAudio"));
 		findViewById(R.id.action_folder_info).setOnClickListener(view -> Signals.emitSignal("requestShowInfoDir"));
+		findViewById(R.id.action_queue_info).setOnClickListener(view -> Signals.emitSignal("requestShowInfoQueue"));
 		
 		findViewById(R.id.action_music_move).setOnClickListener(view -> init_file_moving());
 		findViewById(R.id.action_folder_move).setOnClickListener(view -> init_file_moving());
@@ -151,7 +153,7 @@ public class ActionBar extends LinearLayout {
 			return;
 		}
 		
-		if (Action.get_queue() != null) { //If there is a loaded queue
+		if ((Action.get_queue() != null) && (Global.getDisplayState() == Global.DisplayState.QUEUES)) { //If there is a loaded queue
 			set_block_visibility(View.GONE, View.GONE, View.GONE, View.VISIBLE, View.GONE, View.GONE);
 			return;
 		}
