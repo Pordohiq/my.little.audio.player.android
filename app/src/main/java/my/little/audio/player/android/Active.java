@@ -1,7 +1,7 @@
 package my.little.audio.player.android;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the LGPLv3 License:
+// It is published on GitHub under the LGPLv3 Licence:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.content.Context;

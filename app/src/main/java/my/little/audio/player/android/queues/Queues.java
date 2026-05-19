@@ -1,8 +1,8 @@
 package my.little.audio.player.android.queues;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the LGPLv3 License:
-// https://github.com/lomjek/my.little.audio.player.android
+// It is published on GitHub under the LGPLv3 Licence:
+// https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.os.Build;
 import android.util.Log;
@@ -184,7 +184,7 @@ public class Queues {
 		}
 		
 		if (Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE && active_queue == null){
-			Global.mx_state.toggle_queue_state();
+			Global.mx_state.deactivate_queue();
 		} else if (Global.mx_state.get_queue_state() == MixingState.queue_state.DIRECTORY) {
 			active_queue = new FolderQueue(Global.getPath(), false);
 			Signals.emitSignal("onQueueSet");
@@ -226,6 +226,11 @@ public class Queues {
 	
 	@Nullable
 	public static Queue get_active_queue(){
+		if (active_queue == null) return null;
+		if (active_queue instanceof ShuffledQueue){
+			ShuffledQueue sq = (ShuffledQueue) active_queue;
+			return sq.upcast();
+		}
 		return active_queue;
 	}
 	

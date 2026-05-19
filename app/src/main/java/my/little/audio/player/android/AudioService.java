@@ -1,7 +1,7 @@
 package my.little.audio.player.android;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the LGPLv3 License:
+// It is published on GitHub under the LGPLv3 Licence:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.app.NotificationChannel;
@@ -19,7 +19,6 @@ import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.session.DefaultMediaNotificationProvider;
 import androidx.media3.session.LibraryResult;
 import androidx.media3.session.MediaLibraryService;
-import androidx.media3.session.MediaNotification;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.SessionError;
 
@@ -188,10 +187,11 @@ public class AudioService extends MediaLibraryService {
 		
 		mediaLibrarySession = new MediaLibrarySession.Builder(this, forwardingPlayer, callback).build();
 		
-		MediaNotification.Provider mediaNotificationProvider = new DefaultMediaNotificationProvider.Builder(this)
+		DefaultMediaNotificationProvider mediaNotificationProvider = new DefaultMediaNotificationProvider.Builder(this)
 				.setChannelId("channel_id")
 				.setChannelName(R.string.global_app_name)
 				.build();
+		mediaNotificationProvider.setSmallIcon(R.drawable.global_app_icon_webp);
 		
 		setMediaNotificationProvider(mediaNotificationProvider);
 	}

@@ -1,7 +1,7 @@
 package my.little.audio.player.android.FileView;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the LGPLv3 License:
+// It is published on GitHub under the LGPLv3 Licence:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.content.Context;
@@ -20,6 +20,7 @@ import my.little.audio.player.android.R;
 import my.little.audio.player.android.Signals;
 import my.little.audio.player.android.queues.Queue;
 import my.little.audio.player.android.queues.Queues;
+import my.little.audio.player.android.queues.ShuffledQueue;
 
 public class QueueBlock extends LinearLayout {
 	// Nodes
@@ -55,7 +56,8 @@ public class QueueBlock extends LinearLayout {
 	}
 	
 	private void check_main_icon() {
-		if (Queues.get_active_queue() == queue && queue != null){
+		Queue ac_que = Queues.get_active_queue();
+		if (queue != null && (ac_que == queue)) {
 			queueIcon.setImageResource(R.drawable.block_queue_active);
 		} else {
 			queueIcon.setImageResource(R.drawable.block_queue);
