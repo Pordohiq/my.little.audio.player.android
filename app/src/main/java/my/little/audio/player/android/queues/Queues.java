@@ -234,6 +234,18 @@ public class Queues {
 		return active_queue;
 	}
 	
+	@Nullable
+	public static Music get_next_song_from_active_queue(boolean loop){
+		if (active_queue == null) return null;
+		return active_queue.get_next_song(loop);
+	}
+	
+	@Nullable
+	public static Music get_prev_song_from_active_queue(boolean loop){
+		if (active_queue == null) return null;
+		return active_queue.get_previous_song(loop);
+	}
+	
 	public static void add_music_to_queue(@NonNull Music music, @NonNull Queue queue){
 		if (queue.has_song(music)) {
 			queue.remove_song(music);

@@ -1,7 +1,7 @@
 package my.little.audio.player.android.FileView;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the LGPLv3 License:
+// It is published on GitHub under the LGPLv3 Licence:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.content.Context;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import my.little.audio.player.android.Global;
+import my.little.audio.player.android.MixingState;
 import my.little.audio.player.android.Signals;
 import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.ResTree.DiskElement;
@@ -65,7 +66,11 @@ public class FileView extends LinearLayout {
 	private void draw_queues(){
 		fileContainer.removeAllViews();
 		
-		String path_formatted = getContext().getString(R.string.file_view_queuePath) + String.join("/", Global.getPath());
+		// Bugfix for a weird bug, that sometimes no queue / FolderQueue is enabled but the queue still is set to be the active_queue.
+		if (Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE && Queues.get_active_queue() == null)
+			Global.mx_state.deactivate_queue();
+		
+		String path_formatted = getContext().getString(R.string.file_view_queuePath);
 		pathDisplay.setText(path_formatted);
 		
 		BackBlock backBlock = new BackBlock(getContext());

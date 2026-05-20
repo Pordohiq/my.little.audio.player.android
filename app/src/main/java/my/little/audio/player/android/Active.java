@@ -113,6 +113,10 @@ public class Active extends LinearLayout {
 				if (Global.getPlayBackState() == Global.PlayBackState.PLAYING) {
 					secondHandler.postDelayed(this, 250);
 				}
+				else {
+					progressBar.setMax(1);
+					progressBar.setProgress(1);
+				}
 			} catch (Exception ex) {
 				secondHandler.removeCallbacks(this);
 				Log.e(Global.APP_TAG, "Error: " + ex);

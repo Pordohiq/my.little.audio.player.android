@@ -10,7 +10,6 @@ import my.little.audio.player.android.Action.Action;
 import my.little.audio.player.android.ResTree.ResTree;
 import my.little.audio.player.android.ResTree.Directory;
 import my.little.audio.player.android.ResTree.Music;
-import my.little.audio.player.android.queues.Queue;
 import my.little.audio.player.android.queues.Queues;
 
 import android.app.Application;
@@ -340,14 +339,11 @@ public class Global extends Application {
 		
 		MixingState.queue_state[] queue_states = {MixingState.queue_state.DIRECTORY, MixingState.queue_state.RECURSIVE_DIRECTORY, MixingState.queue_state.LOADED_QUEUE};
 		if (Arrays.asList(queue_states).contains(mx_state.get_queue_state())) {
-			Queue cur_queue = Queues.get_active_queue();
-			if (cur_queue == null) return;
-			
 			Music next_song;
 			if (mx_state.get_repeat_state() == MixingState.repeat_state.NONE){
-				next_song = cur_queue.get_next_song(false);
+				next_song = Queues.get_next_song_from_active_queue(false);
 			} else if (mx_state.get_repeat_state() == MixingState.repeat_state.QUEUE) {
-				next_song = cur_queue.get_next_song(true);
+				next_song = Queues.get_next_song_from_active_queue(true);
 			} else {
 				Log.e(APP_TAG, "Unknown repeat state: " + mx_state.get_repeat_state());
 				quit_song();
@@ -376,20 +372,16 @@ public class Global extends Application {
 		
 		MixingState.queue_state[] queue_states = {MixingState.queue_state.DIRECTORY, MixingState.queue_state.RECURSIVE_DIRECTORY, MixingState.queue_state.LOADED_QUEUE};
 		if (Arrays.asList(queue_states).contains(mx_state.get_queue_state())) {
-			Queue cur_queue = Queues.get_active_queue();
-			if (cur_queue == null) return;
-			
 			Music next_song;
 			if (mx_state.get_repeat_state() == MixingState.repeat_state.NONE){
-				next_song = cur_queue.get_previous_song(false);
+				next_song = Queues.get_prev_song_from_active_queue(false);
 			} else if (mx_state.get_repeat_state() == MixingState.repeat_state.QUEUE) {
-				next_song = cur_queue.get_previous_song(true);
+				next_song = Queues.get_prev_song_from_active_queue(true);
 			} else {
 				Log.e(APP_TAG, "Unknown repeat state: " + mx_state.get_repeat_state());
 				quit_song();
 				return;
 			}
-			
 			
 			if (next_song == null) {
 				quit_song();
