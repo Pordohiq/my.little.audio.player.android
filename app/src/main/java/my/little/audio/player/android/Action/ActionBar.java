@@ -1,7 +1,7 @@
 package my.little.audio.player.android.Action;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the LGPLv3 License:
+// It is published on GitHub under the LGPLv3 Licence:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.app.Activity;
@@ -115,7 +115,7 @@ public class ActionBar extends LinearLayout {
 		findViewById(R.id.action_music_trash).setOnClickListener(view -> Action.delete_element());
 		findViewById(R.id.action_queue_trash).setOnClickListener(view -> Action.trash_queue());
 
-		// Link the Move dialog nodes.
+		// Link the Move dialogue nodes.
 		action_move_dialog.setOnClickListener(view -> finish_file_moving());
 		
 		Signals.subscribeToEvent("onActionElementChanged", this::verify_displayed_state);

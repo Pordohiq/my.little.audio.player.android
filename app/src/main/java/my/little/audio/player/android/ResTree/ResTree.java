@@ -1,7 +1,7 @@
 package my.little.audio.player.android.ResTree;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the LGPLv3 License:
+// It is published on GitHub under the LGPLv3 Licence:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
 import java.io.ByteArrayOutputStream;
@@ -533,12 +533,15 @@ public class ResTree {
 
 		try {
 			Uri new_uri = SAF_copy_element(audio_uri, destUri);
+			SAF_delete_element(audio_uri);
 			String new_name = get_fileName_from_Uri(new_uri);
-			assert new_name != null;
+			if (new_name == null){
+				return;
+			}
 
 			Music file = new Music(
 					new_name,
-					audio_uri,
+					new_uri,
 					new_name.split("\\.")[1]
 			);
 
@@ -588,7 +591,7 @@ public class ResTree {
 		Uri newFolderUri = SAF_create_folder(parentUri, folder_name);
 
 		if (newFolderUri != null) {
-			Directory newDir = new Directory(folder_name, newFolderUri);
+			Directory newDir = new Directory(get_fileName_from_Uri(newFolderUri), newFolderUri);
 
 			if (parentElement == null) {
 				if (library == null) return;

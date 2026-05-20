@@ -98,7 +98,7 @@ public class Main extends ComponentActivity {
 							
 							for (Uri uri : uris) {
 								getContentResolver().takePersistableUriPermission(uri, takeFlags);
-								Action.import_music(uri);
+								Action.import_music(this, uri);
 							}
 						}
 					});

@@ -1,7 +1,7 @@
 package my.little.audio.player.android.Action;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the LGPLv3 License:
+// It is published on GitHub under the LGPLv3 Licence:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.app.Activity;
@@ -170,9 +170,12 @@ public class Action {
 		Signals.emitSignal("requestAudioFromSysDialog");
 	}
 	
-	public static void import_music(Uri path) {
-		ResTree.add_audio_file(path, Global.getPath());
-		Signals.emitSignal("onPathChanged");
+	public static void import_music(@NonNull Context context, @NonNull Uri path) {
+		Global.executor.execute(() -> {
+			ResTree.add_audio_file(path, Global.getPath());
+			Activity activity = (Activity) context;
+			activity.runOnUiThread(() -> Signals.emitSignal("onPathChanged"));
+		});
 	}
 	
 	public static void request_system_folder_name(Context ActivityContext) {

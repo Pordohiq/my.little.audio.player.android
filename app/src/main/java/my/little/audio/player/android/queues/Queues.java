@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import my.little.audio.player.android.Global;
 import my.little.audio.player.android.MixingState;
@@ -199,13 +200,65 @@ public class Queues {
 		}
 	}
 	//endregion
+	//region QueueInteractions
+	public static boolean queue_exists(@NonNull String queue_name){
+		for (Queue queue : loaded_queues){
+			if (Objects.equals(queue.get_name(), queue_name)){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	public static void create_new_queue(@NonNull String name){
+		if (queue_exists(name)){
+			int appendix = 1;
+			name += "_1";
+			while (queue_exists(name)) {
+				appendix++;
+				int idx = name.lastIndexOf('_');
+				if (idx != -1) {
+					name = name.substring(0, idx + 1) + appendix;
+				}
+			}
+		}
+		
 		loaded_queues.add(new Queue(name, new ArrayList<>()));
 		save_queues();
 		Signals.emitSignal("onQueueLibChanged");
 	}
 	
+	public static void rename_queue(@NonNull Queue queue, @NonNull String new_name){
+		if (!loaded_queues.contains(queue)) return;
+		
+		if (queue_exists(new_name)){
+			int appendix = 1;
+			new_name += "_1";
+			while (queue_exists(new_name)) {
+				appendix++;
+				int idx = new_name.lastIndexOf('_');
+				if (idx != -1) {
+					new_name = new_name.substring(0, idx + 1) + appendix;
+				}
+			}
+		}
+		
+		queue.set_name(new_name);
+		save_queues();
+		Signals.emitSignal("onQueueLibChanged");
+	}
+	
+	public static void add_music_to_queue(@NonNull Music music, @NonNull Queue queue){
+		if (queue.has_song(music)) {
+			queue.remove_song(music);
+		} else {
+			queue.add_song(music);
+		}
+		Log.v(Global.APP_TAG, queue.toString());
+		save_queues();
+		Signals.emitSignal("onQueueLibChanged");
+	}
+	//endregion
 	@NonNull
 	public static List<Queue> get_queues (){
 		return new ArrayList<>(loaded_queues);
@@ -244,23 +297,5 @@ public class Queues {
 	public static Music get_prev_song_from_active_queue(boolean loop){
 		if (active_queue == null) return null;
 		return active_queue.get_previous_song(loop);
-	}
-	
-	public static void add_music_to_queue(@NonNull Music music, @NonNull Queue queue){
-		if (queue.has_song(music)) {
-			queue.remove_song(music);
-		} else {
-			queue.add_song(music);
-		}
-		Log.v(Global.APP_TAG, queue.toString());
-		save_queues();
-		Signals.emitSignal("onQueueLibChanged");
-	}
-	
-	public static void rename_queue(@NonNull Queue queue, @NonNull String new_name){
-		if (!loaded_queues.contains(queue)) return;
-		queue.set_name(new_name);
-		save_queues();
-		Signals.emitSignal("onQueueLibChanged");
 	}
 }

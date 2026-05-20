@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import my.little.audio.player.android.Action.Action;
 import my.little.audio.player.android.Global;
-import my.little.audio.player.android.MixingState;
 import my.little.audio.player.android.R;
 import my.little.audio.player.android.Signals;
 import my.little.audio.player.android.queues.Queue;
