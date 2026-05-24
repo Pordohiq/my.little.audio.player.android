@@ -3,6 +3,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile = file("/home/lomjek/Desktop/mLAP/my.little.audio.player.android/mLAP.jks")
+            storePassword = "cumalalahtml"
+            keyAlias = "mLAP"
+            keyPassword = "cumalalahtml"
+        }
+    }
     namespace = "my.little.audio.player.android"
     compileSdk = 36
 
@@ -24,7 +32,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
         }
         getByName("debug") {
             isMinifyEnabled = false
