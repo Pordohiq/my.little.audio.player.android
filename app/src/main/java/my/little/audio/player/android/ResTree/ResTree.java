@@ -409,18 +409,63 @@ public class ResTree {
 			return newFile.getUri();
 		}
 	}
-
+	
 	private static Uri SAF_copy_element(@NonNull Uri sourceUri, @NonNull Uri targetParentUri) throws IOException {
 		Context context = Global.getInstance();
-
+		
 		DocumentFile sourceFile = get_DocumentFile_from_Uri(sourceUri);
 		DocumentFile targetDir = get_DocumentFile_from_Uri(targetParentUri);
-
-		if (sourceFile == null || targetDir == null) {
-			throw new IOException("Source or Target Dir not valid");
+		
+		if (targetDir == null) {
+			throw new IOException("Target Dir not valid");
 		}
-
-		return SAF_copy_element(context, sourceFile, targetDir);
+		
+		if (sourceFile != null) {
+			try {
+				return SAF_copy_element(context, sourceFile, targetDir);
+			} catch (Exception e) {
+				if (sourceFile.isDirectory()) {
+					throw e;
+				}
+			}
+		}
+		
+		String displayName = null;
+		String mimeType = context.getContentResolver().getType(sourceUri);
+		if (mimeType == null) {
+			mimeType = "application/octet-stream";
+		}
+		
+		try (Cursor cursor = context.getContentResolver().query(sourceUri, null, null, null, null)) {
+			if (cursor != null && cursor.moveToFirst()) {
+				int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+				if (nameIndex != -1) {
+					displayName = cursor.getString(nameIndex);
+				}
+			}
+		}
+		
+		if (displayName == null) {
+			displayName = "shared_file_" + System.currentTimeMillis();
+		}
+		
+		DocumentFile newFile = targetDir.createFile(mimeType, displayName);
+		if (newFile == null) {
+			throw new IOException("Failed to create target file");
+		}
+		
+		try (InputStream in = context.getContentResolver().openInputStream(sourceUri);
+		     OutputStream out = context.getContentResolver().openOutputStream(newFile.getUri())) {
+			if (in == null || out == null) {
+				throw new IOException("Failed to open input or output stream");
+			}
+			byte[] buf = new byte[8192];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+		}
+		return newFile.getUri();
 	}
 
 	@Nullable
