@@ -22,4 +22,9 @@ Here are some other Guidline bulettpoints:
 - I don't plan to increase the minSdk any further than it already is. Use if blocks for Support.
 - Please do not any new classes, that don't have an "inspiration" already, unless no other option.
 
+## Submitting Translations
+
+I only have the app in Englisch and in German. I would be very greatful for anybody who minds translating 
+the app. The translation files are in **/app/src/main/res/values***
+
 > Thank You very much!

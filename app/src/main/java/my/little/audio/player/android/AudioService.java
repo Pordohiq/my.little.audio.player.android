@@ -191,7 +191,7 @@ public class AudioService extends MediaLibraryService {
 				.setChannelId("channel_id")
 				.setChannelName(R.string.global_app_name)
 				.build();
-		mediaNotificationProvider.setSmallIcon(R.drawable.global_app_icon_webp);
+		mediaNotificationProvider.setSmallIcon(R.drawable.ic_notification);
 		
 		setMediaNotificationProvider(mediaNotificationProvider);
 	}
