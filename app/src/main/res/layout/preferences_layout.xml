@@ -62,6 +62,20 @@
 				android:layout_height="2dp"
 				android:background="@color/middleGrey" /> <!-- hr -->
 			
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/preferences_icon_set"
+				android:textSize="20sp"
+				android:textAlignment="center"
+				android:gravity="center"
+				android:textColor="@color/lightGrey"/>
+			
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="2dp"
+				android:background="@color/middleGrey" /> <!-- hr -->
+			
 			<LinearLayout
 				android:id="@+id/preferences_action_refresh"
 				android:layout_width="match_parent"
@@ -153,7 +167,7 @@
 					android:layout_gravity="center_vertical"
 					android:textColor="@color/lightGrey"/>
 				
-			</LinearLayout> <!-- Github Code -->
+			</LinearLayout> <!-- GitHub Code -->
 			
 			<LinearLayout
 				android:id="@+id/preferences_youtube_block"
@@ -198,7 +212,7 @@
 					android:textColor="@color/lightGrey"/>
 			
 			</LinearLayout> <!-- License -->
-			
+		
 		</LinearLayout>
 		
 	</ScrollView>

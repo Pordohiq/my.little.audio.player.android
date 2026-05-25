@@ -13,11 +13,12 @@
 	<string name="action_general_set_library">eine neuen Ordner als Bibliothek wählen</string>
 	<string name="action_general_settings">Einstellungen anzeigen</string>
 	<string name="action_popup_new_folder">Name für den neuen Ordner:</string>
-	<string name="global_app_desc">Vor sich haben sie eine kleine Anwendung, welche ich aus Freude ins Leben gerufen habe. Es hat als ein kleines Projekt begonnen, aber es ist so gekommen, dass es zu meinem Hauptprojekt für eine längere Zeit wurde. DIeses Projekt wurde mit der LGPLv3 Lizenz veröffentlicht. Bitte Besuchen Sie die Seite von GitHub für mehr Informationen.</string>
+	<string name="global_app_desc">Vor sich haben sie eine kleine Anwendung, welche ich aus Freude ins Leben gerufen habe. Es hat als ein kleines Projekt begonnen, aber es ist so gekommen, dass es zu meinem Hauptprojekt für eine längere Zeit wurde. DIeses Projekt wurde mit der LGPLv3 Lizenz veröffentlicht. Bitte besuchen Sie die Seite von GitHub für mehr Informationen.</string>
 	<string name="global_app_welcome">Willkomen zu meiner kleinen Audiowiedergabeanwendung</string>
 	<string name="preferences_view_lgpl">LGPLv3 Lizenz</string>
 	<string name="preferences_view_src_code">github - Quellencode</string>
 	<string name="preferences_reset_app">Anwendung zurücksetzen</string>
+	<string name="preferences_icon_set">Die Icons sind ursprünglich aus dem Godot Engine Editor. Einige davon habe ich gemischt und damit meine Kreationen gebaut. Auch die Farben sind inspiriert von der Godot Engine. Godot steht unter der MIT Lizenz.</string>
 	<string name="global_back">zurück</string>
 	<string name="action_element_rename">umbenennen</string>
 	<string name="action_element_trash">löschen</string>
@@ -50,7 +51,7 @@
 	<string name="introduction_action">Das hier ist der Balken für Aktionen. Der Balken wird sich unten befinden. In diesem Balken kann man Aktionen in der Sammlung der Lieder machen: Du kannst eine Datei hinzufügen, du kannst einen neuen Ordner erstellen, den ganzen Ordner neu laden, einen neuen Pfad zur Liedsammlung setzten oder die Einstellungen anschauen. In diesem Balken wird man auch andere Aktionen für spezifische Dateien ausführen können.</string>
 	<string name="info_directory_audio">"UnterAudiodateien: "</string>
 	<string name="info_directory_dirs">"Unterordner: "</string>
-	<string name="info_directory_rec_file_size">"Grösse des Ordners: "</string>
+	<string name="info_directory_rec_file_size">"Größe des Ordners: "</string>
 	<string name="info_queue_element_count">"Elemente in der Warteschlange: "</string>
 	<string name="info_queue_length">"Gemeinsame Länge: "</string>
 </resources>

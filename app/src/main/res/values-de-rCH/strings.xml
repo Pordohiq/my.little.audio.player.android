@@ -18,6 +18,7 @@
 	<string name="preferences_view_lgpl">LGPLv3 Lizenz</string>
 	<string name="preferences_view_src_code">github - Quellencode</string>
 	<string name="preferences_reset_app">Anwendung zurücksetzen</string>
+	<string name="preferences_icon_set">Die Icons sind ursprünglich usem Godot Engine Editor. Einigi han i gmischt und zu neue Kreatione baut. DFarbe han ich au vo de Godot Engine. Godot staht unter de MIT Lizenz.</string>
 	<string name="global_back">zurück</string>
 	<string name="action_element_rename">umbenennen</string>
 	<string name="action_element_trash">löschen</string>

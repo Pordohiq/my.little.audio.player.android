@@ -19,6 +19,7 @@
 	<string name="preferences_view_youtube" translatable="false">Pordohiq - YouTube</string>
 	<string name="preferences_view_lgpl">LGPLv3 License</string>
 	<string name="preferences_reset_app">reset app</string>
+	<string name="preferences_icon_set">The Icons used in this app are originally from the Editor of the Godot Engine. I had to mix some of them into my new creations. The colours too are derived from the Godot Engine Colour Scheme. Godot and it\'s Editor Icons are licenced under the MIT Licence.</string>
 	<string name="global_back">back</string>
 	<string name="action_element_rename">rename</string>
 	<string name="action_element_trash">trash</string>
