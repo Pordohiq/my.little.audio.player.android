@@ -184,14 +184,29 @@ public class Queues {
 			return;
 		}
 		
-		if (Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE && active_queue == null){
-			Global.mx_state.deactivate_queue();
+		if (Global.mx_state.get_queue_state() == MixingState.queue_state.LOADED_QUEUE){
+			if (active_queue == null){
+				Global.mx_state.deactivate_queue();
+			}
+			else if (active_queue instanceof ShuffledQueue){
+				active_queue = ((ShuffledQueue) active_queue).upcast();
+			}
 		} else if (Global.mx_state.get_queue_state() == MixingState.queue_state.DIRECTORY) {
-			active_queue = new FolderQueue(Global.getPath(), false);
-			Signals.emitSignal("onQueueSet");
+			if (active_queue instanceof ShuffledQueue && ((ShuffledQueue) active_queue).upcast() instanceof FolderQueue){
+				active_queue = ((ShuffledQueue) active_queue).upcast();
+			} else {
+				active_queue = new FolderQueue(Global.getPath(), false);
+				if (Global.current_audio != null) move_pointer_to_song(Global.current_audio);
+				Signals.emitSignal("onQueueSet");
+			}
 		} else if (Global.mx_state.get_queue_state() == MixingState.queue_state.RECURSIVE_DIRECTORY) {
-			active_queue = new FolderQueue(Global.getPath(), true);
-			Signals.emitSignal("onQueueSet");
+			if (active_queue instanceof ShuffledQueue && ((ShuffledQueue) active_queue).upcast() instanceof FolderQueue){
+				active_queue = ((ShuffledQueue) active_queue).upcast();
+			} else {
+				active_queue = new FolderQueue(Global.getPath(), true);
+				if (Global.current_audio != null) move_pointer_to_song(Global.current_audio);
+				Signals.emitSignal("onQueueSet");
+			}
 		}
 		
 		if (Global.mx_state.get_shuffle_state() == MixingState.shuffle_state.ON) {
@@ -259,6 +274,7 @@ public class Queues {
 		Signals.emitSignal("onQueueLibChanged");
 	}
 	//endregion
+	//region API
 	@NonNull
 	public static List<Queue> get_queues (){
 		return new ArrayList<>(loaded_queues);
@@ -269,6 +285,7 @@ public class Queues {
 		if (queue == active_queue) unset_active_queue();
 		active_queue = queue;
 		Global.mx_state.activate_loaded_queue();
+		if (Global.current_audio != null) move_pointer_to_song(Global.current_audio);
 		Signals.emitSignal("onQueueSet");
 	}
 	
@@ -298,4 +315,15 @@ public class Queues {
 		if (active_queue == null) return null;
 		return active_queue.get_previous_song(loop);
 	}
+	
+	public static void move_pointer_to_song(@NonNull Music song){
+		if (active_queue == null) return;
+		if (!active_queue.has_song(song)) return;
+		if (active_queue instanceof ShuffledQueue){
+			((ShuffledQueue) active_queue).rotate_queue_to_song(song);
+		} else {
+			active_queue.position = active_queue.get_songs().indexOf(song);
+		}
+	}
+	//endregion
 }

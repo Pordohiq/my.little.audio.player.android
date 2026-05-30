@@ -1,7 +1,7 @@
 package my.little.audio.player.android.FileView;
 
 // This file is part of 'my.little.audio.player.android'
-// It is published on GitHub under the LGPLv3 License:
+// It is published on GitHub under the LGPLv3 Licence:
 // https://github.com/Pordohiq/my.little.audio.player.android
 
 import android.content.Context;
@@ -94,6 +94,9 @@ public class MusicBlock extends LinearLayout {
 
 	private void mainClick(){
 		if (Action.get_lockState() == Action.LockState.ALL || Action.get_lockState() == Action.LockState.AUDIO || Action.get_lockState() == Action.LockState.DISK_ELEMENT) return; // If locked, do nothing
+		if (Queues.get_active_queue() != null && Queues.get_active_queue().has_song(music)){
+			Queues.move_pointer_to_song(music);
+		}
 		Global.setAudio(music, true);
 	}
 

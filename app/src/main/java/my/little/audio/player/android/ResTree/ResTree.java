@@ -233,6 +233,8 @@ public class ResTree {
 		List<DiskElement> elements = library;
 		String last_segment = path.remove(path.size() - 1);
 		
+		if (elements == null) return null;
+		
 		for (String path_element : path) {
 			if (path_element == null) {
 				continue;

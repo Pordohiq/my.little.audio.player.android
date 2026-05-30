@@ -71,5 +71,25 @@ public class ShuffledQueue extends Queue {
 		derivative.contents.remove(song);
 	}
 	
-	public Queue upcast(){ return derivative; }
+	public Queue upcast(){
+		if (shuffled_songs.size() <= position || position < 0){
+			position = 0;
+		}
+		int position_in_queue = derivative.get_songs().indexOf(shuffled_songs.get(position));
+		if (position_in_queue < 0){
+			position_in_queue = 0;
+		}
+		derivative.position = position_in_queue;
+		return derivative;
+	}
+	
+	public void rotate_queue_to_song(@NonNull Music song){
+		re_shuffle(true);
+		int song_position = shuffled_songs.indexOf(song);
+		if (song_position != -1) {
+			Collections.rotate(shuffled_songs, -song_position);
+		}
+		
+		position = 0;
+	}
 }

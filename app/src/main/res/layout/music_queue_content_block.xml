@@ -5,12 +5,14 @@
 	android:layout_height="wrap_content"
 	android:orientation="horizontal"
 	android:gravity="center_vertical"
+	android:fitsSystemWindows="true"
 	android:minHeight="50dp">
 	
 	<ImageView
 		android:id="@+id/music_c_icon"
 		android:layout_width="50dp"
 		android:layout_height="50dp"
+		android:importantForAccessibility="no"
 		android:src="@drawable/block_music" />
 	
 	<TextView
