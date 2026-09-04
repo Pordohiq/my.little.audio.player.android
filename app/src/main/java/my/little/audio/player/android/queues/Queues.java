@@ -135,6 +135,10 @@ public class Queues {
 	//endregion
 	
 	public static void init(){
+		while (!loaded_queues.isEmpty()){
+			loaded_queues.remove(0);
+		}
+		
 		read_queues();
 		print_queues();
 		cleanup_queues();

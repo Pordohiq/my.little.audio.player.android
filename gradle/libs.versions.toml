@@ -1,5 +1,5 @@
 [versions]
-agp = "9.2.1"
+agp = "9.3.2"
 media3 = "1.10.0"
 app-compat = "1.7.1"
 media = "1.7.0"
